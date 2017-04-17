@@ -1,0 +1,22 @@
+<?php
+
+$secondSite = '{{YOU_NAME}}.m';
+$secondBackend = 'leon.backend';
+$secondSource = 'wangbin.source';
+$domain = DOMAIN;
+
+return [
+    'use_cache' => false,
+
+    'frontend_url' => "http://{$secondSite}.{$domain}",
+    'frontend_source' => "http://{$secondSource}.{$domain}/kake-frontend",
+
+    'backend_url' => "http://{$secondBackend}.{$domain}",
+    'backend_source' => "http://{$secondSource}.{$domain}/kake-backend",
+
+    'upload_url' => "http://{$secondSite}.{$domain}/upload/kake",
+    'thrift_port' => '8888',
+
+    'wechat_callback' => "http://{$secondSite}.${domain}/",
+    'alipay_callback' => "http://{$secondSite}.${domain}/",
+];
