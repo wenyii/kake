@@ -6,4 +6,4 @@ Trip app
 * cd kake
 * ./init
 * composer install
-* sudo chmod -R a+w backend/runtime/ frontend/runtime/ backend/web/assets/ frontend/web/assets/ /upload/
+* sudo chmod -R a+w backend/runtime/ frontend/runtime/ backend/web/assets/ frontend/web/assets/ 
