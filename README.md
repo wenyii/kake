@@ -1,9 +1,9 @@
-# maiqi-kake
-KAKE酒店预订-移动端平台
+# kake
+Trip app
 
 ## Install step
-* git clone git@192.168.0.222:<your-namespace>/maiqi-kake.git
-* cd maiqi-kake
+* git clone https://github.com/maiqi2016/kake.git
+* cd kake
 * ./init
 * composer install
 * sudo chmod -R a+w backend/runtime/ frontend/runtime/ backend/web/assets/ frontend/web/assets/ /upload/
