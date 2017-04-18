@@ -1,8 +1,8 @@
 <?php
 
-$secondSite = '{{YOU_NAME}}.m';
-$secondBackend = 'leon.backend';
-$secondSource = 'wangbin.source';
+$secondSite = 'www';
+$secondBackend = 'backend';
+$secondSource = 'source';
 $domain = DOMAIN;
 
 return [
