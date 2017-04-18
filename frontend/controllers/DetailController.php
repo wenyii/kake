@@ -17,9 +17,13 @@ class DetailController extends GeneralController
         $this->sourceCss = null;
         $this->sourceJs = null;
 
-        $detail = $this->getProduct(Yii::$app->request->get('id'));
-        $this->dump($detail);
+        return $this->cache([
+            'detail-index'
+        ], function () {
+            $detail = $this->getProduct(Yii::$app->request->get('id'));
 
-        return $this->render('index', compact('detail'));
+            return $this->render('index', compact('detail'));
+        });
+
     }
 }
