@@ -23,18 +23,16 @@ class SiteController extends GeneralController
         //焦点图
         $focusList = $this->listProductFocus(2);
 
-        $list = $this->listProduct(1, 1);
-
         //闪购模块
-        // $flashSalesList = $this->listProduct(2, 1);
+        $flashSalesList = $this->listProduct(1, 2, 2);
 
         //广告模块
-        $bannerList = $this->listBanner(1);
+        $banner = current($this->listBanner(1));
 
         //精品推荐
-        // $standardList = $this->listProduct(0,1);
+        $standardList = $this->listProduct(1, 4, 0);
 
-        return $this->render('index', compact('focusList', 'flashSalesList', 'bannerList', 'standardList'));
+        return $this->render('index', compact('focusList', 'flashSalesList', 'banner', 'standardList'));
 
     }
 }
