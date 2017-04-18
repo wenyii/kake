@@ -49,4 +49,6 @@ return [
     'the order has been paid' => '该订单已经支付',
     'resubmit the order please' => '订单已完成或异常, 有需要可重新下单',
     'order package required' => '订单套餐不能为空',
+    'product data error' => '产品数据异常',
+    'product price error' => '产品价格异常',
 ];

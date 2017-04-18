@@ -222,6 +222,10 @@ class GeneralController extends MainController
             'detail'
         ], $controller);
 
+        if (!empty($detail)) {
+            $detail['min_price'] = min(array_column($detail['package'], 'price'));
+        }
+
         return $detail;
     }
 
