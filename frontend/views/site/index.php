@@ -16,7 +16,7 @@ $params['ng_ctrl'] = 'site';
                     <?php foreach ($focusList as $focus): ?>
                         <a href="<?= $params['frontend_url'] ?>/?r=detail/index&id=<?= $focus['id'] ?>">
                             <img style="width: 25%;float:left"
-                                 src="<?= $focus['cover_deep_path'] ?>/<?= $focus['cover_filename'] ?>"/></a>
+                                 src="<?= current($focus['cover_preview_url']) ?>"/></a>
                     <?php endforeach ?>
                 </div>
             </div>
@@ -34,28 +34,29 @@ $params['ng_ctrl'] = 'site';
                 </div>
             </a>
         </div>
-        <?php if (!empty($focusList)): ?>
-            <div class="carousel" id="scroll-near" kk-scroll>
-                <div class="carousel-scroller" id="carousel-scroller">
+
+        <div class="carousel" id="scroll-near" kk-scroll>
+            <div class="carousel-scroller" id="carousel-scroller">
+                <?php if (!empty($flashSalesList)): ?>
                     <?php foreach ($flashSalesList as $flashSales): ?>
                         <div>
                             <a href="<?= $params['frontend_url'] ?>/?r=detail/index&id=<?= $flashSales['id'] ?>">
                                 <img class="img-responsive"
-                                     src="<?= $flashSales['cover_deep_path'] ?>/<?= $flashSales['cover_filename'] ?>"/></a>
+                                     src="<?= current($flashSales['cover_preview_url']) ?>"/></a>
 
-                            <p><?= $flashSales['title'] ?></p>
+                            <p><?= $flashSales['name'] ?></p>
                         </div>
                     <?php endforeach ?>
-                </div>
+                <?php endif; ?>
             </div>
-        <?php endif; ?>
+        </div>
 
     </div>
-    <?php if (!empty($bannerList)): ?>
+    <?php if (!empty($banner)): ?>
         <div class="activity">
-            <a href="<?= $params['frontend_url'] ?>/?r=detail/index&id=1">
+            <a target="<?= $banner['target_info'] ?>" href="<?= $banner['link_url'] ?>">
                 <img class="img-responsive"
-                     src="<?= $params['frontend_source'] ?>/img/bananer.jpg"/></a>
+                     src="<?= current($banner['preview_url']) ?>"></a>
         </div>
     <?php endif; ?>
     <div class="recommend">
@@ -63,65 +64,24 @@ $params['ng_ctrl'] = 'site';
             <span class="recommend2">精品推荐</span>
         </p>
 
-        <div class="recommend3">
-            <div class="recommend3-1">
-                <a href="<?= $params['frontend_url'] ?>/?r=detail/index&id=1">
-                    <img class="img-responsive"
-                         src="<?= $params['frontend_source'] ?>/img/hotel_1_2.jpg"/></a>
+        <?php if (!empty($standardList)): ?>
+            <?php foreach ($standardList as $standard): ?>
+                <div class="recommend3">
+                    <div class="recommend3-1">
+                        <a href="<?= $params['frontend_url'] ?>/?r=detail/index&id=<?= $standard['id'] ?>">
+                            <img class="img-responsive"
+                                 src="<?= current($standard['cover_preview_url']) ?>"/></a>
 
-                <div class="recommend3-1-1">￥<span>699</span></div>
-            </div>
-            <div class="recommend3-2">
-                云南香格里拉国际大酒店
-            </div>
-            <div class="recommend3-3">
-                三江并流 | 太阳最早照耀的地方
-            </div>
-        </div>
-        <div class="recommend3">
-            <div class="recommend3-1">
-                <a href="<?= $params['frontend_url'] ?>/?r=detail/index&id=1">
-                    <img class="img-responsive"
-                         src="<?= $params['frontend_source'] ?>/img/hotel_1_4.jpg"/></a>
-
-                <div class="recommend3-1-1">￥<span>999</span></div>
-            </div>
-            <div class="recommend3-2">
-                 威尔逊总统酒店
-            </div>
-            <div class="recommend3-3">
-                三江并流 | 太阳最早照耀的地方
-            </div>
-        </div>
-        <div class="recommend3">
-            <div class="recommend3-1">
-                <a href="<?= $params['frontend_url'] ?>/?r=detail/index&id=1">
-                    <img class="img-responsive"
-                         src="<?= $params['frontend_source'] ?>/img/hotel_1_5.jpg"/></a>
-
-                <div class="recommend3-1-1">￥<span>1999</span></div>
-            </div>
-            <div class="recommend3-2">
-                云南香格里拉国际大酒店
-            </div>
-            <div class="recommend3-3">
-                三江并流 | 太阳最早照耀的地方
-            </div>
-        </div>
-        <div class="recommend3">
-            <div class="recommend3-1">
-                <a href="<?= $params['frontend_url'] ?>/?r=detail/index&id=1">
-                    <img class="img-responsive"
-                         src="<?= $params['frontend_source'] ?>/img/hotel_1_6.jpg"/></a>
-
-                <div class="recommend3-1-1">￥<span>19999</span></div>
-            </div>
-            <div class="recommend3-2">
-                 威尔逊总统酒店
-            </div>
-            <div class="recommend3-3">
-                三江并流 | 太阳最早照耀的地方
-            </div>
-        </div>
+                        <div class="recommend3-1-1">￥<span><?= $standard['price'] ?></span></div>
+                    </div>
+                    <div class="recommend3-2">
+                        <?= $standard['name'] ?>
+                    </div>
+                    <div class="recommend3-3">
+                        <?= $standard['title'] ?>
+                    </div>
+                </div>
+            <?php endforeach ?>
+        <?php endif; ?>
     </div>
 </div>

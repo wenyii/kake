@@ -10,6 +10,8 @@ use yii\helpers\ArrayHelper;
  */
 class ItemsController extends GeneralController
 {
+    const PRODUCT_PAGE_NUM = 10;
+
     /**
      * Displays index.
      */
@@ -18,23 +20,28 @@ class ItemsController extends GeneralController
         $this->sourceCss = null;
         $this->sourceJs = null;
 
-        $keyword = Yii::$app->request->get('keyword');
-        $adKeyword = Yii::$app->params['site_search_ad_keyword'];
-        $adUrl = Yii::$app->params['site_search_ad_url'];
+        return $this->cache([
+            'items-index'
+        ], function () {
+            return $this->render('index', ['html' => $this->renderListPage(1)]);
+        });
 
-        // 搜索推广
-        if (!empty($adUrl) && ('' === trim($keyword) || $adKeyword === $keyword)) {
-            $adUrl = $this->compatibleUrl($adUrl);
+    }
 
-            return $this->redirect($adUrl);
-        }
-
+    public function actionAjaxList()
+    {
         $page = Yii::$app->request->get('page');
-        $classify = Yii::$app->request->get('classify');
-        $sale = !!Yii::$app->request->get('sale');
+        $this->success([
+            'html' => $this->renderListPage($page)
+        ]);
+    }
 
-        $list = $this->listProduct($page, $keyword, null, $classify, $sale);
+    private function renderListPage($page)
+    {
+        $list = $this->listProduct($page, self::PRODUCT_PAGE_NUM);
+        $content = $this->renderFile(Yii::$app->getViewPath() . DS . 'items/list.php', $list);
+        $content = $this->renderContent($content);
 
-        return $this->render('index', ['items' => $list]);
+        return $content;
     }
 }
