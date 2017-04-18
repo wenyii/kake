@@ -64,7 +64,7 @@ $params['ng_ctrl'] = 'detail';
                 简介
             </div>
             <div class=" detail-hotel-2">
-                <?= $detail['info']?>
+                <?= $detail['info'] ?>
             </div>
         </div>
         <div class="blank">
@@ -89,7 +89,7 @@ $params['ng_ctrl'] = 'detail';
                 券享说明
             </div>
             <div class="notice-money">
-                <?= $detail['enjoy']?>
+                <?= $detail['enjoy'] ?>
             </div>
         </div>
         <div class="blank">
@@ -102,7 +102,7 @@ $params['ng_ctrl'] = 'detail';
                 用券说明
             </div>
             <div class="notice-money">
-                <?= $detail['use']?>
+                <?= $detail['use'] ?>
             </div>
         </div>
     </div>
