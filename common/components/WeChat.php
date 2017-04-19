@@ -53,26 +53,6 @@ class WeChat extends Object
     }
 
     /**
-     * Show error
-     *
-     * @access protected
-     *
-     * @param mixed $error
-     *
-     * @return void
-     * @throws \Exception
-     */
-    protected function error($error)
-    {
-        if (is_array($error)) {
-            $error = json_encode($error, JSON_UNESCAPED_UNICODE);
-        }
-        Yii::error($error);
-
-        throw new \Exception($error);
-    }
-
-    /**
      * Set and get config
      *
      * @access public
@@ -133,8 +113,7 @@ class WeChat extends Object
             return $result->prepay_id;
         }
 
-        $this->error($result);
-        return false;
+        return $result;
     }
 
     /**
