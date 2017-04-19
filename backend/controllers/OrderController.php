@@ -34,7 +34,7 @@ class OrderController extends GeneralController
                 'value' => 'select-order',
                 'level' => 'primary',
                 'icon' => 'globe',
-                'params' => ['order_number']
+                'params' => ['order_number', 'payment_method']
             ],
             [
                 'text' => '子订单',
@@ -237,21 +237,39 @@ class OrderController extends GeneralController
      * @access public
      *
      * @param string $order_number
+     * @param integer $payment_method
      */
-    public function actionSelectOrder($order_number)
+    public function actionSelectOrder($order_number, $payment_method)
     {
-        $result = Yii::$app->wx->payment->query($order_number);
+        if ($payment_method) {
+            $result = Yii::$app->ali->alipayTradeQuery($order_number);
+            if (is_string($result)) {
+                Yii::error($result);
+                $this->error($result);
+            }
+            $state = $result['trade_status'];
+            $paymentState = [
+                'WAIT_BUYER_PAY' => '订单等待支付中',
+                'TRADE_CLOSED' => '订单未付款或已全额退款',
+                'TRADE_SUCCESS' => '订单已完成支付',
+                'TRADE_FINISHED' => '订单已经完成，不可退款',
+            ];
+        } else {
+            $result = Yii::$app->wx->payment->query($order_number);
+            $state = $result->trade_state;
+            $paymentState = [
+                'SUCCESS' => '订单已完成支付',
+                'NOTPAY' => '订单暂未支付',
+                'REFUND' => '订单已经申请退款',
+                'CLOSE' => '订单已经关闭',
+                'USERPAYING' => '订单等待支付中',
+                'PAYERROR' => '订单支付失败',
+            ];
+        }
 
-        $paymentState = [
-            'SUCCESS' => '该订单已完成支付',
-            'NOTPAY' => '该订单暂未支付',
-            'REFUND' => '该订单已经申请退款',
-            'CLOSE' => '该订单已经关闭',
-            'USERPAYING' => '该订单正在支付中',
-            'PAYERROR' => '该订单支付失败',
-        ];
-        Yii::$app->session->setFlash('info', $paymentState[$result->trade_state]);
+        $prefix = $payment_method ? '[支付宝]' : '[微信]';
 
+        Yii::$app->session->setFlash('info', $prefix . ' ' . $paymentState[$state]);
         $this->goReference($this->getControllerName());
     }
 }

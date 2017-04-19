@@ -48,7 +48,6 @@ class GeneralController extends MainController
      *
      * @access public
      * @return void
-     * @throws \Exception
      */
     public function weChatLogic()
     {
@@ -62,7 +61,7 @@ class GeneralController extends MainController
             $result = $wx->user();
             $result = $this->service('user.get-with-we-chat', $result);
             if (is_string($result)) {
-                throw new \Exception(Yii::t('common', $result));
+                $this->error(Yii::t('common', $result));
             }
 
             $this->loginUser($result, isset($result['state']) ? 'we-chat-login' : 'we-chat-bind');
@@ -92,7 +91,7 @@ class GeneralController extends MainController
      *
      * @access public
      *
-     * @param array $user
+     * @param array  $user
      * @param string $type
      * @param string $system
      *
@@ -133,22 +132,31 @@ class GeneralController extends MainController
      * 创建安全链接
      *
      * @access protected
-     * @param mixed $params
+     *
+     * @param mixed  $params
      * @param string $router
+     * @param boolean $checkUser
      *
      * @return \yii\web\Response
      */
-    protected function createSafeLink($params, $router)
+    protected function createSafeLink($params, $router, $checkUser = true)
     {
         $item = [
             'item' => $params,
-            'user_id' => $this->user->id,
             'ip' => Yii::$app->request->userIP
         ];
+
+        if ($checkUser) {
+            $item['user_id'] = $this->user->id;
+        }
+
         $item = Helper::createSign($item, 'sign');
         $item = Yii::$app->rsa->encryptByPublicKey(json_encode($item));
 
-        return $this->redirect([$router, 'safe' => $item]);
+        return $this->redirect([
+            $router,
+            'safe' => $item
+        ]);
     }
 
     /**
@@ -156,9 +164,11 @@ class GeneralController extends MainController
      *
      * @access protected
      *
+     * @param boolean $checkUser
+     *
      * @return mixed
      */
-    protected function validateSafeLink()
+    protected function validateSafeLink($checkUser = true)
     {
         $item = Yii::$app->request->get('safe');
         $item = json_decode(Yii::$app->rsa->decryptByPrivateKey($item), true);
@@ -170,7 +180,7 @@ class GeneralController extends MainController
             $error = true;
         }
 
-        if ($this->user->id != $item['user_id']) {
+        if ($checkUser && $this->user->id != $item['user_id']) {
             $error = true;
         }
 

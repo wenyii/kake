@@ -16,12 +16,12 @@ class AliPay extends Object
     /**
      * @var object SDK instance
      */
-    public $app;
+    private $app;
 
     /**
      * @var array option
      */
-    public $options = [
+    private $options = [
         'callback' => null,
         'gateway_url' => 'https://openapi.alipay.com/gateway.do',
         'rsa_private_key' => '@alipay/key/rsa_app.private',
@@ -70,14 +70,88 @@ class AliPay extends Object
     }
 
     /**
-     * Create sign
+     * alipay.trade.wap.pay
      *
      * @access public
+     *
+     * @param array $params
+     *
      * @return void
      */
-    public function sign()
+    public function alipayTradeWapPay($params)
     {
-        $params = array_filter($this->params);
+        $params['product_code'] = 'QUICK_WAP_PAY';
+        if (!isset($params['timeout_express'])) {
+            $params['timeout_express'] = '60m';
+        }
+
+        $this->request($params);
+    }
+
+    /**
+     * alipay.trade.query
+     *
+     * @access public
+     *
+     * @param string $outTradeNo
+     *
+     * @return mixed
+     */
+    public function alipayTradeQuery($outTradeNo)
+    {
+        $params['out_trade_no'] = $outTradeNo;
+
+        return $this->request($params, 'GET');
+    }
+
+    /**
+     * alipay.trade.close
+     *
+     * @access public
+     *
+     * @param string $outTradeNo
+     *
+     * @return mixed
+     */
+    public function alipayTradeClose($outTradeNo)
+    {
+        $params['out_trade_no'] = $outTradeNo;
+
+        return $this->request($params, 'GET');
+    }
+
+    /**
+     * alipay.trade.refund
+     *
+     * @access public
+     *
+     * @param string $outTradeNo
+     * @param string $outRequestNo
+     * @param float  $refundAmount
+     *
+     * @return mixed
+     */
+    public function alipayTradeRefund($outTradeNo, $outRequestNo, $refundAmount)
+    {
+        $params['out_trade_no'] = $outTradeNo;
+        $params['out_request_no'] = $outRequestNo;
+        $params['refund_amount'] = $refundAmount;
+
+        return $this->request($params, 'GET');
+    }
+
+    /**
+     * Handle data for sign
+     *
+     * @access private
+     *
+     * @param $params
+     *
+     * @return string
+     */
+    private function handleDataForSign($params)
+    {
+        $params = array_filter($params);
         unset($params['sign']);
         ksort($params);
 
@@ -86,6 +160,19 @@ class AliPay extends Object
             $paramsStr .= '&' . $key . '=' . $val;
         }
         $paramsStr = ltrim($paramsStr, '&');
+
+        return $paramsStr;
+    }
+
+    /**
+     * Create sign
+     *
+     * @access private
+     * @return void
+     */
+    private function createSign()
+    {
+        $paramsStr = $this->handleDataForSign($this->params);
 
         $privateKey = "-----BEGIN RSA PRIVATE KEY-----\n";
         $privateKey .= wordwrap($this->options['rsa_private_key'], 64, "\n", true);
@@ -101,30 +188,120 @@ class AliPay extends Object
     }
 
     /**
-     * Create order
+     * Validate sign for async
      *
      * @access public
      *
      * @param array $params
      *
-     * @return void
+     * @see    https://doc.open.alipay.com/docs/doc.htm?docType=1&articleId=106120
+     * @return boolean
      */
-    public function order($params)
+    public function validateSignAsync($params)
     {
-        $params['product_code'] = 'QUICK_WAP_PAY';
-        if (!isset($params['timeout_express'])) {
-            $params['timeout_express'] = '60m';
+        $sign = base64_decode($params['sign']);
+        unset($params['sign_type']);
+        $paramsStr = $this->handleDataForSign($params);
+
+        return $this->validateSign($paramsStr, $sign);
+    }
+
+    /**
+     * Validate sign for sync
+     *
+     * @access public
+     *
+     * @param array $params
+     *
+     * @see    https://doc.open.alipay.com/docs/doc.htm?docType=1&articleId=106120
+     * @return mixed
+     */
+    public function validateSignSync($params)
+    {
+        $sign = base64_decode($params['sign']);
+        $params = current($params);
+        $paramsStr = json_encode($params, JSON_UNESCAPED_UNICODE);
+
+        $result = $this->validateSign($paramsStr, $sign);
+
+        return $result ? $params : false;
+    }
+
+    /**
+     * Validate sign
+     *
+     * @param string $paramsStr
+     * @param string $sign
+     *
+     * @return boolean
+     */
+    private function validateSign($paramsStr, $sign)
+    {
+        $publicKey = "-----BEGIN PUBLIC KEY-----\n";
+        $publicKey .= wordwrap($this->options['pay_public_key'], 64, "\n", true);
+        $publicKey .= "\n-----END PUBLIC KEY-----";
+
+        if ('RSA2' == $this->sign_type) {
+            $result = openssl_verify($paramsStr, $sign, $publicKey, OPENSSL_ALGO_SHA256);
+        } else {
+            $result = openssl_verify($paramsStr, $sign, $publicKey);
         }
 
-        $this->method = 'alipay.trade.wap.pay';
+        return !!$result;
+    }
+
+    /**
+     * Request api
+     *
+     * @access private
+     *
+     * @param array  $params
+     * @param string $method
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    private function request($params, $method = 'POST')
+    {
+        $method = strtoupper($method);
+        if (!in_array($method, [
+            'POST',
+            'GET'
+        ])
+        ) {
+            return 'request method error';
+        }
+
+        $api = Helper::functionCallTrance();
+        $api = Helper::camelToUnder($api, '.');
+
+        $this->method = $api;
         $this->biz_content = json_encode($params, JSON_UNESCAPED_UNICODE);
-        Helper::dump($this->params,1);
 
-        $this->sign();
-        $url = $this->options['gateway_url'] . '?charset=UTF-8';
+        $this->createSign();
 
-        header("Content-type:text/html;charset=utf-8");
-        echo Helper::postForm($url, $this->params);
+        $response = null;
+        if ('GET' == $method) {
+            $result = Helper::cURL($this->options['gateway_url'], $method, $this->params);
+            $result = json_decode($result, true);
+
+            $response = $this->validateSignSync($result);
+
+            if (false === $response) {
+                throw new \Exception('validate sign fail');
+            }
+
+            if ('10000' != $response['code']) {
+                $response = $response['sub_msg'];
+            }
+        } else {
+            $url = $this->options['gateway_url'] . '?charset=UTF-8';
+
+            header("Content-type:text/html;charset=utf-8");
+            echo Helper::postForm($url, $this->params);
+        }
+
+        return $response;
     }
 
     /**
