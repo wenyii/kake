@@ -2,7 +2,7 @@
 /* @var $this yii\web\View */
 
 $params = \Yii::$app->params;
-$params['ng_ctrl'] = 'items';
+\Yii::$app->params['ng_ctrl'] = 'items';
 ?>
 <header>
     <a href="javascript:history.go(-1);">
@@ -41,26 +41,8 @@ $params['ng_ctrl'] = 'items';
         </div>
     </div>
 </header>
-<div class="body">
-    <div class="recommend">
-        <?php if (!empty($items)): ?>
-            <?php foreach ($items as $item): ?>
-                <div class="recommend3">
-                    <div class="recommend3-1">
-                        <a href="<?= $params['frontend_url'] ?>/?r=detail/index&id=<?= $item['id'] ?>">
-                            <img class="img-responsive"
-                                 src="<?= current($item['cover_preview_url']) ?>"/></a>
-
-                        <div class="recommend3-1-1">￥<span><?= $item['price'] ?></span></div>
-                    </div>
-                    <div class="recommend3-2">
-                        <?= $item['name'] ?>
-                    </div>
-                    <div class="recommend3-3">
-                        <?= $item['title'] ?>
-                    </div>
-                </div>
-            <?php endforeach ?>
-        <?php endif; ?>
+<div class="body" ng-init="ajaxNextPage()">
+    <div class="recommend" data-page="1">
+        <?= $html ?>
     </div>
 </div>
