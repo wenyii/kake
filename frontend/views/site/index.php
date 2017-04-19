@@ -8,6 +8,30 @@ $params['ng_ctrl'] = 'site';
     <div class="banner">
         <div class="menu">
             <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
+
+            <div class="menu-1">
+                <b>
+                    <img class="img-responsive"
+                         src="<?= $params['frontend_source'] ?>/img/triangle.svg"/>
+                </b>
+                <ul>
+                    <li>
+                        <img
+                            src="<?= $params['frontend_source'] ?>/img/site.svg"/>
+                        首页
+                    </li>
+                    <li>
+                        <img
+                            src="<?= $params['frontend_source'] ?>/img/order-center.svg"/>
+                        订单中心
+                    </li>
+                    <li class="menu-order-center">
+                        <img
+                            src="<?= $params['frontend_source'] ?>/img/phone.svg"/>
+                        咨询客服
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <?php if (!empty($focusList)): ?>

@@ -4,22 +4,43 @@
 $params = \Yii::$app->params;
 $params['ng_ctrl'] = 'detail';
 ?>
-
-<header>
-    <a href="javascript:history.go(-1);">
-        <img class="return img-responsive"
-             src="<?= $params['frontend_source'] ?>/img/triangle_03.png"/>
-    </a>
-    酒店详情
-    <div class="detail">
-        <img class="img-responsive"
-             src="<?= $params['frontend_source'] ?>/img/detail_06.png"/>
-    </div>
-</header>
 <div class="body">
     <div class="banner">
+        <a href="javascript:history.go(-1);">
+        <div class="arrows">
+            <img src="<?= $params['frontend_source'] ?>/img/arrows.svg"/>
+            </div>
+             </a>
+         <div class="menu">
+            <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
+
+            <div class="menu-1">
+                <b>
+                    <img class="img-responsive"
+                         src="<?= $params['frontend_source'] ?>/img/triangle.svg"/>
+                </b>
+                <ul>
+                    <li>
+                        <img
+                            src="<?= $params['frontend_source'] ?>/img/site.svg"/>
+                        首页
+                    </li>
+                    <li>
+                        <img
+                            src="<?= $params['frontend_source'] ?>/img/order-center.svg"/>
+                        订单中心
+                    </li>
+                    <li class="menu-order-center">
+                        <img
+                            src="<?= $params['frontend_source'] ?>/img/phone.svg"/>
+                        咨询客服
+                    </li>
+                </ul>
+            </div>
+        </div>
         <div class="carousel" id="focus-hot" kk-focus=".point" style="overflow:hidden">
             <div class="carousel-scroller">
+
                 <?php if (!empty($detail['slave_preview_url'])): ?>
                     <?php foreach ($detail['slave_preview_url'] as $photo): ?>
                         <img style="width: 25%;float:left"
@@ -43,9 +64,6 @@ $params['ng_ctrl'] = 'detail';
                  </span>
         </div>
     </div>
-    <div class="blank">
-
-    </div>
     <div class="classify">
         <div class="classify-1">
             <div class="classify-1-1">
@@ -67,9 +85,6 @@ $params['ng_ctrl'] = 'detail';
                 <?= $detail['info'] ?>
             </div>
         </div>
-        <div class="blank">
-
-        </div>
         <div class="detail-hotel">
             <div class=" detail-hotel-1">
  <span> <img
@@ -78,6 +93,25 @@ $params['ng_ctrl'] = 'detail';
             </div>
             <div class=" detail-hotel-2">
                 <?= $detail['characteristic'] ?>
+            <div class=" detail-hotel-2 detail-hotel_2">
+                一:金山口列车</br>
+                &nbsp &nbsp &nbsp &nbsp瑞士的美是无法凭借想象的，只有走到那里才能感受那份真实的美好；在瑞士慢游的几天，
+                真正感受到了独属于瑞士的这份美好与幸福，瑞士是中欧国家之一，
+                北邻德国，西邻法国，南邻意大利，东邻奥地利和列支敦士登，丰富的旅游资源，全国的地理都以高原与山地为主，
+                被誉为“欧洲屋脊”之称，有着世界公园的美誉；</br>
+                <div class=" detail-hotel-2-1">
+                    <a href="<?= $params['frontend_url'] ?>/?r=detail/index&id=1">
+                        <img class="img-responsive"
+                             src="<?= $params['frontend_source'] ?>/img/hotel2-2_06.jpg"/></a>
+                </div>
+                二:冰川快线</br>
+                &nbsp &nbsp &nbsp &nbsp记得之前有看过一条新闻，为了彻底消除贫困，瑞士政府计划会给每个成年人每周补助425英镑（约合人民币4022元），
+                无论工作与否，此外儿童每周也将获得0英镑补助。
+                <div class=" detail-hotel-2-1">
+                    <a href="<?= $params['frontend_url'] ?>/?r=detail/index&id=1">
+                        <img class="img-responsive"
+                             src="<?= $params['frontend_source'] ?>/img/hotel2-3_09.jpg"/></a>
+                </div>
             </div>
         </div>
     </div>
@@ -91,9 +125,6 @@ $params['ng_ctrl'] = 'detail';
             <div class="notice-money">
                 <?= $detail['enjoy'] ?>
             </div>
-        </div>
-        <div class="blank">
-
         </div>
         <div class="detail-hotel">
             <div class=" detail-hotel-1">
