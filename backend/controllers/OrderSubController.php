@@ -380,15 +380,20 @@ class OrderSubController extends GeneralController
             $info = null;
             $order = $this->getOrderBySubId($id);
 
-            // 微信退款
-            if ($order['payment_method'] == 0) {
-                $orderNo = $order['order_number'];
-                $refundNo = $order['id'] . 'R' . $orderNo;
+            $orderNo = $order['order_number'];
+            $refundNo = $order['id'] . 'R' . $orderNo;
+
+            // 支付宝
+            if ($order['payment_method']) {
+                $price = intval($order['price']) / 100;
+                $result = Yii::$app->ali->alipayTradeRefund($orderNo, $refundNo, $price);
+                $info = is_string($result) ? $result : '退款申请已经提交';
+            } else { // 微信
                 $result = Yii::$app->wx->payment->refund($orderNo, $refundNo, $order['total_price'], $order['price']);
                 $info = isset($result->err_code_des) ? $result->err_code_des : '退款申请已经提交';
             }
 
-            $info && $info = ' (' . $info . ')';
+            $info && $info = ' (操作结果: ' . $info . ')';
             Yii::$app->session->setFlash('success', '同意退款操作完成' . $info);
         }
 

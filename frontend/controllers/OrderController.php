@@ -18,15 +18,6 @@ class OrderController extends GeneralController
     const PAY_CODE_ALI = 1;
 
     /**
-     * @inheritDoc
-     */
-    public function init()
-    {
-        parent::init();
-        $this->mustLogin();
-    }
-
-    /**
      * @var array 子订单查询条件
      */
     public static $orderSubCondition = [
@@ -82,14 +73,15 @@ class OrderController extends GeneralController
     ];
 
     /**
-     * 微信下单并创建本地订单
+     * 第三方下单前的本地下单
      *
-     * @access public
+     * @access private
      *
-     * @link   http://leon.m.kakehotels.com/order/wx/?xxx
-     * @return string
+     * @param integer $payCode
+     *
+     * @return array
      */
-    public function actionWx()
+    private function localOrder($payCode)
     {
         $params = $this->validateSafeLink();
 
@@ -118,59 +110,58 @@ class OrderController extends GeneralController
         }
 
         // 生成订单编号
-        $orderNumber = Helper::createOrderNumber(self::PAY_CODE_WX, $this->user->id);
-
-        // 微信统一下单
-        $prepayId = Yii::$app->wx->order([
-            'body' => $product['title'],
-            'out_trade_no' => $orderNumber,
-            'total_fee' => $price,
-            'notify_url' => Yii::$app->params['frontend_url'] . '/order/wx-paid',
-            'openid' => $this->user->openid,
-        ]);
+        $orderNumber = Helper::createOrderNumber($payCode, $this->user->id);
 
         // 本地下单
-        if ($prepayId) {
-            $result = $this->service('order.add', [
-                'order_number' => $orderNumber,
-                'user_id' => $this->user->id,
-                'product_id' => $product['id'],
-                'payment_method' => self::PAY_CODE_WX,
-                'price' => $price,
-                'package' => $_package
-            ]);
+        $result = $this->service('order.add', [
+            'order_number' => $orderNumber,
+            'user_id' => $this->user->id,
+            'product_id' => $product['id'],
+            'payment_method' => $payCode,
+            'price' => $price,
+            'package' => $_package
+        ]);
 
-            if (is_string($result)) {
-                $this->error(Yii::t('common', $result));
-            }
+        if (is_string($result)) {
+            $this->error(Yii::t('common', $result));
         }
 
-        $this->sourceJs = ['order/wx'];
-
-        return $this->render('wx', [
-            'json' => Yii::$app->wx->payment->configForPayment($prepayId)
-        ]);
+        return [
+            $orderNumber,
+            $product['title'],
+            $price
+        ];
     }
 
     /**
-     * 支付宝下单并创建本地订单
+     * 微信下单
      *
      * @access public
-     *
-     * @param integer $product_id
-     * @param array   $package
-     *
-     * @link   http://leon.m.kakehotels.com/order/ali/?product_id=1
+     * @link   http://leon.m.kakehotels.com/order/wx/?xxx
      * @return string
      */
-    public function actionAli($product_id = 1, $package = [1 => 1])
+    public function actionWx()
     {
-        Yii::$app->ali->order([
-            'subject' => '一直破洞的袜子',
-            'out_trade_no' => '11223344556677',
-            'total_amount' => 0.02,
-        ]);
-        return null;
+        list($outTradeNo, $body, $price) = $this->localOrder(self::PAY_CODE_WX);
+
+        return $this->wxPay($outTradeNo, $body, $price);
+    }
+
+    /**
+     * 支付宝下单
+     *
+     * @access public
+     * @link   http://leon.m.kakehotels.com/order/ali?xxx
+     * @return string
+     */
+    public function actionAli()
+    {
+        list($outTradeNo) = $this->localOrder(self::PAY_CODE_ALI);
+
+        return $this->createSafeLink([
+            'order_number' => $outTradeNo,
+            'first' => true
+        ], 'order/ali-pay');
     }
 
     /**
@@ -208,7 +199,7 @@ class OrderController extends GeneralController
     }
 
     /**
-     * 订单支付 - 一般用于首次支付失败后重复调用
+     * 微信支付订单（可重复调用）
      *
      * @link http://leon.m.kakehotels.com/order/wx-pay/?xxx
      * @return string
@@ -216,40 +207,57 @@ class OrderController extends GeneralController
     public function actionWxPay()
     {
         $params = $this->validateSafeLink();
-        $order = $this->getOrder($params['order_id']);
+        $order = $this->getOrder($params['order_number'], 'order_number');
 
         // 查询订单
         $result = Yii::$app->wx->payment->query($order['order_number']);
         if (!in_array($result->trade_state, [
             'NOTPAY',
             'PAYERROR'
-        ])) {
+        ])
+        ) {
             $this->error(Yii::t('common', 'resubmit the order please'));
         }
 
         // 生成订单编号
         $orderNumber = Helper::createOrderNumber(self::PAY_CODE_WX, $this->user->id);
 
-        // 微信关闭旧订单并统一下单
+        // 更新本地订单编号
+        $result = $this->service('order.update-order-number', [
+            'id' => $params['order_id'],
+            'order_number' => $orderNumber
+        ]);
+
+        if (is_string($result)) {
+            $this->error(Yii::t('common', $result));
+        }
+
+        // 关闭旧订单
         Yii::$app->wx->payment->close($order['order_number']);
+
+        return $this->wxPay($orderNumber, $order['title'], $order['price']);
+    }
+
+    /**
+     * View for we chat pay
+     *
+     * @param string $outTradeNo
+     * @param string $body
+     * @param float  $price
+     *
+     * @return string
+     */
+    private function wxPay($outTradeNo, $body, $price)
+    {
         $prepayId = Yii::$app->wx->order([
-            'body' => $order['title'],
-            'out_trade_no' => $orderNumber,
-            'total_fee' => $order['price'],
+            'body' => $body,
+            'out_trade_no' => $outTradeNo,
+            'total_fee' => $price,
             'notify_url' => Yii::$app->params['frontend_url'] . '/order/wx-paid',
             'openid' => $this->user->openid,
         ]);
-
-        // 更新本地订单编号
-        if ($prepayId) {
-            $result = $this->service('order.update-order-number', [
-                'id' => $params['order_id'],
-                'order_number' => $orderNumber
-            ]);
-
-            if (is_string($result)) {
-                $this->error(Yii::t('common', $result));
-            }
+        if (!is_string($prepayId)) {
+            $this->error(json_encode($prepayId, JSON_UNESCAPED_UNICODE));
         }
 
         $this->sourceJs = ['order/wx'];
@@ -260,7 +268,62 @@ class OrderController extends GeneralController
     }
 
     /**
-     * 微信支付回调处理并更新本地订单
+     * 支付宝支付订单（可重复调用）
+     *
+     * @link http://leon.m.kakehotels.com/order/ali-pay?xxx
+     * @return mixed
+     */
+    public function actionAliPay()
+    {
+        // $this->dump($this->createSafeLink(['order_number' => '11704318100045'], 'order/ali-pay', false));
+        if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
+            return '请在普通浏览器中打开访问 ⚔';
+        }
+
+        $params = $this->validateSafeLink(false);
+        $order = $this->getOrder($params['order_number'], 'order_number');
+
+        // 查询订单
+        $result = Yii::$app->ali->alipayTradeQuery($order['order_number']);
+        if (is_array($result)) {
+
+            if (!in_array($result['trade_status'], [
+                'WAIT_BUYER_PAY',
+                'TRADE_CLOSED'
+            ])
+            ) {
+                $this->error(Yii::t('common', 'resubmit the order please'));
+            }
+
+            // 生成订单编号
+            $orderNumber = Helper::createOrderNumber(self::PAY_CODE_ALI, $this->user->id);
+
+            // 更新本地订单编号
+            $result = $this->service('order.update-order-number', [
+                'id' => $params['order_id'],
+                'order_number' => $orderNumber
+            ]);
+
+            if (is_string($result)) {
+                $this->error(Yii::t('common', $result));
+            }
+
+            // 关闭旧订单
+            Yii::$app->ali->alipayTradeClose($order['order_number']);
+        }
+
+        Yii::$app->ali->alipayTradeWapPay([
+            'subject' => $order['title'],
+            'out_trade_no' => isset($orderNumber) ? $orderNumber : $order['order_number'],
+            'total_amount' => intval($order['price']) / 100,
+            'notify_url' => Yii::$app->params['frontend_url'] . '/order/ali-paid',
+        ]);
+
+        return true;
+    }
+
+    /**
+     * 微信支付回调
      */
     public function actionWxPaid()
     {
@@ -285,10 +348,35 @@ class OrderController extends GeneralController
     }
 
     /**
+     * 支付宝支付回调
+     */
+    public function actionAliPaid()
+    {
+        $params = Yii::$app->request->get();
+
+        if (Yii::$app->ali->validateSignAsync($params)) {
+            $result = $this->service('order.pay-handler', [
+                'order_number' => $params['out_trade_no'],
+                'paid_result' => true
+            ]);
+
+            if (is_string($result)) {
+                Yii::error(Yii::t('common', $result));
+            }
+        }
+
+        Yii::error('签名验证失败: ' . json_encode($params, JSON_UNESCAPED_UNICODE));
+    }
+
+    /**
      * @inheritdoc
      */
     public function beforeAction($action)
     {
+        if (!in_array($action->id, ['ali-pay'])) {
+            $this->mustLogin();
+        }
+
         if (in_array($action->id, ['wx-paid'])) {
             $action->controller->enableCsrfValidation = false;
         }
