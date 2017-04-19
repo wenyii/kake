@@ -31,6 +31,7 @@ class DetailController extends GeneralController
 
             return $this->render('index', compact('detail'));
         });
+        
 
     }
 
