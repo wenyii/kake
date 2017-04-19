@@ -31,7 +31,6 @@ class DetailController extends GeneralController
 
             return $this->render('index', compact('detail'));
         });
-
     }
 
     /**
@@ -45,6 +44,5 @@ class DetailController extends GeneralController
         $package = $this->listProductPackage(Yii::$app->request->get('id'));
 
         return $this->render('conbo', compact('package'));
-
     }
 }
