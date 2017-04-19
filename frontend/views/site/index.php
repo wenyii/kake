@@ -1,6 +1,7 @@
 <?php
 /* @var $this yii\web\View */
 
+use yii\helpers\Url;
 $params = \Yii::$app->params;
 $params['ng_ctrl'] = 'site';
 ?>
@@ -38,7 +39,7 @@ $params['ng_ctrl'] = 'site';
             <div class="carousel" id="focus-hot" kk-focus=".point" style="overflow:hidden">
                 <div class="carousel-scroller">
                     <?php foreach ($focusList as $focus): ?>
-                        <a href="<?= $params['frontend_url'] ?>/?r=detail/index&id=<?= $focus['id'] ?>">
+                        <a href="<?= Url::to(['detail/index', 'id' => $focus['id']]) ?>">
                             <img style="width: 25%;float:left"
                                  src="<?= current($focus['cover_preview_url']) ?>"/></a>
                     <?php endforeach ?>
