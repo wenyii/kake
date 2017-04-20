@@ -301,7 +301,7 @@ class GeneralController extends MainController
      */
     public function listProduct($page = 1, $page_size = null, $manifestation = null, $classify = null, $sale = null, $keyword = null)
     {
-        list($offset, $limit) = Helper::page($page, $page_size ?: Yii::$app->params['items_page_size']);
+        list($offset, $limit) = Helper::page($page, $page_size ?: Yii::$app->params['product_page_size']);
         $params = compact('manifestation', 'classify', 'sale', 'keyword', 'limit', 'offset');
 
         return $this->cache([
@@ -406,7 +406,7 @@ class GeneralController extends MainController
 
         $condition = OrderController::$orderSubCondition;
         $condition['where'] = $where;
-        list($condition['offset'], $condition['limit']) = Helper::page($page, Yii::$app->params['items_page_size']);
+        list($condition['offset'], $condition['limit']) = Helper::page($page, Yii::$app->params['order_page_size']);
 
         $list = $this->service('order.list', $condition);
 
