@@ -3,6 +3,7 @@
 $secondSite = 'www';
 $secondBackend = 'backend';
 $secondSource = 'source';
+$secondPic = 'pic';
 $domain = DOMAIN;
 
 return [
@@ -16,7 +17,7 @@ return [
     'backend_source' => "http://{$secondSource}.{$domain}/kake-backend",
 
     'upload_path' => '/upload/kake',
-    'upload_url' => "http://{$secondSite}.{$domain}/upload/kake",
+    'upload_url' => "http://{$secondPic}.{$domain}/upload/kake",
 
     'wechat_callback' => "http://{$secondSite}.${domain}/",
     'alipay_callback' => "http://{$secondSite}.${domain}/",

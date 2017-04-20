@@ -2,11 +2,6 @@
 
 namespace frontend\controllers;
 
-use common\components\Helper;
-use Yii;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
-
 /**
  * Site controller
  */
@@ -33,6 +28,5 @@ class SiteController extends GeneralController
         $standardList = $this->listProduct(1, 4, 0);
 
         return $this->render('index', compact('focusList', 'flashSalesList', 'banner', 'standardList'));
-
     }
 }

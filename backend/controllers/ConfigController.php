@@ -63,7 +63,7 @@ class ConfigController extends GeneralController
                 'code'
             ],
             'key' => 'code',
-            'value',
+            'value' => 'empty',
             'remark',
             'state' => [
                 'code',
