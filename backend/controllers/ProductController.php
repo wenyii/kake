@@ -648,7 +648,14 @@ class ProductController extends GeneralController
             // 生成其他图附件地址
             $record = $this->createAttachmentUrls($record, ['attachment_ids' => 'slave']);
             // 获取套餐数据
-            $record = $this->listForeignData($record, 'package');
+            $record = $this->listForeignData($record, 'package', function($item) {
+                return Helper::pullSome($item, [
+                    'sale_type',
+                    'sale_rate',
+                    'sale_from',
+                    'sale_to'
+                ]);
+            });
         }
 
         // TODO

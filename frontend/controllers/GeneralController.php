@@ -233,7 +233,8 @@ class GeneralController extends MainController
         ], $controller);
 
         if (!empty($detail)) {
-            $detail['min_price'] = min(array_column($detail['package'], 'price'));
+            $field = $detail['sale'] ? 'sale_price' : 'price';
+            $detail['min_price'] = min(array_column($detail['package'], $field));
         }
 
         return $detail;
