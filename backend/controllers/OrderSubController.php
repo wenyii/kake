@@ -377,7 +377,6 @@ class OrderSubController extends GeneralController
             Yii::$app->session->setFlash('danger', Yii::t('common', $result));
         } else {
 
-            $info = null;
             $order = $this->getOrderBySubId($id);
 
             $orderNo = $order['order_number'];
@@ -393,8 +392,10 @@ class OrderSubController extends GeneralController
                 $info = isset($result->err_code_des) ? $result->err_code_des : '退款申请已经提交';
             }
 
-            $info && $info = ' (操作结果: ' . $info . ')';
-            Yii::$app->session->setFlash('success', '同意退款操作完成' . $info);
+            $info = ($order['payment_method'] ? '[支付宝反馈] ' : '[微信反馈] ') . $info;
+            Yii::info('UID:' . $this->user->id . ' -> ' . $info);
+
+            Yii::$app->session->setFlash('success', $info);
         }
 
         $this->goReference($this->getControllerName());
