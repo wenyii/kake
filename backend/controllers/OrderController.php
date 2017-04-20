@@ -242,21 +242,20 @@ class OrderController extends GeneralController
     public function actionSelectOrder($order_number, $payment_method)
     {
         if ($payment_method) {
-            $result = Yii::$app->ali->alipayTradeQuery($order_number);
-            if (is_string($result)) {
-                Yii::error($result);
-                $this->error($result);
-            }
-            $state = $result['trade_status'];
             $paymentState = [
                 'WAIT_BUYER_PAY' => '订单等待支付中',
-                'TRADE_CLOSED' => '订单未付款或已全额退款',
+                'TRADE_CLOSED' => '订单已全额退款(或未付款)',
                 'TRADE_SUCCESS' => '订单已完成支付',
-                'TRADE_FINISHED' => '订单已经完成，不可退款',
+                'TRADE_FINISHED' => '订单已经完成(不可退款)',
             ];
+
+            $result = Yii::$app->ali->alipayTradeQuery($order_number);
+            if (is_string($result)) {
+                $info = $result;
+            } else {
+                $info = $paymentState[$result['trade_status']];
+            }
         } else {
-            $result = Yii::$app->wx->payment->query($order_number);
-            $state = $result->trade_state;
             $paymentState = [
                 'SUCCESS' => '订单已完成支付',
                 'NOTPAY' => '订单暂未支付',
@@ -265,11 +264,13 @@ class OrderController extends GeneralController
                 'USERPAYING' => '订单等待支付中',
                 'PAYERROR' => '订单支付失败',
             ];
+            $result = Yii::$app->wx->payment->query($order_number);
+            $info = $paymentState[$result->trade_state];
         }
 
-        $prefix = $payment_method ? '[支付宝]' : '[微信]';
+        $prefix = $payment_method ? '[支付宝反馈] ' : '[微信反馈] ';
 
-        Yii::$app->session->setFlash('info', $prefix . ' ' . $paymentState[$state]);
+        Yii::$app->session->setFlash('info', $prefix . $info);
         $this->goReference($this->getControllerName());
     }
 }
