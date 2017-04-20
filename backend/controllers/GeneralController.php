@@ -958,13 +958,13 @@ class GeneralController extends MainController
     /**
      * 日期转换钩子
      *
-     * @access protected
+     * @access public
      *
      * @param array $record
      *
      * @return array
      */
-    protected function preHookDateSection($record)
+    public function preHookDateSection($record)
     {
         $container = static::$hookDateSection ?: [];
         $container = array_merge([
@@ -1009,7 +1009,7 @@ class GeneralController extends MainController
     /**
      * 秩序化附件钩子
      *
-     * @access protected
+     * @access public
      *
      * @param array  $record
      * @param string $action
@@ -1017,7 +1017,7 @@ class GeneralController extends MainController
      * @return array
      * @throws \Exception
      */
-    protected function preHookOrderAttachment($record, $action)
+    public function preHookOrderAttachment($record, $action)
     {
         if (empty($action)) {
             return $record;
@@ -1060,7 +1060,7 @@ class GeneralController extends MainController
     /**
      * 秩序化标签钩子
      *
-     * @access protected
+     * @access public
      *
      * @param array  $record
      * @param string $action
@@ -1068,7 +1068,7 @@ class GeneralController extends MainController
      * @return array
      * @throws \Exception
      */
-    protected function preHookOrderTag($record, $action)
+    public function preHookOrderTag($record, $action)
     {
         if (empty($action)) {
             return $record;
@@ -1145,13 +1145,13 @@ class GeneralController extends MainController
     /**
      * 日期转换钩子
      *
-     * @access protected
+     * @access public
      *
      * @param array $record
      *
      * @return array
      */
-    protected function preHookDateSectionDouble($record)
+    public function preHookDateSectionDouble($record)
     {
         $container = static::$hookDateSectionDouble;
         if (empty($container)) {
@@ -1198,14 +1198,14 @@ class GeneralController extends MainController
     /**
      * 金钱数值钩子
      *
-     * @access protected
+     * @access public
      *
      * @param array   $record
      * @param integer $multiple
      *
      * @return array
      */
-    protected function preHookPriceNumber($record, $multiple = 100)
+    public function preHookPriceNumber($record, $multiple = 100)
     {
         $container = static::$hookPriceNumber;
         if (empty($container)) {
@@ -1222,13 +1222,13 @@ class GeneralController extends MainController
     /**
      * UBB&HTML钩子
      *
-     * @access protected
+     * @access public
      *
      * @param array $record
      *
      * @return array
      */
-    protected function preHookUbbAndHtml($record)
+    public function preHookUbbAndHtml($record)
     {
         $container = static::$hookUbbAndHtml;
         if (empty($container)) {
@@ -1248,13 +1248,13 @@ class GeneralController extends MainController
     /**
      * 逻辑钩子
      *
-     * @access protected
+     * @access public
      *
      * @param array $where
      *
      * @return array
      */
-    protected function preHookLogicForWhere($where)
+    public function preHookLogicForWhere($where)
     {
         $container = static::$hookLogic;
         if (empty($container) || empty($where)) {
@@ -1314,13 +1314,13 @@ class GeneralController extends MainController
     /**
      * 日期转换钩子
      *
-     * @access protected
+     * @access public
      *
      * @param array $record
      *
      * @return array
      */
-    protected function sufHookDateSection($record)
+    public function sufHookDateSection($record)
     {
         $container = static::$hookDateSection ?: [];
         $container = array_merge([
@@ -1354,14 +1354,14 @@ class GeneralController extends MainController
     /**
      * 日期转换钩子
      *
-     * @access protected
+     * @access public
      *
      * @param array  $record
      * @param string $action
      *
      * @return array
      */
-    protected function sufHookDateSectionDouble($record, $action)
+    public function sufHookDateSectionDouble($record, $action)
     {
         if (!in_array($action, ['edit'])) {
             return $record;
@@ -1408,15 +1408,14 @@ class GeneralController extends MainController
     /**
      * 金钱数值钩子
      *
-     * @access protected
+     * @access public
      *
      * @param array   $record
      * @param integer $multiple
-     *C
      *
      * @return array
      */
-    protected function sufHookPriceNumber($record, $multiple = 100)
+    public function sufHookPriceNumber($record, $multiple = 100)
     {
         $container = static::$hookPriceNumber;
         if (empty($container)) {
@@ -1433,13 +1432,13 @@ class GeneralController extends MainController
     /**
      * UBB&HTML钩子
      *
-     * @access protected
+     * @access public
      *
      * @param array $record
      *
      * @return array
      */
-    protected function sufHookUbbAndHtml($record)
+    public function sufHookUbbAndHtml($record)
     {
         $container = static::$hookUbbAndHtml;
         if (empty($container)) {
@@ -1459,14 +1458,14 @@ class GeneralController extends MainController
     /**
      * 逻辑钩子
      *
-     * @access protected
+     * @access public
      *
      * @param array  $record
      * @param string $action
      *
      * @return array
      */
-    protected function sufHookLogic($record, $action)
+    public function sufHookLogic($record, $action)
     {
         if (in_array($action, ['filter'])) {
             return $record;
@@ -1499,10 +1498,10 @@ class GeneralController extends MainController
     /**
      * 展示列表页
      *
-     * @access protected
+     * @access public
      * @return object
      */
-    protected function showList()
+    public function showList()
     {
         $this->logReference($this->getControllerName());
 
@@ -1609,13 +1608,13 @@ class GeneralController extends MainController
     /**
      * 展示空表单
      *
-     * @access protected
+     * @access public
      *
      * @param string $tag
      *
      * @return object
      */
-    protected function showForm($tag)
+    public function showForm($tag)
     {
         $this->logReference($this->getControllerName($tag));
 
@@ -1672,13 +1671,13 @@ class GeneralController extends MainController
     /**
      * 展示指定记录表单
      *
-     * @access protected
+     * @access public
      *
      * @param string $tag
      *
      * @return object
      */
-    protected function showFormWithRecord($tag)
+    public function showFormWithRecord($tag)
     {
         $this->logReference($this->getControllerName($tag));
 

@@ -683,13 +683,14 @@ class MainController extends Controller
      *
      * @access public
      *
-     * @param array  $record
-     * @param mixed  $items
-     * @param string $action
+     * @param array    $record
+     * @param mixed    $items
+     * @param callable $extraHandler
+     * @param string   $action
      *
      * @return array
      */
-    public function listForeignData($record, $items, $action = null)
+    public function listForeignData($record, $items, $extraHandler = null, $action = null)
     {
         $items = (array) $items;
         $action = $action ?: 'edit';
@@ -711,7 +712,15 @@ class MainController extends Controller
                 $controller = '\backend\controllers\\' . Helper::underToCamel($assist['table'], false) . 'Controller';
             }
 
+            $extraData = [];
+            if ($extraHandler && $result = call_user_func($extraHandler, $record)) {
+                if (is_array($result)) {
+                    $extraData = $result;
+                }
+            }
+
             foreach ($record[$key] as $k => $v) {
+                $v = array_merge($v, $extraData);
                 $record[$key][$k] = $this->callMethod('sufHandleField', $v, [$v], $controller);
             }
             $record[$assist['field_name']] = implode(',', array_column($record[$key], 'id'));
