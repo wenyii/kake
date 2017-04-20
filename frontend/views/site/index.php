@@ -52,7 +52,7 @@ $params['ng_ctrl'] = 'site';
  <span> <img
          src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
             闪购专区
-            <a href="<?= $params['frontend_url'] ?>/?r=items/index">
+            <a href="<?= Url::to(['items/index']) ?>">
                 <div class="experience-1-more">更多
                     <img class="img-responsive"
                          src="<?= $params['frontend_source'] ?>/img/more.svg"/>
@@ -65,7 +65,7 @@ $params['ng_ctrl'] = 'site';
                 <?php if (!empty($flashSalesList)): ?>
                     <?php foreach ($flashSalesList as $flashSales): ?>
                         <div>
-                            <a href="<?= $params['frontend_url'] ?>/?r=detail/index&id=<?= $flashSales['id'] ?>">
+                            <a href="<?= Url::to(['detail/index', 'id' => $flashSales['id']]) ?>">
                                 <img class="img-responsive"
                                      src="<?= current($flashSales['cover_preview_url']) ?>"/></a>
 
@@ -93,7 +93,7 @@ $params['ng_ctrl'] = 'site';
             <?php foreach ($standardList as $standard): ?>
                 <div class="recommend3">
                     <div class="recommend3-1">
-                        <a href="<?= $params['frontend_url'] ?>/?r=detail/index&id=<?= $standard['id'] ?>">
+                        <a href="<?= Url::to(['detail/index', 'id' => $standard['id']]) ?>">
                             <img class="img-responsive"
                                  src="<?= current($standard['cover_preview_url']) ?>"/></a>
 

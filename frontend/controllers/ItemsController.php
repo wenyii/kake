@@ -28,6 +28,9 @@ class ItemsController extends GeneralController
 
     }
 
+    /**
+     * ajax 分页
+     */
     public function actionAjaxList()
     {
         $page = Yii::$app->request->get('page');
@@ -36,11 +39,13 @@ class ItemsController extends GeneralController
         ]);
     }
 
+    /**
+     * Displays  list
+     */
     private function renderListPage($page)
     {
         $list = $this->listProduct($page, self::PRODUCT_PAGE_NUM);
-        $content = $this->renderFile(Yii::$app->getViewPath() . DS . 'items/list.php', $list);
-        $content = $this->renderContent($content);
+        $content = $this->renderPartial('list', $list);
 
         return $content;
     }
