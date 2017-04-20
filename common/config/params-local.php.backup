@@ -3,6 +3,7 @@
 $secondSite = 'www';
 $secondBackend = 'backend';
 $secondSource = 'source';
+$secondPic = 'pic';
 $domain = DOMAIN;
 
 return [
@@ -14,7 +15,8 @@ return [
     'backend_url' => "http://{$secondBackend}.{$domain}",
     'backend_source' => "http://{$secondSource}.{$domain}/kake-backend",
 
-    'upload_url' => "http://{$secondSite}.{$domain}/upload/kake",
+    'upload_url' => "http://{$secondPic}.{$domain}/upload/kake",
+    'thrift_ip' => '127.0.0.1',
     'thrift_port' => '8888',
 
     'wechat_callback' => "http://{$secondSite}.${domain}/",
