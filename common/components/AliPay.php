@@ -74,12 +74,17 @@ class AliPay extends Object
      *
      * @access public
      *
-     * @param array $params
+     * @param array  $params
+     * @param string $notifyUrl
      *
      * @return void
      */
-    public function alipayTradeWapPay($params)
+    public function alipayTradeWapPay($params, $notifyUrl = null)
     {
+        if ($notifyUrl && strpos($notifyUrl, 'http') === 0) {
+            $this->notify_url = $notifyUrl;
+        }
+
         $params['product_code'] = 'QUICK_WAP_PAY';
         if (!isset($params['timeout_express'])) {
             $params['timeout_express'] = '60m';

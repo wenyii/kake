@@ -156,6 +156,15 @@ class OrderController extends GeneralController
      */
     public function actionAli()
     {
+        /**
+        $this->dump($this->createSafeLink([
+            'product_id' => 1,
+            'package' => [
+                1 => 1
+            ]
+        ], 'order/ali'));
+        //*/
+
         list($outTradeNo) = $this->localOrder(self::PAY_CODE_ALI);
 
         return $this->createSafeLink([
@@ -275,7 +284,6 @@ class OrderController extends GeneralController
      */
     public function actionAliPay()
     {
-        // $this->dump($this->createSafeLink(['order_number' => '11704318100045'], 'order/ali-pay', false));
         if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
             return '请在普通浏览器中打开访问 ⚔';
         }
@@ -296,11 +304,11 @@ class OrderController extends GeneralController
             }
 
             // 生成订单编号
-            $orderNumber = Helper::createOrderNumber(self::PAY_CODE_ALI, $this->user->id);
+            $orderNumber = Helper::createOrderNumber(self::PAY_CODE_ALI, $order['user_id']);
 
             // 更新本地订单编号
             $result = $this->service('order.update-order-number', [
-                'id' => $params['order_id'],
+                'id' => $order['id'],
                 'order_number' => $orderNumber
             ]);
 
@@ -312,12 +320,12 @@ class OrderController extends GeneralController
             Yii::$app->ali->alipayTradeClose($order['order_number']);
         }
 
+        $notifyUrl = Yii::$app->params['frontend_url'] . '/order/ali-paid';
         Yii::$app->ali->alipayTradeWapPay([
             'subject' => $order['title'],
             'out_trade_no' => isset($orderNumber) ? $orderNumber : $order['order_number'],
             'total_amount' => intval($order['price']) / 100,
-            'notify_url' => Yii::$app->params['frontend_url'] . '/order/ali-paid',
-        ]);
+        ], $notifyUrl);
 
         return true;
     }
@@ -352,20 +360,25 @@ class OrderController extends GeneralController
      */
     public function actionAliPaid()
     {
-        $params = Yii::$app->request->get();
+        $params = Yii::$app->request->post();
+        Yii::info('支付宝异步回调数据：' . json_encode($params, JSON_UNESCAPED_UNICODE));
 
-        if (Yii::$app->ali->validateSignAsync($params)) {
-            $result = $this->service('order.pay-handler', [
-                'order_number' => $params['out_trade_no'],
-                'paid_result' => true
-            ]);
-
-            if (is_string($result)) {
-                Yii::error(Yii::t('common', $result));
-            }
+        if (empty($params)) {
+            return null;
         }
 
-        Yii::error('签名验证失败: ' . json_encode($params, JSON_UNESCAPED_UNICODE));
+        if (!Yii::$app->ali->validateSignAsync($params)) {
+            Yii::error('支付宝异步回调, 签名验证失败: ' . json_encode($params, JSON_UNESCAPED_UNICODE));
+        }
+
+        $result = $this->service('order.pay-handler', [
+            'order_number' => $params['out_trade_no'],
+            'paid_result' => true
+        ]);
+
+        if (is_string($result)) {
+            Yii::error(Yii::t('common', $result));
+        }
     }
 
     /**
@@ -373,11 +386,18 @@ class OrderController extends GeneralController
      */
     public function beforeAction($action)
     {
-        if (!in_array($action->id, ['ali-pay'])) {
+        if (!in_array($action->id, [
+            'ali-pay',
+            'ali-paid'
+        ])
+        ) {
             $this->mustLogin();
         }
 
-        if (in_array($action->id, ['wx-paid'])) {
+        if (in_array($action->id, [
+            'wx-paid',
+            'ali-paid'
+        ])) {
             $action->controller->enableCsrfValidation = false;
         }
 
