@@ -45,7 +45,7 @@ class ItemsController extends GeneralController
     private function renderListPage($page)
     {
         $list = $this->listProduct($page, self::PRODUCT_PAGE_NUM);
-        $content = $this->renderPartial('list', $list);
+        $content = $this->renderPartial('list', compact('list'));
 
         return $content;
     }
