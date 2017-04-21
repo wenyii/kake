@@ -201,7 +201,7 @@ EOF
                         break;
 
                     case '2' :
-                        $sale_price = $price - ($price * ($rate / 100)) / 100;
+                        $sale_price = ($price - $price * ($rate / 100 / 100)) / 100;
                         break;
                 }
 
