@@ -101,7 +101,7 @@ class OrderController extends GeneralController
 
         $price = 0;
         $_package = [];
-        foreach ($params['package'] as $id => $number) {
+        foreach ((array) $params['package'] as $id => $number) {
             if (!isset($packageData[$id])) {
                 $this->error(Yii::t('common', 'product package illegal'));
             }
@@ -157,8 +157,9 @@ class OrderController extends GeneralController
     /**
      * 微信下单
      *
-     * @access public
-     * @link   http://leon.m.kakehotels.com/order/wx/?xxx
+     * @access  public
+     * @link    http://leon.m.kakehotels.com/order/wx/?xxx
+     * @license link create by $this->createSafeLink()
      * @return string
      */
     public function actionWx()
@@ -171,21 +172,13 @@ class OrderController extends GeneralController
     /**
      * 支付宝下单
      *
-     * @access public
-     * @link   http://leon.m.kakehotels.com/order/ali?xxx
+     * @access  public
+     * @link    http://leon.m.kakehotels.com/order/ali?xxx
+     * @license link create by $this->createSafeLink()
      * @return string
      */
     public function actionAli()
     {
-        /**
-        $this->dump($this->createSafeLink([
-            'product_id' => 1,
-            'package' => [
-                1 => 1
-            ]
-        ], 'order/ali'));
-        //*/
-
         list($outTradeNo) = $this->localOrder(self::PAY_CODE_ALI);
 
         return $this->createSafeLink([

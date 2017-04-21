@@ -11,6 +11,16 @@ use yii\helpers\ArrayHelper;
 class DetailController extends GeneralController
 {
     /**
+     * @inheritDoc
+     */
+    public function init()
+    {
+        parent::init();
+
+        $this->mustLogin();
+    }
+
+    /**
      * Displays detail.
      */
     public function actionIndex()
@@ -44,32 +54,42 @@ class DetailController extends GeneralController
     }
 
     /**
-     * 用户支付
+     * 支付前处理
      */
-    public function actionAjaxUserPay()
+    public function actionPrefixPay()
     {
-        // TODO 验证参数并组织以下数据数组
-        // 单个套餐数量不超过 10
-        // 验证验证码的有效性
-        $params = Yii::$app->request->post();
-        $this->dump($params);
-        $productId = Yii::$app->request->get('id');
-        $package = [
-            1 => 2,
-            2 => 3
+        /*
+        $_POST = [
+            'user_info' => [
+                'name' => 'Leon',
+                'phone' => '15021275672',
+                'captcha' => '256461'
+            ],
+            'payment_method' => 'wx',
+            'product_id' => 1,
+            'package' => [
+                // package_id => numbers
+                1 => 1,
+                2 => 4,
+            ]
         ];
-        $userInfo = [
-            'name' => $params['name'],
-            'phone' => $params['phone'],
-            'captcha' => $params['captcha']
-        ];
-        $paymentMethod = 'wx';
+        */
 
-        // TODO 修改用户表对应数据
-        // params : $userInfo
-        // return : booleans
+        // 用户信息
+        $userInfo = Yii::$app->request->post('user_info');
+        $result = $this->service('user.edit-real-info', [
+            'id' => $this->user->id,
+            'real_name' => $userInfo['name'],
+            'phone' => $userInfo['phone'],
+            'captcha' => $userInfo['captcha']
+        ]);
 
-        // TODO 生成下单链接
+        if (is_string($result)) {
+            $this->error($result);
+        }
+
+        // 支付方式
+        $paymentMethod = Yii::$app->request->post('payment_method');
         if (!in_array($paymentMethod, [
             'wx',
             'ali'
@@ -79,8 +99,8 @@ class DetailController extends GeneralController
         }
 
         return $this->createSafeLink([
-            'product_id' => $productId,
-            'package' => $package
+            'product_id' => Yii::$app->request->post('product_id'),
+            'package' => Yii::$app->request->post('package')
         ], 'order/' . $paymentMethod . '/');
     }
 }

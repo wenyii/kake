@@ -53,4 +53,5 @@ return [
     'product price error' => '产品价格异常',
     'product package greater then limit' => '购买的产品套餐个数 {buy} 多于限购数量 {max}',
     'product package greater then limit with purchased' => '购买的产品套餐个数 {buy} 多于限购数量 {max} (减去已购数量 {buys})',
+    'phone captcha error' => '手机验证码不正确',
 ];
