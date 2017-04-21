@@ -3,7 +3,7 @@
 
 use yii\helpers\Url;
 $params = \Yii::$app->params;
-$params['ng_ctrl'] = 'combo';
+$params['ng_ctrl'] = 'choose-package';
 ?>
 <header>
     <a href="javascript:history.go(-1);">
