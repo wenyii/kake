@@ -111,6 +111,11 @@ EOF
                 'title' => '折后价格',
                 'code'
             ],
+            'purchase_limit' => [
+                'code',
+                'empty',
+                'not_set_info' => '<span class="not-set">(无限量)</span>'
+            ],
             'info',
             'state' => [
                 'code',
@@ -138,6 +143,11 @@ EOF
             ],
             'name',
             'price',
+            'purchase_limit' => [
+                'placeholder' => '留空或0表示不限制',
+                'tip' => '以单微信号为标准进行限制',
+                'value' => \Yii::$app->params['default_purchase_limit']
+            ],
             'info' => [
                 'elem' => 'textarea',
                 'placeholder' => '256个字以内'

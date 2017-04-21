@@ -133,8 +133,8 @@ class GeneralController extends MainController
      *
      * @access protected
      *
-     * @param mixed  $params
-     * @param string $router
+     * @param mixed   $params
+     * @param string  $router
      * @param boolean $checkUser
      *
      * @return \yii\web\Response
@@ -234,6 +234,7 @@ class GeneralController extends MainController
 
         if (!empty($detail)) {
             $field = $detail['sale'] ? 'sale_price' : 'price';
+            $detail['max_sales'] = max($detail['virtual_sales'], $detail['real_sales']);
             $detail['min_price'] = min(array_column($detail['package'], $field));
         }
 
@@ -312,10 +313,16 @@ class GeneralController extends MainController
 
             $controller = $this->controller('product-package');
 
-            $list = $this->service('product.simple-list', $params);
+            $list = $this->service('product.product-list', $params);
             array_walk($list, function (&$item) use ($controller) {
                 $item = $this->callMethod('sufHandleField', $item, [$item], $controller);
                 $item = $this->createAttachmentUrl($item, ['attachment_cover' => 'cover']);
+
+                $item['max_sales'] = max($item['virtual_sales'], $item['real_sales']);
+                $item['min_price'] = $item['price'];
+                if (!empty($item['sale_price'])) {
+                    $item['min_price'] = min($item['sale_price'], $item['price']);
+                }
             });
 
             return $list;
@@ -340,8 +347,20 @@ class GeneralController extends MainController
 
         $list = $this->service('product.package-list', ['product_id' => $product_id]);
 
+        $purchaseTimes = [];
+        if ($this->user) {
+            $purchaseTimes = $this->service('order.purchase-times', [
+                'user_id' => $this->user->id,
+                'package_ids' => array_column($list, 'id')
+            ]);
+        }
+
         $controller = $this->controller('product-package');
-        array_walk($list, function (&$item) use ($controller) {
+        array_walk($list, function (&$item) use ($controller, $purchaseTimes) {
+            $item['min_purchase_limit'] = $item['purchase_limit'];
+            if (isset($purchaseTimes[$item['id']])) {
+                $item['min_purchase_limit'] = $item['purchase_limit'] - $purchaseTimes[$item['id']];
+            }
             $item = $this->callMethod('sufHandleField', $item, [$item], $controller);
         });
 

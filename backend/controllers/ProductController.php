@@ -210,7 +210,7 @@ class ProductController extends GeneralController
                 'elem' => 'input',
                 'equal' => true
             ],
-            'min_night' => [
+            'night_times' => [
                 'elem' => 'input',
                 'equal' => true
             ],
@@ -286,7 +286,9 @@ class ProductController extends GeneralController
                 'info'
             ],
             'stock',
-            'min_night' => 'tip',
+            'virtual_sales' => 'tip',
+            'real_sales' => 'tip',
+            'night_times' => 'tip',
             'manifestation' => [
                 'code',
                 'info'
@@ -431,7 +433,10 @@ class ProductController extends GeneralController
             'stock' => [
                 'value' => 0,
             ],
-            'min_night' => [
+            'virtual_sales' => [
+                'value' => rand(99, 999)
+            ],
+            'night_times' => [
                 'value' => 1,
             ],
             'manifestation' => [
