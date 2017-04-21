@@ -50,7 +50,7 @@ class DetailController extends GeneralController
 
         $packageList = $this->listProductPackage(Yii::$app->request->get('id'));
 
-        return $this->render('conbo', compact('packageList'));
+        return $this->render('choose-package', compact('packageList'));
     }
 
     /**
