@@ -21,7 +21,6 @@ class DetailController extends GeneralController
             'detail-index'
         ], function () {
             $detail = $this->getProduct(Yii::$app->request->get('id'));
-            $this->dump($detail);
             if (empty($detail)) {
                 $this->error(Yii::t('common', 'product data error'));
             }
