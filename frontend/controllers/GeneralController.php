@@ -207,38 +207,44 @@ class GeneralController extends MainController
      */
     public function getProduct($id)
     {
-        $id = (int) $id;
-        if (empty($id)) {
-            $this->error(Yii::t('common', 'product id required'));
-        }
+        return $this->cache([
+            'get-product',
+            $id
+        ], function () use ($id) {
+            $id = (int) $id;
 
-        $controller = $this->controller('product');
-        $condition = $this->callMethod('editCondition', [], null, $controller);
+            if (empty($id)) {
+                $this->error(Yii::t('common', 'product id required'));
+            }
 
-        $condition = ArrayHelper::merge($condition, [
-            'where' => [
-                ['product.id' => $id],
-                ['product.state' => 1],
-            ]
-        ]);
+            $controller = $this->controller('product');
+            $condition = $this->callMethod('editCondition', [], null, $controller);
 
-        $detail = $this->service('product.detail', $condition);
-        if (empty($detail)) {
-            return false;
-        }
+            $condition = ArrayHelper::merge($condition, [
+                'where' => [
+                    ['product.id' => $id],
+                    ['product.state' => 1],
+                ]
+            ]);
 
-        $detail = $this->callMethod('sufHandleField', $detail, [
-            $detail,
-            'detail'
-        ], $controller);
+            $detail = $this->service('product.detail', $condition);
+            if (empty($detail)) {
+                return false;
+            }
 
-        if (!empty($detail)) {
-            $field = $detail['sale'] ? 'sale_price' : 'price';
-            $detail['max_sales'] = max($detail['virtual_sales'], $detail['real_sales']);
-            $detail['min_price'] = min(array_column($detail['package'], $field));
-        }
+            $detail = $this->callMethod('sufHandleField', $detail, [
+                $detail,
+                'detail'
+            ], $controller);
 
-        return $detail;
+            if (!empty($detail)) {
+                $field = $detail['sale'] ? 'sale_price' : 'price';
+                $detail['max_sales'] = max($detail['virtual_sales'], $detail['real_sales']);
+                $detail['min_price'] = min(array_column($detail['package'], $field));
+            }
+            
+            return $detail;
+        }, DAY);
     }
 
     /**
@@ -310,7 +316,6 @@ class GeneralController extends MainController
             'list-product',
             func_get_args()
         ], function () use ($params) {
-
             $controller = $this->controller('product-package');
 
             $list = $this->service('product.product-list', $params);
