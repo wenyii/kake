@@ -310,10 +310,11 @@ class GeneralController extends MainController
             func_get_args()
         ], function () use ($params) {
 
-            $controller = $this->controller('product');
+            $controller = $this->controller('product-package');
 
             $list = $this->service('product.simple-list', $params);
             array_walk($list, function (&$item) use ($controller) {
+                $item = $this->callMethod('sufHandleField', $item, [$item], $controller);
                 $item = $this->createAttachmentUrl($item, ['attachment_cover' => 'cover']);
             });
 
