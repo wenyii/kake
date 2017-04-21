@@ -1,6 +1,7 @@
 <?php
 /* @var $this yii\web\View */
 
+use yii\helpers\Url;
 $params = \Yii::$app->params;
 $params['ng_ctrl'] = 'combo';
 ?>
@@ -149,6 +150,8 @@ $params['ng_ctrl'] = 'combo';
 <footer>
     <div class="price"><p>￥<span>19999</span> 起</p></div>
 <!--   <a href="--><?//= $params['frontend_url'] ?><!--/?r=detail/user-pay&id=--><?//= $focus['id'] ?><!--">-->
+    <a href="--><?= Url::to(['detail/user-pay']) ?>">
     <div class="buy">立即付款</div>
+        </a>
 <!--      </a>-->
 </footer>

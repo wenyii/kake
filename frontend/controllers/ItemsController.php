@@ -1,14 +1,17 @@
 <?php
-
 namespace frontend\controllers;
 
+use common\components\Helper;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * Items controller
  */
 class ItemsController extends GeneralController
 {
+    const PRODUCT_PAGE_NUM = 10;
+
     /**
      * Displays index.
      */
@@ -17,11 +20,16 @@ class ItemsController extends GeneralController
         $this->sourceCss = null;
         $this->sourceJs = null;
 
-        return $this->render('index', ['html' => $this->renderListPage(1)]);
+        return $this->cache([
+            'items-index'
+        ], function () {
+            return $this->render('index', ['html' => $this->renderListPage(1)]);
+        });
+
     }
 
     /**
-     * ajax 获取下一页列表
+     * ajax 分页
      */
     public function actionAjaxList()
     {
@@ -32,17 +40,11 @@ class ItemsController extends GeneralController
     }
 
     /**
-     * 渲染列表视图并返回 html
-     *
-     * @access private
-     *
-     * @param integer $page
-     *
-     * @return string
+     * Displays  list
      */
     private function renderListPage($page)
     {
-        $list = $this->listProduct($page, Yii::$app->params['product_page_size']);
+        $list = $this->listProduct($page, self::PRODUCT_PAGE_NUM);
         $content = $this->renderPartial('list', compact('list'));
 
         return $content;
