@@ -1,4 +1,5 @@
 <?php
+
 namespace frontend\controllers;
 
 use Yii;
@@ -18,7 +19,6 @@ class DetailController extends GeneralController
         $this->sourceJs = null;
 
         $detail = $this->getProduct(Yii::$app->request->get('id'));
-        
         if (empty($detail)) {
             $this->error(Yii::t('common', 'product data error'));
         }
