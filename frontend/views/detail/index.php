@@ -7,11 +7,12 @@ $params['ng_ctrl'] = 'detail';
 <div class="body">
     <div class="banner">
         <a href="javascript:history.go(-1);">
-        <div class="arrows">
-            <img src="<?= $params['frontend_source'] ?>/img/arrows.svg"/>
+            <div class="arrows">
+                <img src="<?= $params['frontend_source'] ?>/img/arrows.svg"/>
             </div>
-             </a>
-         <div class="menu">
+        </a>
+
+        <div class="menu">
             <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
 
             <div class="menu-1">
@@ -58,7 +59,7 @@ $params['ng_ctrl'] = 'detail';
         </div>
         <div class="hotel-detail-2">
          <span class="hotel-detail-2-1">
-                      库存剩余<span>688</span>份
+                      销量<span><?= $detail['max_sales'] ?>份/月</span>
                  </span>
         </div>
     </div>
@@ -91,8 +92,8 @@ $params['ng_ctrl'] = 'detail';
             </div>
             <div class=" detail-hotel-2 detail-hotel_2">
                 <?= $detail['characteristic'] ?>
+            </div>
         </div>
-    </div>
     </div>
     <div class="notice">
         <div class="detail-hotel">
@@ -118,17 +119,17 @@ $params['ng_ctrl'] = 'detail';
     </div>
 
 
-<footer>
-    <div class="price"><p>￥<span><?= $detail['min_price'] ?></span> 起</p></div>
+    <footer>
+        <div class="price"><p>￥<span><?= $detail['min_price'] ?></span> 起</p></div>
 
-    <div class="buy">立即购买</div>
-    <div class=" service">
-        <img class="img-responsive"
-             src="<?= $params['frontend_source'] ?>/img/_service_11.png"/>
-    </div>
-    <div class=" back-top">
-        <img class="img-responsive"
-             src="<?= $params['frontend_source'] ?>/img/back-top_13.png"/>
-    </div>
+        <div class="buy">立即购买</div>
+        <div class=" service">
+            <img class="img-responsive"
+                 src="<?= $params['frontend_source'] ?>/img/_service_11.png"/>
+        </div>
+        <div class=" back-top">
+            <img class="img-responsive"
+                 src="<?= $params['frontend_source'] ?>/img/back-top_13.png"/>
+        </div>
 
-</footer>
+    </footer>

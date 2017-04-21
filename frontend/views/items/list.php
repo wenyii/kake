@@ -13,7 +13,7 @@ $params = \Yii::$app->params;
                     <img class="img-responsive"
                          src="<?= current($item['cover_preview_url']) ?>"/></a>
 
-                <div class="recommend3-1-1">￥<span><?= $item['price'] ?></span></div>
+                <div class="recommend3-1-1">￥<span><?= $item['min_price'] ?></span></div>
             </div>
             <div class="recommend3-2">
                 <?= $item['name'] ?>
