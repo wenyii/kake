@@ -2,6 +2,10 @@
 /* @var $this yii\web\View */
 
 use yii\helpers\Url;
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 $params = \Yii::$app->params;
 $params['ng_ctrl'] = 'choose-package';
 ?>
@@ -149,5 +153,13 @@ $params['ng_ctrl'] = 'choose-package';
 
 <footer>
     <div class="price"><p>￥<span>19999</span> 起</p></div>
+<<<<<<< Updated upstream
     <div class="buy">立即付款</div>
 </footer>
+=======
+
+    <div class="buy"><a href="<?= Url::to(['detail/user-pay']) ?>">立即付款</a></div>
+</footer>
+
+
+>>>>>>> Stashed changes
