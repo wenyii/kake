@@ -2,19 +2,15 @@
 /* @var $this yii\web\View */
 
 use yii\helpers\Url;
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 $params = \Yii::$app->params;
-$params['ng_ctrl'] = 'conbo';
+$params['ng_ctrl'] = 'combo';
 ?>
 <header>
     <a href="javascript:history.go(-1);">
         <img class="return img-responsive"
              src="<?= $params['frontend_source'] ?>/img/return.svg"/>
     </a>
-    选择套餐
+   选择套餐
     <div class=" menu detail">
         <img class="img-responsive"
              src="<?= $params['frontend_source'] ?>/img/menu1.svg"/>
@@ -57,11 +53,11 @@ $params['ng_ctrl'] = 'conbo';
             选择套餐
         </div>
         <ul>
-            <li>
+            <li class="combo_1">
                 <div class="combo-1">
                     <b></b>威尔逊总统酒店双床房/大床房 <span>￥1999</span>
                 </div>
-                <div class="combo-2 ">
+                <div class="combo-2">
                     <i>
                         <img
                             src="<?= $params['frontend_source'] ?>/img/triangle_top.png"/>
@@ -80,7 +76,7 @@ $params['ng_ctrl'] = 'conbo';
                     </div>
                 </div>
             </li>
-            <li>
+            <li class="combo_2">
                 <div class="combo-1">
                     <b></b>威尔逊总统酒店双床房/大床房 <span>￥1999</span>
                 </div>
@@ -153,14 +149,5 @@ $params['ng_ctrl'] = 'conbo';
 
 <footer>
     <div class="price"><p>￥<span>19999</span> 起</p></div>
-<<<<<<< Updated upstream
-<!--   <a href="--><?//= $params['frontend_url'] ?><!--/?r=detail/user-pay&id=--><?//= $focus['id'] ?><!--">-->
-    <a href="--><?= Url::to(['detail/user-pay']) ?>">
     <div class="buy">立即付款</div>
-        </a>
-<!--      </a>-->
 </footer>
-=======
-    <div class="buy"><a href="<?= Url::to(['detail/user-pay']) ?>">立即付款</a></div>
-</footer>
->>>>>>> Stashed changes
