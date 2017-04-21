@@ -95,11 +95,32 @@ class OrderController extends GeneralController
             $this->error(Yii::t('common', 'product package does not exist'));
         }
 
+        $packagePurchaseTimes = $this->service('order.purchase.times', [
+            'user_id' => $this->user->id
+        ]);
+
         $price = 0;
         $_package = [];
         foreach ($params['package'] as $id => $number) {
             if (!isset($packageData[$id])) {
                 $this->error(Yii::t('common', 'product package illegal'));
+            }
+
+            if (empty($packagePurchaseTimes[$id])) {
+                if ($number > $packageData[$id]['purchase_limit']) {
+                    $this->error(Yii::t('common', 'product package greater then limit', [
+                        'buy' => $number,
+                        'max' => $packageData[$id]['purchase_limit']
+                    ]));
+                }
+            } else {
+                if ($number > $packageData[$id]['purchase_limit'] - $packagePurchaseTimes[$id]) {
+                    $this->error(Yii::t('common', 'product package greater then limit with purchased', [
+                        'buy' => $number,
+                        'max' => $packageData[$id]['purchase_limit'],
+                        'buys' => $packagePurchaseTimes[$id]
+                    ]));
+                }
             }
 
             $_package[$id] = $packageData[$id];
