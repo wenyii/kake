@@ -2,8 +2,12 @@
 /* @var $this yii\web\View */
 
 use yii\helpers\Url;
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 $params = \Yii::$app->params;
-$params['ng_ctrl'] = 'combo';
+$params['ng_ctrl'] = 'choose-package';
 ?>
 <header>
     <a href="javascript:history.go(-1);">
@@ -149,5 +153,13 @@ $params['ng_ctrl'] = 'combo';
 
 <footer>
     <div class="price"><p>￥<span>19999</span> 起</p></div>
+<<<<<<< Updated upstream
     <div class="buy">立即付款</div>
 </footer>
+=======
+
+    <div class="buy"><a href="<?= Url::to(['detail/user-pay']) ?>">立即付款</a></div>
+</footer>
+
+
+>>>>>>> Stashed changes
