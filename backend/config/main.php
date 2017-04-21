@@ -18,7 +18,7 @@ return [
             'name' => 'KK_BACKEND_SESS',
             'cookieParams' => [
                 'domain' => DOMAIN,
-                'lifetime' => 86400,
+                'lifetime' => 30 * 86400,
                 'httpOnly' => true,
                 'path' => '/',
             ],
