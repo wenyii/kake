@@ -124,8 +124,10 @@ $params['ng_ctrl'] = 'detail';
 
         <div class="buy">立即购买</div>
         <div class=" service">
-            <img class="img-responsive"
-                 src="<?= $params['frontend_source'] ?>/img/_service_11.png"/>
+            <a href="tel:<?= Yii::$app->params['company_tel'] ?>">
+                <img class="img-responsive"
+                     src="<?= $params['frontend_source'] ?>/img/_service_11.png"/>
+            </a>
         </div>
         <div class=" back-top">
             <img class="img-responsive"
