@@ -45,7 +45,7 @@ class LoginController extends GeneralController
     {
         $params = Yii::$app->request->post();
         $params['ip'] = Yii::$app->request->userIP;
-        $params['type'] = 'backend-login';
+        $params['type'] = 1;
 
         $user = $this->service('user.login-check', $params);
 
