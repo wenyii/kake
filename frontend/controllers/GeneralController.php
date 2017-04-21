@@ -207,15 +207,16 @@ class GeneralController extends MainController
      */
     public function getProduct($id)
     {
+        $id = (int) $id;
+
+        if (empty($id)) {
+            $this->error(Yii::t('common', 'product id required'));
+        }
+
         return $this->cache([
             'get-product',
             $id
         ], function () use ($id) {
-            $id = (int) $id;
-
-            if (empty($id)) {
-                $this->error(Yii::t('common', 'product id required'));
-            }
 
             $controller = $this->controller('product');
             $condition = $this->callMethod('editCondition', [], null, $controller);
@@ -242,7 +243,7 @@ class GeneralController extends MainController
                 $detail['max_sales'] = max($detail['virtual_sales'], $detail['real_sales']);
                 $detail['min_price'] = min(array_column($detail['package'], $field));
             }
-            
+
             return $detail;
         }, DAY);
     }
