@@ -25,7 +25,7 @@ class ItemsController extends GeneralController
      */
     public function actionAjaxList()
     {
-        $page = Yii::$app->request->get('page');
+        $page = Yii::$app->request->post('page');
         $this->success([
             'html' => $this->renderListPage($page)
         ]);
