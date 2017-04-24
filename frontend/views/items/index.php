@@ -42,7 +42,9 @@ $params = \Yii::$app->params;
     </div>
 </header>
 <div class="body" ng-init="ajaxNextPage()">
-    <div class="recommend" data-page="1">
+
+    <div class="recommend" data-page="2">
+
         <?= $html ?>
     </div>
 </div>
