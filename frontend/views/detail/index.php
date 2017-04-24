@@ -122,6 +122,7 @@ $params['ng_ctrl'] = 'detail';
     <footer>
         <div class="price"><p>￥<span><?= $detail['min_price'] ?></span> 起</p></div>
 
+<<<<<<< Updated upstream
         <div class="buy">立即购买</div>
         <div class=" service">
             <a href="tel:<?= Yii::$app->params['company_tel'] ?>">
@@ -133,5 +134,18 @@ $params['ng_ctrl'] = 'detail';
             <img class="img-responsive"
                  src="<?= $params['frontend_source'] ?>/img/back-top_13.png"/>
         </div>
+=======
+    <div class="buy">立即购买</div>
+    <div class=" service">
+        <a href="tel:17130046175">
+        <img class="img-responsive"
+             src="<?= $params['frontend_source'] ?>/img/_service_11.png"/>
+            </a>
+    </div>
+    <div class=" back-top">
+        <img class="img-responsive"
+             src="<?= $params['frontend_source'] ?>/img/back-top_13.png"/>
+    </div>
+>>>>>>> Stashed changes
 
     </footer>
