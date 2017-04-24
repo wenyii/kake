@@ -2,6 +2,7 @@
 /* @var $this yii\web\View */
 
 use yii\helpers\Url;
+
 $params = \Yii::$app->params;
 $params['ng_ctrl'] = 'site';
 ?>
@@ -18,17 +19,17 @@ $params['ng_ctrl'] = 'site';
                 <ul>
                     <li>
                         <img
-                            src="<?= $params['frontend_source'] ?>/img/site.svg"/>
+                                src="<?= $params['frontend_source'] ?>/img/site.svg"/>
                         首页
                     </li>
                     <li>
                         <img
-                            src="<?= $params['frontend_source'] ?>/img/order-center.svg"/>
+                                src="<?= $params['frontend_source'] ?>/img/order-center.svg"/>
                         订单中心
                     </li>
                     <li class="menu-order-center">
                         <img
-                            src="<?= $params['frontend_source'] ?>/img/phone.svg"/>
+                                src="<?= $params['frontend_source'] ?>/img/phone.svg"/>
                         咨询客服
                     </li>
                 </ul>
@@ -39,7 +40,10 @@ $params['ng_ctrl'] = 'site';
             <div class="carousel" id="focus-hot" kk-focus=".point" style="overflow:hidden">
                 <div class="carousel-scroller">
                     <?php foreach ($focusList as $focus): ?>
-                        <a href="<?= Url::to(['detail/index', 'id' => $focus['id']]) ?>">
+                        <a href="<?= Url::to([
+                            'detail/index',
+                            'id' => $focus['id']
+                        ]) ?>">
                             <img style="width: 25%;float:left"
                                  src="<?= current($focus['cover_preview_url']) ?>"/></a>
                     <?php endforeach ?>
@@ -50,7 +54,7 @@ $params['ng_ctrl'] = 'site';
     <div class=" experience">
         <div class=" experience-1">
  <span> <img
-         src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
+             src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
             闪购专区
             <a href="<?= Url::to(['items/index']) ?>">
                 <div class="experience-1-more">更多
@@ -65,7 +69,10 @@ $params['ng_ctrl'] = 'site';
                 <?php if (!empty($flashSalesList)): ?>
                     <?php foreach ($flashSalesList as $flashSales): ?>
                         <div>
-                            <a href="<?= Url::to(['detail/index', 'id' => $flashSales['id']]) ?>">
+                            <a href="<?= Url::to([
+                                'detail/index',
+                                'id' => $flashSales['id']
+                            ]) ?>">
                                 <img class="img-responsive"
                                      src="<?= current($flashSales['cover_preview_url']) ?>"/></a>
 
@@ -85,15 +92,15 @@ $params['ng_ctrl'] = 'site';
         </div>
     <?php endif; ?>
     <div class="recommend">
-        <p>
-            <span class="recommend2">精品推荐</span>
-        </p>
-
         <?php if (!empty($standardList)): ?>
+            <p><span class="recommend2">精品推荐</span></p>
             <?php foreach ($standardList as $standard): ?>
                 <div class="recommend3">
                     <div class="recommend3-1">
-                        <a href="<?= Url::to(['detail/index', 'id' => $standard['id']]) ?>">
+                        <a href="<?= Url::to([
+                            'detail/index',
+                            'id' => $standard['id']
+                        ]) ?>">
                             <img class="img-responsive"
                                  src="<?= current($standard['cover_preview_url']) ?>"/></a>
 
