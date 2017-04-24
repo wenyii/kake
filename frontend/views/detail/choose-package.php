@@ -7,8 +7,8 @@ $params = \Yii::$app->params;
 $params['ng_ctrl'] = 'choose-package';
 ?>
 <header>
-    <a href="javascript:history.go(-1);">
-        <img class="return img-responsive"
+    <a href="javascript:history.go(-1);" class="return">
+        <img class=" img-responsive"
              src="<?= $params['frontend_source'] ?>/img/return.svg"/>
     </a>
    选择套餐
