@@ -10,11 +10,6 @@ $params['ng_ctrl'] = 'site';
     <div class="banner">
         <div class="menu" kk-menu="#menu">
             <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
-            
-                <b>
-                    <img class="img-responsive"
-                         src="<?= $params['frontend_source'] ?>/img/triangle.svg"/>
-                </b>
             </div>
         </div>
 

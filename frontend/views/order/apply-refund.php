@@ -6,38 +6,13 @@ $params = \Yii::$app->params;
 ?>
 <header>
     <a href="javascript:history.go(-1);" class="return">
-        <img class=" img-responsive"
+        <img class="img-responsive"
              src="<?= $params['frontend_source'] ?>/img/return.svg"/>
     </a>
-    申请退款
-    <div class=" menu detail">
+    列表
+    <div class="menu detail" kk-menu="#menu">
         <img class="img-responsive"
              src="<?= $params['frontend_source'] ?>/img/menu1.svg"/>
-
-            <b>
-                <img class="img-responsive"
-                     src="<?= $params['frontend_source'] ?>/img/triangle.svg"/>
-            </b>
-            <ul>
-                <a href="<?= $params['frontend_url'] ?>/">
-                    <li>
-                        <img
-                            src="<?= $params['frontend_source'] ?>/img/site.svg"/>
-                        首页
-                    </li>
-                </a>
-                <li>
-                    <img
-                        src="<?= $params['frontend_source'] ?>/img/order-center.svg"/>
-                    订单中心
-                </li>
-                <li class="menu-order-center">
-                    <img
-                        src="<?= $params['frontend_source'] ?>/img/phone.svg"/>
-                    咨询客服
-                </li>
-            </ul>
-        </div>
     </div>
 </header>
 <div class="body">
