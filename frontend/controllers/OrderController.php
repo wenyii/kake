@@ -95,7 +95,7 @@ class OrderController extends GeneralController
             $this->error(Yii::t('common', 'product package does not exist'));
         }
 
-        $packagePurchaseTimes = $this->service('order.purchase.times', [
+        $packagePurchaseTimes = $this->service('order.purchase-times', [
             'user_id' => $this->user->id
         ]);
 
@@ -106,18 +106,19 @@ class OrderController extends GeneralController
                 $this->error(Yii::t('common', 'product package illegal'));
             }
 
+            $limit = 'purchase_limit';
             if (empty($packagePurchaseTimes[$id])) {
-                if ($number > $packageData[$id]['purchase_limit']) {
+                if (!empty($packageData[$id][$limit]) && $number > $packageData[$id][$limit]) {
                     $this->error(Yii::t('common', 'product package greater then limit', [
                         'buy' => $number,
-                        'max' => $packageData[$id]['purchase_limit']
+                        'max' => $packageData[$id][$limit]
                     ]));
                 }
             } else {
-                if ($number > $packageData[$id]['purchase_limit'] - $packagePurchaseTimes[$id]) {
+                if ($number > $packageData[$id][$limit] - $packagePurchaseTimes[$id]) {
                     $this->error(Yii::t('common', 'product package greater then limit with purchased', [
                         'buy' => $number,
-                        'max' => $packageData[$id]['purchase_limit'],
+                        'max' => $packageData[$id][$limit],
                         'buys' => $packagePurchaseTimes[$id]
                     ]));
                 }
