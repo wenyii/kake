@@ -4,102 +4,76 @@
 use yii\helpers\Url;
 
 $params = \Yii::$app->params;
-$params['ng_ctrl'] = 'choose-package';
+\Yii::$app->params['ng_ctrl'] = 'detail';
 ?>
 <header>
     <a href="javascript:history.go(-1);" class="return">
         <img class=" img-responsive"
              src="<?= $params['frontend_source'] ?>/img/return.svg"/>
     </a>
-   选择套餐
+    选择套餐
     <div class=" menu detail">
         <img class="img-responsive"
              src="<?= $params['frontend_source'] ?>/img/menu1.svg"/>
 
-        <div class="menu-1">
+        <div class="menu-1" kk-menu="#menu">
             <b>
                 <img class="img-responsive"
                      src="<?= $params['frontend_source'] ?>/img/triangle.svg"/>
             </b>
-            <ul>
-                <a href="<?= $params['frontend_url'] ?>/">
-                    <li>
-                        <img
-                            src="<?= $params['frontend_source'] ?>/img/site.svg"/>
-                        首页
-                    </li>
-                </a>
-                <li>
-                    <img
-                        src="<?= $params['frontend_source'] ?>/img/order-center.svg"/>
-                    订单中心
-                </li>
-                <li class="menu-order-center">
-                    <img
-                        src="<?= $params['frontend_source'] ?>/img/phone.svg"/>
-                    咨询客服
-                </li>
-            </ul>
         </div>
     </div>
 </header>
-<div class="body">
-    <div class="blank">
-
-    </div>
+<div class="body" product-id="<?= $productId ?>">
+    <div class="blank"></div>
     <div class="combo">
         <div class=" detail-hotel-1">
  <span> <img
-         src="<?= $params['frontend_source'] ?>/img/icon-7.png"/></span>
+             src="<?= $params['frontend_source'] ?>/img/icon-7.png"/></span>
             选择套餐
         </div>
         <ul>
-            <li class="combo_1">
-                <div class="combo-1">
-                    <b></b>威尔逊总统酒店双床房/大床房 <span>￥1999</span>
-                </div>
-                <div class="combo-2">
-                    <i>
-                        <img
-                            src="<?= $params['frontend_source'] ?>/img/triangle_top.png"/>
-                    </i>
+            <?php if (!empty($packageList)): ?>
+                <?php foreach ($packageList as $item): ?>
 
-                    <div class="combo-3">
-                        周五入住威尔逊总统酒店一晚,入住有效期,2017年2月8日到四月20日,不适用日期2017年3月29日至31日.
-                    </div>
-                    <div class="combo-4">
-                        <div class="combo-4-1">购买数量</div>
-                        <div class="combo-4-2" ng-controller="myCtrl">
-                            <span class="reduction" ng-click="reduce()">-</span>
-                            <span class="num">{{ count }}</span>
-                            <span class="add" ng-click="add()">+</span>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <li class="combo_2">
-                <div class="combo-1">
-                    <b></b>威尔逊总统酒店双床房/大床房 <span>￥1999</span>
-                </div>
-                <div class="combo-2">
-                    <i>
-                        <img
-                            src="<?= $params['frontend_source'] ?>/img/triangle_top.png"/>
-                    </i>
+                    <?php $id = $item['id']; ?>
 
-                    <div class="combo-3">
-                        周五入住威尔逊总统酒店一晚,入住有效期,2017年2月8日到四月20日,不适用日期2017年3月29日至31日.
-                    </div>
-                    <div class="combo-4">
-                        <div class="combo-4-1">购买数量</div>
-                        <div class="combo-4-2" ng-controller="myCtrl">
-                            <span class="reduction" ng-click="reduce()">-</span>
-                            <span class="num">{{ count }}</span>
-                            <span class="add" ng-click="add()">+</span>
-                        </div>
-                    </div>
-                </div>
-            </li>
+                    <?php $package = "buy.package['limit_" . $id . "']"; ?>
+                    <?php $number = $package . ".number"; ?>
+
+                    <?php if ($item['min_purchase_limit'] != 0): ?>
+                        <li class="combo_1">
+                            <?php $_item = '{id: ' . $item['id'] . ', number: 1, price: ' . $item['min_price'] . '}'; ?>
+                            <div class="combo-1" kk-tap="<?= $package ?> = (<?= $number ?> ? null : <?= $_item ?>); calPrice()">
+                                <b ng-class="{'current': <?= $number ?>}"></b><?= $item['name'] ?>
+                                <span>￥<?= $item['min_price'] ?></span>
+                            </div>
+                            <div class="combo-2 kk-animate" ng-class="{'kk-b2s': <?= $number ?>}"
+                                 ng-show="<?= $number ?>">
+                                <i><img src="<?= $params['frontend_source'] ?>/img/triangle_top.png"/></i>
+
+                                <div class="combo-3"><?= $item['info'] ?></div>
+                                <div class="combo-4">
+                                    <div class="combo-4-1">
+                                        购买数量 (<?= $item['min_purchase_limit'] < 0 ? '无限制' : '≤' . $item['min_purchase_limit'] . '份' ?>)</div>
+                                    <div class="combo-4-2">
+                                        <span class="reduction" kk-tap="goodsDel(<?= $id ?>)">-</span>
+                                        <span class="num" ng-bind="<?= $number ?>"></span>
+                                        <span class="add"
+                                              kk-tap="goodsAdd(<?= $id ?>, <?= $item['min_purchase_limit'] ?>)">+</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    <?php else: ?>
+                        <li class="combo_1">
+                            <div class="combo-1 disabled">
+                                <b></b><?= $item['name'] ?> <span>￥<?= $item['min_price'] ?> (已达购买上限)</span>
+                            </div>
+                        </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </ul>
     </div>
     <div class="blank">
@@ -108,16 +82,15 @@ $params['ng_ctrl'] = 'choose-package';
     <div class="linkman">
         <div class=" detail-hotel-1">
  <span> <img
-         src="<?= $params['frontend_source'] ?>/img/icon-7.png"/></span>
+             src="<?= $params['frontend_source'] ?>/img/icon-7.png"/></span>
             联系人信息
         </div>
-        <input type="" name="name" id="" value="" placeholder="请输入姓名"/>
-        <input type="" name="tel" id="" value="" placeholder="请输入手机号码"/>
+        <input type="text" name="name" ng-model="buy.user_info.name" placeholder="姓名"/>
+        <input type="text" name="phone" ng-model="buy.user_info.phone" ng-model="message" placeholder="手机号码"/>
 
         <div class="auth-code">
-            <input type="" name="auth-code " id="auth-code" value="" placeholder="请输入验证码"/>
-
-            <div class="auth-code-1">获取验证码</div>
+            <input type="text" name="captcha " ng-model="buy.user_info.captcha" placeholder="验证码"/>
+            <div class="auth-code-1" kk-sms="{{buy.user_info.phone}}" sms-type="2" message="factory.message">发送验证码</div>
         </div>
     </div>
     <div class="blank">
@@ -126,29 +99,25 @@ $params['ng_ctrl'] = 'choose-package';
     <div class="payment">
         <div class=" detail-hotel-1">
  <span> <img
-         src="<?= $params['frontend_source'] ?>/img/icon-7.png"/></span>
+             src="<?= $params['frontend_source'] ?>/img/icon-7.png"/></span>
             选择支付方式
         </div>
         <ul>
-            <li cass="payment-wechat">
+            <li cass="payment-wechat" kk-tap="buy.payment_method = 'wx'" ng-class="{'current': buy.payment_method == 'wx'}">
                 <img class="img-responsive"
                      src="<?= $params['frontend_source'] ?>/img/wechat.png"/>
-                <label class="pay">
-                    <input type="radio" name="pay" checked="checked"/>
-                </label>
+                <label class="pay">微信支付</label>
             </li>
-            <li cass="payment-allpay">
+            <li cass="payment-allpay" kk-tap="buy.payment_method = 'ali'" ng-class="{'current': buy.payment_method == 'ali'}">
                 <img class="img-responsive"
                      src="<?= $params['frontend_source'] ?>/img/allpay.png"/>
-                <label class="pay">
-                    <input type="radio" name="pay"/>
-                </label>
+                <label class="pay">支付宝支付</label>
             </li>
         </ul>
     </div>
 </div>
 
 <footer>
-    <div class="price"><p>￥<span>19999</span> 起</p></div>
-    <div class="buy">立即付款</div>
+    <div class="price"><p>￥<span ng-bind="totalPrice"></span></p></div>
+    <div class="buy" kk-tap="goToPayment()">立即付款</div>
 </footer>

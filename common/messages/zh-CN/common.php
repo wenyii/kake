@@ -27,6 +27,7 @@ return [
     'param illegal' => '非法参数 {param}',
     'lack of necessary parameters' => '缺少必要的参数',
     'forbidden access' => '禁止访问',
+    'phone number illegal' => '手机号码格式不正确',
 
     // logic login
     'login first' => '请先登录系统, 再次尝试该操作',

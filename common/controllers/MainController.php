@@ -920,10 +920,14 @@ class MainController extends Controller
      */
     public function actionAjaxSms()
     {
-        $type = Yii::$app->request->post('type');
+        $phone = Yii::$app->request->post('phone');
+        if (!preg_match('/^[\d]([\d\-\ ]+)?[\d]$/', $phone)) {
+            $this->fail('phone number illegal');
+        }
+
         $result = $this->service('phone-captcha.send', [
-            'phone' => Yii::$app->request->post('phone'),
-            'type' => $type
+            'phone' => $phone,
+            'type' => Yii::$app->request->post('type')
         ]);
 
         if (is_string($result)) {
