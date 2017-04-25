@@ -151,12 +151,11 @@ class GeneralController extends MainController
         }
 
         $item = Helper::createSign($item, 'sign');
-        $item = Yii::$app->rsa->encryptByPublicKey(json_encode($item));
+        $item = base64_encode(Yii::$app->rsa->encryptByPublicKey(json_encode($item)));
 
-        return $this->redirect([
-            $router,
-            'safe' => $item
-        ]);
+        $url = Helper::joinString('/', Yii::$app->params['frontend_url'], $router) . '/';
+
+        return $this->redirect($url . '?safe=' . $item);
     }
 
     /**
@@ -170,25 +169,28 @@ class GeneralController extends MainController
      */
     protected function validateSafeLink($checkUser = true)
     {
-        $item = Yii::$app->request->get('safe');
+        $item = base64_decode(Yii::$app->request->get('safe'));
         $item = json_decode(Yii::$app->rsa->decryptByPrivateKey($item), true);
-        if (!$item) {
+
+        $error = false;
+
+        if (!$error && !$item) {
             $error = true;
         }
 
-        if (!Helper::validateSign($item, 'sign')) {
+        if (!$error && !Helper::validateSign($item, 'sign')) {
             $error = true;
         }
 
-        if ($checkUser && $this->user->id != $item['user_id']) {
+        if (!$error && $checkUser && $this->user->id != $item['user_id']) {
             $error = true;
         }
 
-        if (Yii::$app->request->userIP != $item['ip']) {
+        if (!$error && Yii::$app->request->userIP != $item['ip']) {
             $error = true;
         }
 
-        if (!empty($error)) {
+        if ($error) {
             Yii::error('支付链接异常: ' . json_encode($item, JSON_UNESCAPED_UNICODE));
             $this->error(Yii::t('common', 'payment link illegal'));
         }
@@ -370,11 +372,25 @@ class GeneralController extends MainController
 
         $controller = $this->controller('product-package');
         array_walk($list, function (&$item) use ($controller, $purchaseTimes) {
-            $item['min_purchase_limit'] = $item['purchase_limit'];
-            if (isset($purchaseTimes[$item['id']])) {
-                $item['min_purchase_limit'] = $item['purchase_limit'] - $purchaseTimes[$item['id']];
+
+            $limit = 'purchase_limit';
+            $mLimit = 'min_purchase_limit';
+
+            if ($item[$limit] <= 0) {
+                $item[$mLimit] = -1;
+            } else {
+                $item[$mLimit] = $item[$limit];
+                if (isset($purchaseTimes[$item['id']])) {
+                    $item[$mLimit] = $item[$limit] - $purchaseTimes[$item['id']];
+                    $item[$mLimit] = $item[$mLimit] <= 0 ? 0 : $item[$mLimit];
+                }
             }
+
             $item = $this->callMethod('sufHandleField', $item, [$item], $controller);
+            $item['min_price'] = $item['price'];
+            if (!empty($item['sale_price'])) {
+                $item['min_price'] = min($item['sale_price'], $item['price']);
+            }
         });
 
         return array_combine(array_column($list, 'id'), $list);

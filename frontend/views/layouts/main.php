@@ -38,8 +38,29 @@ $ngCtl = empty($params['ng_ctrl']) ? null : (' ng-controller="' . $params['ng_ct
 
 <body<?= $ngCtl ?>>
 
-<kk-loading></kk-loading>
-<kk-message></kk-message>
+<kk-loading loading="factory.loading"></kk-loading>
+<kk-message message="factory.message"></kk-message>
+
+<div id="menu">
+    <img class="img-responsive triangle" src="<?= $params['frontend_source'] ?>/img/triangle.svg"/>
+
+    <div>
+        <a href="<?= Url::to(['site/index']) ?>">
+            <img src="<?= $params['frontend_source'] ?>/img/site.svg"/>
+            首页
+        </a>
+        <hr/>
+        <a href="<?= Url::to(['order/index']) ?>">
+            <img src="<?= $params['frontend_source'] ?>/img/order-center.svg"/>
+            订单中心
+        </a>
+        <hr/>
+        <a href="tel:<?= Yii::$app->params['company_tel'] ?>">
+            <img src="<?= $params['frontend_source'] ?>/img/phone.svg"/>
+            咨询客服
+        </a>
+    </div>
+</div>
 
 <?php $this->beginBody() ?>
 <?= $content ?>

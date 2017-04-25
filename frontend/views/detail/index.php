@@ -1,10 +1,12 @@
 <?php
 /* @var $this yii\web\View */
 
+use yii\helpers\Url;
+
 $params = \Yii::$app->params;
-$params['ng_ctrl'] = 'detail';
+\Yii::$app->params['ng_ctrl'] = 'detail';
 ?>
-<div class="body">
+<div class="body" ng-init="service.goToTop('.back-top')">
     <div class="banner">
         <a href="javascript:history.go(-1);">
             <div class="arrows">
@@ -12,7 +14,7 @@ $params['ng_ctrl'] = 'detail';
             </div>
         </a>
 
-        <div class="menu">
+        <div class="menu" kk-menu="#menu">
             <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
 
                 <b>
@@ -41,21 +43,21 @@ $params['ng_ctrl'] = 'detail';
         </div>
         <div class="hotel-detail-2">
          <span class="hotel-detail-2-1">
-                      销量<span><?= $detail['max_sales'] ?>份/月</span>
+                      已售 <span><?= $detail['max_sales'] ?></span> 份
                  </span>
         </div>
     </div>
-    <div class="classify">
-        <div class="classify-1">
-            <div class="classify-1-1">
-                <span class="cur-1">详情介绍</span>
+    <div class="classify" kk-fixed>
+        <div class="classify-1" kk-tab-card="cur-1" tab-element="div">
+            <div class="classify-1-1 cur-1" tab-card=".card_first">
+                <span>详情介绍</span>
             </div>
-            <div class="classify-1-2">
+            <div class="classify-1-2" tab-card=".card_second">
                 <span>预订须知</span>
             </div>
         </div>
     </div>
-    <div class="detail-hotel_1">
+    <div class="detail-hotel_1 card_first">
         <div class="detail-hotel">
             <div class=" detail-hotel-1">
  <span> <img
@@ -77,7 +79,7 @@ $params['ng_ctrl'] = 'detail';
             </div>
         </div>
     </div>
-    <div class="notice">
+    <div class="notice card_second">
         <div class="detail-hotel">
             <div class=" detail-hotel-1">
  <span> <img
@@ -102,16 +104,16 @@ $params['ng_ctrl'] = 'detail';
 
 
     <footer>
-        <div class="price"><p>￥<span><?= $detail['min_price'] ?></span> 起</p></div>
+        <div class="price"><p>￥<span><?= $detail['min_price'] ?></span> 起/<?= $detail['night_times'] ?>晚</p></div>
 
-        <div class="buy">立即购买</div>
+        <div class="buy"><a href="<?= Url::to(['detail/choose-package', 'id' => $detail['id']]) ?>">立即购买</a></div>
         <div class=" service">
             <a href="tel:<?= Yii::$app->params['company_tel'] ?>">
                 <img class="img-responsive"
                      src="<?= $params['frontend_source'] ?>/img/_service_11.png"/>
             </a>
         </div>
-        <div class=" back-top">
+        <div class="back-top">
             <img class="img-responsive"
                  src="<?= $params['frontend_source'] ?>/img/back-top_13.png"/>
         </div>
