@@ -12,16 +12,9 @@ $params = \Yii::$app->params;
              src="<?= $params['frontend_source'] ?>/img/return.svg"/>
     </a>
     选择套餐
-    <div class=" menu detail">
+    <div class="menu detail" kk-menu="#menu">
         <img class="img-responsive"
              src="<?= $params['frontend_source'] ?>/img/menu1.svg"/>
-
-        <div class="menu-1" kk-menu="#menu">
-            <b>
-                <img class="img-responsive"
-                     src="<?= $params['frontend_source'] ?>/img/triangle.svg"/>
-            </b>
-        </div>
     </div>
 </header>
 <div class="body" product-id="<?= $productId ?>">
