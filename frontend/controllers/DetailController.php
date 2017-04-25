@@ -46,17 +46,20 @@ class DetailController extends GeneralController
     public function actionChoosePackage()
     {
         $this->sourceCss = null;
-        $this->sourceJs = null;
+        $this->sourceJs = [
+            'detail/index'
+        ];
 
-        $packageList = $this->listProductPackage(Yii::$app->request->get('id'));
+        $productId = Yii::$app->request->get('id');
+        $packageList = $this->listProductPackage($productId);
 
-        return $this->render('choose-package', compact('packageList'));
+        return $this->render('choose-package', compact('packageList', 'productId'));
     }
 
     /**
      * 支付前处理
      */
-    public function actionPrefixPay()
+    public function actionPrefixPayment()
     {
         /*
         $_POST = [
@@ -76,20 +79,20 @@ class DetailController extends GeneralController
         */
 
         // 用户信息
-        $userInfo = Yii::$app->request->post('user_info');
+        $userInfo = Yii::$app->request->get('user_info');
         $result = $this->service('user.edit-real-info', [
-            'id' => $this->user->id,
+            'user_id' => $this->user->id,
             'real_name' => $userInfo['name'],
             'phone' => $userInfo['phone'],
             'captcha' => $userInfo['captcha']
         ]);
 
         if (is_string($result)) {
-            $this->error($result);
+            $this->error(Yii::t('common', $result));
         }
 
         // 支付方式
-        $paymentMethod = Yii::$app->request->post('payment_method');
+        $paymentMethod = Yii::$app->request->get('payment_method');
         if (!in_array($paymentMethod, [
             'wx',
             'ali'
@@ -99,8 +102,8 @@ class DetailController extends GeneralController
         }
 
         return $this->createSafeLink([
-            'product_id' => Yii::$app->request->post('product_id'),
-            'package' => Yii::$app->request->post('package')
-        ], 'order/' . $paymentMethod . '/');
+            'product_id' => Yii::$app->request->get('product_id'),
+            'package' => Yii::$app->request->get('package')
+        ], 'order/' . $paymentMethod);
     }
 }

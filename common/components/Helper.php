@@ -1989,7 +1989,7 @@ class Helper extends Object
      */
     public static function joinString($split, ...$items)
     {
-        $total = count($items);
+        $total = count($items) - 1;
         $_items = [];
 
         foreach ($items as $key => $value) {

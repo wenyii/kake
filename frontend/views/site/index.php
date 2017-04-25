@@ -8,7 +8,7 @@ $params['ng_ctrl'] = 'site';
 ?>
 <div class="body">
     <div class="banner">
-        <div class="menu">
+        <div class="menu" kk-menu="#menu">
             <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
             
                 <b>
