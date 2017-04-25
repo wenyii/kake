@@ -73,6 +73,73 @@ class OrderController extends GeneralController
     ];
 
     /**
+     * INDEX
+     */
+    public function actionIndex()
+    {
+        $this->sourceCss = null;
+        $this->sourceJs = null;
+
+        $orderSub = $this->listOrderSub(1);
+
+        return $this->render('index', compact('orderSub'));
+    }
+
+    /**
+     * 预约申请
+     */
+    public function actionAjaxApplyOrder()
+    {
+        $result = $this->service('order.apply-order', [
+            'order_sub_id' => Yii::$app->request->post('id'),
+            'name' => Yii::$app->request->post('name'),
+            'phone' => Yii::$app->request->post('phone'),
+            'date' => Yii::$app->request->post('date')
+        ]);
+
+        if (is_string($result)) {
+            $this->fail($result);
+        }
+
+        $this->success(null, '预约申请已提交');
+    }
+
+    /**
+     * 退款申请
+     */
+    public function actionAjaxApplyRefund()
+    {
+        $result = $this->service('order.apply-refund', [
+            'order_sub_id' => Yii::$app->request->post('id'),
+            'remark' => Yii::$app->request->post('remark')
+        ]);
+
+        if (is_string($result)) {
+            $this->fail($result);
+        }
+
+        $this->success(null, '退款申请已提交');
+    }
+
+    /**
+     * 发票中心
+     */
+    public function actionAjaxBill()
+    {
+        $result = $this->service('order.bill', [
+            'order_sub_id' => Yii::$app->request->post('id'),
+            'invoiceTitle' => Yii::$app->request->post('invoiceTitle'),
+            'address' => Yii::$app->request->post('address')
+        ]);
+
+        if (is_string($result)) {
+            $this->fail($result);
+        }
+
+        $this->success(null, '发票已提交');
+    }
+
+    /**
      * 第三方下单前的本地下单
      *
      * @access private

@@ -322,14 +322,7 @@ class GeneralController extends MainController
             $controller = $this->controller('product-package');
 
             $list = $this->service('product.product-list', $params);
-
-            foreach ($list as $key => &$item) {
-
-                if (empty($item['price'])) {
-                    unset($list[$key]);
-                    continue;
-                }
-
+            array_walk($list, function (&$item) use ($controller) {
                 $item = $this->callMethod('sufHandleField', $item, [$item], $controller);
                 $item = $this->createAttachmentUrl($item, ['attachment_cover' => 'cover']);
 
@@ -338,7 +331,7 @@ class GeneralController extends MainController
                 if (!empty($item['sale_price'])) {
                     $item['min_price'] = min($item['sale_price'], $item['price']);
                 }
-            }
+            });
 
             return $list;
         }, DAY);
