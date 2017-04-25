@@ -14,7 +14,6 @@ $params = \Yii::$app->params;
         <img class="img-responsive"
              src="<?= $params['frontend_source'] ?>/img/menu1.svg"/>
     </div>
-    </div>
 </header>
 <div class="body" ng-init="ajaxNextPage()">
 
@@ -23,3 +22,8 @@ $params = \Yii::$app->params;
         <?= $html ?>
     </div>
 </div>
+
+
+
+
+
