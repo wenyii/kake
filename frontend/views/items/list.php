@@ -2,9 +2,8 @@
 /* @var $this yii\web\View */
 
 use yii\helpers\Url;
-$params = \Yii::$app->params;
-\Yii::$app->params['ng_ctrl'] = 'items';
 ?>
+
 <?php if (!empty($list)): ?>
     <?php foreach ($list as $item): ?>
         <div class="recommend3">

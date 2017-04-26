@@ -296,7 +296,7 @@ class GeneralController extends MainController
         }, DAY);
     }
 
-    /**
+        /**
      * 列表产品
      *
      * @access public
@@ -314,25 +314,25 @@ class GeneralController extends MainController
     {
         list($offset, $limit) = Helper::page($page, $page_size ?: Yii::$app->params['product_page_size']);
         $params = compact('manifestation', 'classify', 'sale', 'keyword', 'limit', 'offset');
-
         return $this->cache([
             'list-product',
             func_get_args()
         ], function () use ($params) {
             $controller = $this->controller('product-package');
-
             $list = $this->service('product.product-list', $params);
-            array_walk($list, function (&$item) use ($controller) {
+            foreach ($list as $key => &$item) {
+                if (empty($item['price'])) {
+                    unset($list[$key]);
+                    continue;
+                }
                 $item = $this->callMethod('sufHandleField', $item, [$item], $controller);
                 $item = $this->createAttachmentUrl($item, ['attachment_cover' => 'cover']);
-
                 $item['max_sales'] = max($item['virtual_sales'], $item['real_sales']);
                 $item['min_price'] = $item['price'];
                 if (!empty($item['sale_price'])) {
                     $item['min_price'] = min($item['sale_price'], $item['price']);
                 }
-            });
-
+            }
             return $list;
         }, DAY);
     }

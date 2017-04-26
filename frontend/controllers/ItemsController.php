@@ -15,7 +15,7 @@ class ItemsController extends GeneralController
     public function actionIndex()
     {
         $this->sourceCss = null;
-        $this->sourceJs = null;
+        $this->sourceJs = false;
 
         return $this->render('index', ['html' => $this->renderListPage(1)]);
     }

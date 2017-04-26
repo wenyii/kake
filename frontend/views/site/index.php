@@ -4,8 +4,8 @@
 use yii\helpers\Url;
 
 $params = \Yii::$app->params;
-$params['ng_ctrl'] = 'site';
 ?>
+
 <div class="body">
     <div class="banner">
         <div class="menu" kk-menu="#menu">
