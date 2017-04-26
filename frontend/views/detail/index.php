@@ -6,6 +6,7 @@ use yii\helpers\Url;
 $params = \Yii::$app->params;
 \Yii::$app->params['ng_ctrl'] = 'detail';
 ?>
+
 <div class="body" ng-init="service.goToTop('.back-top')">
     <div class="banner">
         <a href="javascript:history.go(-1);">
