@@ -197,7 +197,12 @@ EOF
         });
 
         return parent::sufHandleField($record, $action, function ($record) {
-            if (!empty($record['id']) && !empty($record['sale_rate'])) {
+
+            if (empty($record['id'])) {
+                return $record;
+            }
+
+            if (!empty($record['sale_rate'])) {
 
                 $controller = $this->controller('product');
                 $record['sale'] = $this->callMethod('saleLogic', 0, [$record], $controller);
@@ -222,6 +227,8 @@ EOF
 
                 if ($sale_price > 0) {
                     $record['sale_price'] = $sale_price;
+                } else {
+                    $record['sale_price'] = $record['price'] / 100;
                 }
             }
 
