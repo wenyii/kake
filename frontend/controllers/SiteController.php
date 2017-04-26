@@ -13,7 +13,7 @@ class SiteController extends GeneralController
     public function actionIndex()
     {
         $this->sourceCss = null;
-        $this->sourceJs = null;
+        $this->sourceJs = false;
 
         //焦点图
         $focusList = $this->listProductFocus(2);

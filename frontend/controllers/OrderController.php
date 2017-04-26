@@ -23,12 +23,20 @@ class OrderController extends GeneralController
     public static $orderSubCondition = [
         'table' => 'order_sub',
         'join' => [
-            [
-                'table' => 'order'
-            ],
+            ['table' => 'order'],
+            ['table' => 'product_package'],
             [
                 'left_table' => 'order',
                 'table' => 'product'
+            ],
+            [
+                'left_table' => 'product',
+                'table' => 'attachment',
+                'left_on_field' => 'attachment_cover',
+            ],
+            [
+                'left_table' => 'product',
+                'table' => 'hotel'
             ],
             [
                 'table' => 'bill',
@@ -36,53 +44,104 @@ class OrderController extends GeneralController
                 'right_on_field' => 'order_sub_id'
             ],
             [
-                'left_table' => 'product',
-                'table' => 'hotel'
-            ],
-            [
-                'left_table' => 'product',
-                'table' => 'product_description',
-            ],
-            [
-                'left_table' => 'product',
-                'table' => 'attachment',
-                'as' => 'cover',
-                'left_on_field' => 'attachment_cover',
+                'table' => 'order_instructions_log',
+                'left_on_field' => 'id',
+                'right_on_field' => 'order_sub_id'
             ]
         ],
         'select' => [
-            'product.*',
-            'product.id AS product_id',
+            'order_sub.*',
 
-            'bill.*',
-            'bill.id AS bill_id',
+            'order.order_number',
+
+            'product_package.name AS package_name',
+
+            'product.title',
+            'product.destination',
+            'product.attachment_cover',
+
+            'attachment.deep_path AS cover_deep_path',
+            'attachment.filename AS cover_filename',
 
             'hotel.name AS hotel_name',
-            'hotel.address',
 
-            'product_description.*',
+            'bill.id AS bill_id',
+            'bill.courier_company',
+            'bill.courier_number',
+            'bill.invoice_title',
+            'bill.address',
 
-            'cover.deep_path AS cover_deep_path',
-            'cover.filename AS cover_filename',
-
-            'order.*',
-            'order.id AS order_id',
-
-            'order_sub.*'
+            'order_instructions_log.remark',
         ]
     ];
 
     /**
-     * INDEX
+     * 订单中心
      */
     public function actionIndex()
     {
         $this->sourceCss = null;
-        $this->sourceJs = null;
+        $this->sourceJs = [
+            'order/index'
+        ];
 
-        $orderSub = $this->listOrderSub(1);
+        $ongoing = $this->renderListPage(1, 'ongoing');
+        $completed = $this->renderListPage(1, 'completed');
 
-        return $this->render('index', compact('orderSub'));
+        return $this->render('index', compact('ongoing', 'completed'));
+    }
+
+    /**
+     * ajax 获取下一页订单列表
+     */
+    public function actionAjaxList()
+    {
+        $page = Yii::$app->request->post('page');
+        $type = Yii::$app->request->post('type');
+
+        $this->success([
+            'html' => $this->renderListPage($page, $type)
+        ]);
+    }
+
+    /**
+     * 渲染订单列表 html
+     *
+     * @access private
+     *
+     * @param integer $page
+     * @param string $type
+     *
+     * @return string
+     */
+    private function renderListPage($page, $type)
+    {
+        $map = [
+            'ongoing' => [0, 1, 2, 3],
+            'completed' => [4, 5]
+        ];
+
+        if (!isset($map[$type])) {
+            return null;
+        }
+
+        $list = $this->listOrderSub($page, $map[$type]);
+        $content = $this->renderPartial('list-' . $type, compact('list'));
+
+        return $content;
+    }
+
+    /**
+     * 申请预约页面
+     */
+    public function actionApplyOrder()
+    {
+        $this->sourceCss = null;
+        $this->sourceJs = [
+            'order/index'
+        ];
+
+        return $this->render('apply-order');
     }
 
     /**
@@ -105,6 +164,19 @@ class OrderController extends GeneralController
     }
 
     /**
+     * 申请退款页面
+     */
+    public function actionApplyRefund()
+    {
+        $this->sourceCss = null;
+        $this->sourceJs = [
+            'order/index'
+        ];
+
+        return $this->render('apply-refund');
+    }
+
+    /**
      * 退款申请
      */
     public function actionAjaxApplyRefund()
@@ -118,17 +190,17 @@ class OrderController extends GeneralController
             $this->fail($result);
         }
 
-        $this->success(null, '退款申请已提交');
+        $this->success(null, 'refund request submitted');
     }
 
     /**
-     * 发票中心
+     * 开具发票
      */
-    public function actionAjaxBill()
+    public function actionAjaxApplyBill()
     {
-        $result = $this->service('order.bill', [
+        $result = $this->service('order.apply-bill', [
             'order_sub_id' => Yii::$app->request->post('id'),
-            'invoiceTitle' => Yii::$app->request->post('invoiceTitle'),
+            'invoice_title' => Yii::$app->request->post('company') ? Yii::$app->request->post('company_name') : null,
             'address' => Yii::$app->request->post('address')
         ]);
 
@@ -136,8 +208,10 @@ class OrderController extends GeneralController
             $this->fail($result);
         }
 
-        $this->success(null, '发票已提交');
+        $this->success(null, 'invoice request submitted');
     }
+
+    // --↓↓- Payment -↓↓--
 
     /**
      * 第三方下单前的本地下单
@@ -174,20 +248,22 @@ class OrderController extends GeneralController
             }
 
             $limit = 'purchase_limit';
-            if (empty($packagePurchaseTimes[$id])) {
-                if (!empty($packageData[$id][$limit]) && $number > $packageData[$id][$limit]) {
-                    $this->error(Yii::t('common', 'product package greater then limit', [
-                        'buy' => $number,
-                        'max' => $packageData[$id][$limit]
-                    ]));
-                }
-            } else {
-                if ($number > $packageData[$id][$limit] - $packagePurchaseTimes[$id]) {
-                    $this->error(Yii::t('common', 'product package greater then limit with purchased', [
-                        'buy' => $number,
-                        'max' => $packageData[$id][$limit],
-                        'buys' => $packagePurchaseTimes[$id]
-                    ]));
+            if (!empty($packageData[$id][$limit])) {
+                if (empty($packagePurchaseTimes[$id])) {
+                    if ($number > $packageData[$id][$limit]) {
+                        $this->error(Yii::t('common', 'product package greater then limit', [
+                            'buy' => $number,
+                            'max' => $packageData[$id][$limit]
+                        ]));
+                    }
+                } else {
+                    if ($number > $packageData[$id][$limit] - $packagePurchaseTimes[$id]) {
+                        $this->error(Yii::t('common', 'product package greater then limit with purchased', [
+                            'buy' => $number,
+                            'max' => $packageData[$id][$limit],
+                            'buys' => $packagePurchaseTimes[$id]
+                        ]));
+                    }
                 }
             }
 
@@ -330,7 +406,7 @@ class OrderController extends GeneralController
     }
 
     /**
-     * View for we chat pay
+     * 微信支付页面渲染
      *
      * @param string $outTradeNo
      * @param string $body
