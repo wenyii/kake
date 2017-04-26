@@ -145,7 +145,7 @@ EOF
             'price',
             'purchase_limit' => [
                 'placeholder' => '留空或0表示不限制',
-                'tip' => '以单微信号为标准进行限制',
+                'tip' => '以用户为单位进行限购',
                 'value' => \Yii::$app->params['default_purchase_limit']
             ],
             'info' => [
@@ -170,6 +170,11 @@ EOF
             ],
             'price' => [
                 'label' => 5
+            ],
+            'purchase_limit' => [
+                'placeholder' => '留空或0表示不限制',
+                'tip' => '以用户为单位进行限购',
+                'value' => \Yii::$app->params['default_purchase_limit']
             ],
             'info' => [
                 'elem' => 'textarea',

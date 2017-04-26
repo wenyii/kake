@@ -6,6 +6,7 @@ use yii\helpers\Url;
 $params = \Yii::$app->params;
 \Yii::$app->params['ng_ctrl'] = 'detail';
 ?>
+
 <header>
     <a href="javascript:history.go(-1);" class="return">
         <img class=" img-responsive"
