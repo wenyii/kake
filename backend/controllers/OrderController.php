@@ -34,7 +34,10 @@ class OrderController extends GeneralController
                 'value' => 'select-order',
                 'level' => 'primary',
                 'icon' => 'globe',
-                'params' => ['order_number', 'payment_method']
+                'params' => [
+                    'order_number',
+                    'payment_method'
+                ]
             ],
             [
                 'text' => '子订单',
@@ -59,12 +62,17 @@ class OrderController extends GeneralController
             'username' => [
                 'table' => 'user',
                 'elem' => 'input',
-                'title' => '下单人'
+                'title' => '下单用户'
+            ],
+            'real_name' => [
+                'table' => 'order_contacts',
+                'elem' => 'input',
+                'title' => '订单联系人'
             ],
             'phone' => [
-                'table' => 'user',
+                'table' => 'order_contacts',
                 'elem' => 'input',
-                'title' => '下单人联系方式'
+                'title' => '订单联系电话'
             ],
             'product_title' => [
                 'table' => 'product',
@@ -102,11 +110,13 @@ class OrderController extends GeneralController
                 'color' => 'default'
             ],
             'username' => [
-                'title' => '下单人'
+                'title' => '下单用户'
+            ],
+            'real_name' => [
+                'title' => '订单联系人'
             ],
             'phone' => [
-                'title' => '下单人联系方式',
-                'empty'
+                'title' => '订单联系电话'
             ],
             'product_title' => [
                 'title' => '产品标题',
@@ -156,7 +166,7 @@ class OrderController extends GeneralController
             'id' => 'code',
             'order_number' => 'code',
             'username' => [
-                'title' => '下单人'
+                'title' => '下单用户'
             ],
             'hotel_name' => [
                 'title' => '酒店名称'
@@ -200,13 +210,18 @@ class OrderController extends GeneralController
                     'left_table' => 'product',
                     'table' => 'hotel',
                     'left_on_field' => 'hotel_id'
+                ],
+                [
+                    'left_table' => 'order',
+                    'table' => 'order_contacts'
                 ]
             ],
             'select' => [
                 'user.username',
-                'user.phone',
                 'product.title AS product_title',
                 'hotel.name AS hotel_name',
+                'order_contacts.real_name',
+                'order_contacts.phone',
                 'order.*'
             ],
             'order' => 'order.id DESC'
@@ -236,7 +251,7 @@ class OrderController extends GeneralController
      *
      * @access public
      *
-     * @param string $order_number
+     * @param string  $order_number
      * @param integer $payment_method
      */
     public function actionSelectOrder($order_number, $payment_method)
@@ -265,7 +280,12 @@ class OrderController extends GeneralController
                 'PAYERROR' => '订单支付失败',
             ];
             $result = Yii::$app->wx->payment->query($order_number);
-            $info = $paymentState[$result->trade_state];
+
+            if (isset($result->trade_state)) {
+                $info = $paymentState[$result->trade_state];
+            } else {
+                $info = '交易不存在';
+            }
         }
 
         $prefix = $payment_method ? '[支付宝反馈] ' : '[微信反馈] ';

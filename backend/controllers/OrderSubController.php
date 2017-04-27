@@ -128,6 +128,10 @@ class OrderSubController extends GeneralController
                 'elem' => 'input',
                 'equal' => true
             ],
+            'username' => [
+                'table' => 'user',
+                'elem' => 'input'
+            ],
             'check_in_name' => 'input',
             'check_in_phone' => 'input',
             'check_in_time' => [
@@ -174,7 +178,8 @@ class OrderSubController extends GeneralController
                 'table' => 'order',
                 'field' => 'order_number',
                 'code',
-                'color' => 'default'
+                'color' => 'default',
+                'tip'
             ],
             'price' => 'code',
             'name' => [
@@ -186,6 +191,18 @@ class OrderSubController extends GeneralController
             'check_in_name' => 'empty',
             'check_in_phone' => 'empty',
             'check_in_time' => 'empty',
+            'payment_state' => [
+                'table' => 'order',
+                'code',
+                'info',
+                'color' => [
+                    0 => 'warning',
+                    1 => 'success',
+                    2 => 'default'
+                ]
+            ],
+            'add_time' => 'tip',
+            'update_time' => 'tip',
             'state' => [
                 'code',
                 'info',
@@ -266,10 +283,15 @@ class OrderSubController extends GeneralController
             'join' => [
                 ['table' => 'order'],
                 ['table' => 'product_package'],
+                [
+                    'left_table' => 'order',
+                    'table' => 'user'
+                ]
             ],
             'select' => [
                 'product_package.name',
                 'order.order_number',
+                'order.payment_state',
                 'order_sub.*'
             ],
             'order' => 'order_sub.id DESC'
@@ -368,34 +390,52 @@ class OrderSubController extends GeneralController
      */
     public function actionAgreeRefund($id)
     {
-        $result = $this->service('order.agree-refund', [
-            'order_sub_id' => $id,
-            'user_id' => $this->user->id
-        ]);
+        $order = $this->getOrderBySubId($id);
 
-        if (is_string($result)) {
-            Yii::$app->session->setFlash('danger', Yii::t('common', $result));
-        } else {
+        $orderNo = $order['order_number'];
+        $refundNo = $order['id'] . 'R' . $orderNo;
 
-            $order = $this->getOrderBySubId($id);
-
-            $orderNo = $order['order_number'];
-            $refundNo = $order['id'] . 'R' . $orderNo;
-
-            // 支付宝
-            if ($order['payment_method']) {
-                $price = intval($order['price']) / 100;
-                $result = Yii::$app->ali->alipayTradeRefund($orderNo, $refundNo, $price);
-                $info = is_string($result) ? $result : '退款申请已经提交';
-            } else { // 微信
+        // 支付宝
+        $success = true;
+        if ($order['payment_method']) {
+            $price = intval($order['price']) / 100;
+            $result = Yii::$app->ali->alipayTradeRefund($orderNo, $refundNo, $price);
+            if (is_string($result)) {
+                $success = false;
+                $info = $result;
+            } else {
+                $info = '退款申请已经提交';
+            }
+        } else { // 微信
+            try {
                 $result = Yii::$app->wx->payment->refund($orderNo, $refundNo, $order['total_price'], $order['price']);
-                $info = isset($result->err_code_des) ? $result->err_code_des : '退款申请已经提交';
+            } catch (\Exception $e) {
+                $this->error($e->getMessage());
             }
 
-            $info = ($order['payment_method'] ? '[支付宝反馈] ' : '[微信反馈] ') . $info;
-            Yii::info('UID:' . $this->user->id . ' -> ' . $info);
+            if (isset($result->err_code_des)) {
+                $success = false;
+                $info = $result->err_code_des;
+            } else {
+                $info = '退款申请已经提交';
+            }
+        }
 
-            Yii::$app->session->setFlash('success', $info);
+        $info = ($order['payment_method'] ? '[支付宝反馈] ' : '[微信反馈] ') . $info;
+        Yii::info('UID:' . $this->user->id . ' -> ' . $info);
+
+        if (!$success) {
+            Yii::$app->session->setFlash('danger', $info);
+        } else {
+            $result = $this->service('order.agree-refund', [
+                'order_sub_id' => $id,
+                'user_id' => $this->user->id
+            ]);
+            if (is_string($result)) {
+                Yii::$app->session->setFlash('danger', Yii::t('common', $result));
+            } else {
+                Yii::$app->session->setFlash('success', $info);
+            }
         }
 
         $this->goReference($this->getControllerName());
