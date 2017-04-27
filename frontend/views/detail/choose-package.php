@@ -80,10 +80,10 @@ $params = \Yii::$app->params;
             联系人信息
         </div>
         <input type="text" name="name" ng-model="buy.user_info.name" placeholder="姓名"/>
-        <input type="text" name="phone" ng-model="buy.user_info.phone" ng-model="message" placeholder="手机号码"/>
+        <input type="number" name="phone" ng-model="buy.user_info.phone" ng-model="message" placeholder="手机号码"/>
 
         <div class="auth-code">
-            <input type="text" name="captcha " ng-model="buy.user_info.captcha" placeholder="验证码"/>
+            <input type="number" name="captcha " ng-model="buy.user_info.captcha" placeholder="验证码"/>
             <div class="auth-code-1" kk-sms="{{buy.user_info.phone}}" sms-type="2" message="factory.message">发送验证码</div>
         </div>
     </div>
