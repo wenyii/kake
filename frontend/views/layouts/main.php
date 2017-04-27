@@ -42,8 +42,7 @@ $ngCtl = empty($params['ng_ctrl']) ? null : (' ng-controller="' . $params['ng_ct
 <kk-message message="factory.message"></kk-message>
 
 <div id="menu">
-    <img class="img-responsive triangle" src="<?= $params['frontend_source'] ?>/img/triangle.svg"/>
-
+    <div class="triangle"></div>
     <div>
         <a href="<?= Url::to(['site/index']) ?>">
             <img src="<?= $params['frontend_source'] ?>/img/site.svg"/>

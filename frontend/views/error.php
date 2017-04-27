@@ -8,3 +8,7 @@
 <?= $title ?>
 <?= $type ?>
 <?= $message ?>
+<div class="error">
+  <img class="img-responsive"
+             src="<?= $params['frontend_source'] ?>/img/404.jpg"/>
+</div>
