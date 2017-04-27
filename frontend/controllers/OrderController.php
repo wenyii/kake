@@ -156,56 +156,12 @@ class OrderController extends GeneralController
     }
 
     /**
-     * 申请预约页面
-     */
-    public function actionApplyOrder()
-    {
-        $this->sourceCss = null;
-        $this->sourceJs = [
-            'order/index'
-        ];
-
-        return $this->render('apply-order');
-    }
-
-    /**
-     * 预约申请
-     */
-    public function actionAjaxApplyOrder()
-    {
-        $result = $this->service('order.apply-order', [
-            'order_sub_id' => Yii::$app->request->post('id'),
-            'name' => Yii::$app->request->post('name'),
-            'phone' => Yii::$app->request->post('phone'),
-            'date' => Yii::$app->request->post('date')
-        ]);
-
-        if (is_string($result)) {
-            $this->fail($result);
-        }
-
-        $this->success(null, '预约申请已提交');
-    }
-
-    /**
-     * 申请退款页面
-     */
-    public function actionApplyRefund()
-    {
-        $this->sourceCss = null;
-        $this->sourceJs = [
-            'order/index'
-        ];
-
-        return $this->render('apply-refund');
-    }
-
-    /**
      * 退款申请
      */
     public function actionAjaxApplyRefund()
     {
         $result = $this->service('order.apply-refund', [
+            'user_id' => $this->user->id,
             'order_sub_id' => Yii::$app->request->post('id'),
             'remark' => Yii::$app->request->post('remark')
         ]);
@@ -218,11 +174,49 @@ class OrderController extends GeneralController
     }
 
     /**
+     * 预约申请
+     */
+    public function actionAjaxApplyOrder()
+    {
+        $result = $this->service('order.apply-order', [
+            'user_id' => $this->user->id,
+            'order_sub_id' => Yii::$app->request->post('id'),
+            'name' => Yii::$app->request->post('name'),
+            'phone' => Yii::$app->request->post('phone'),
+            'time' => Yii::$app->request->post('time')
+        ]);
+
+        if (is_string($result)) {
+            $this->fail($result);
+        }
+
+        $this->success(null, '预约申请已提交');
+    }
+
+    /**
+     * 我已入住
+     */
+    public function actionAjaxCompleted()
+    {
+        $result = $this->service('order.completed', [
+            'user_id' => $this->user->id,
+            'order_sub_id' => Yii::$app->request->post('id')
+        ]);
+
+        if (is_string($result)) {
+            $this->fail($result);
+        }
+
+        $this->success(null, '入住操作成功');
+    }
+
+    /**
      * 开具发票
      */
     public function actionAjaxApplyBill()
     {
         $result = $this->service('order.apply-bill', [
+            'user_id' => $this->user->id,
             'order_sub_id' => Yii::$app->request->post('id'),
             'invoice_title' => Yii::$app->request->post('company') ? Yii::$app->request->post('company_name') : null,
             'address' => Yii::$app->request->post('address')
