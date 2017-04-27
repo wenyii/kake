@@ -9,6 +9,7 @@ use common\components\Helper;
 use common\components\Upload;
 use yii\base\DynamicModel;
 use yii\helpers\Url;
+use yii\helpers\Html;
 
 /**
  * Main controller
@@ -143,41 +144,101 @@ class MainController extends Controller
     }
 
     /**
-     * 显示错误
+     * 解析提示数据中的链接
+     *
+     * @access public
+     * @param array $message
+     * @return string
+     */
+    public function messageParseLink($message)
+    {
+        $msg = Helper::popOne($message, 0);
+        $items = [];
+
+        foreach ($message as $item) {
+            $options = isset($item['options']) ? $item['options'] : [];
+            $items[] = Html::a($item['text'], $item['router'], $options);
+        }
+
+        return sprintf($msg, ...$items);
+    }
+
+    /**
+     * 显示错误提示页面
      *
      * @access public
      *
      * @param string  $message
-     * @param string  $title
      * @param integer $code
+     * @param string $trace
      *
      * @return void
      */
-    public function error($message, $title = null, $code = null)
+    public function error($message, $code = null, $trace = null)
     {
         $this->sourceCss = [
-            'error/index'
+            'message/index'
         ];
+
+        if (is_array($message)) {
+            $message = $this->messageParseLink($message);
+        }
 
         switch ($code) {
             case '404' :
                 $params = [
                     'type' => '404',
-                    'message' => Yii::t('common', 'page not found')
+                    'message' => Yii::t('common', 'page not found'),
+                    'title' => '404'
                 ];
                 break;
 
             default :
                 $params = [
                     'type' => 'error',
-                    'message' => $message
+                    'message' => $message,
+                    'title' => 'Oops!'
                 ];
                 break;
         }
 
-        $params['title'] = $title ?: Yii::t('yii', 'Error');
+        Yii::error('catch error : ' . json_encode($params, JSON_UNESCAPED_UNICODE) . ' ' . $trace);
 
-        $content = $this->renderFile(Yii::$app->getViewPath() . DS . 'error.php', $params);
+        $content = $this->renderFile(Yii::$app->getViewPath() . DS . 'message.php', $params);
+        $content = $this->renderContent($content);
+
+        exit($content);
+    }
+
+    /**
+     * 显示正确提示页面
+     *
+     * @access public
+     *
+     * @param string $message
+     * @param string $title
+     * @param string $extraHtml
+     *
+     * @return void
+     */
+    public function message($message, $title = null, $extraHtml = null)
+    {
+        $this->sourceCss = [
+            'message/index'
+        ];
+
+        if (is_array($message)) {
+            $message = $this->messageParseLink($message);
+        }
+
+        $params = [
+            'type' => 'message',
+            'message' => $message,
+            'title' => $title,
+            'extra' => $extraHtml
+        ];
+
+        $content = $this->renderFile(Yii::$app->getViewPath() . DS . 'message.php', $params);
         $content = $this->renderContent($content);
 
         exit($content);
@@ -205,11 +266,8 @@ class MainController extends Controller
         if (Yii::$app->request->isAjax) {
             $this->fail($title . ':' . $message);
         } else {
-
             $trace = YII_DEBUG ? strval($exception->getPrevious()) : null;
-            Yii::error('catch error : ' . $title . ',' . $message . ' ' . $trace);
-
-            $this->error($message, $title, $code);
+            $this->error($message, $code, $trace);
         }
     }
 
@@ -354,7 +412,7 @@ class MainController extends Controller
             return true;
         }
 
-        $this->error(Yii::t('common', 'support ajax method only'), Yii::t('common', 'forbidden access'));
+        $this->error(Yii::t('common', 'support ajax method only'));
 
         return false;
     }
@@ -385,7 +443,7 @@ class MainController extends Controller
             if (Yii::$app->request->isAjax) {
                 $this->fail($error);
             } else {
-                $this->error($error, Yii::t('common', 'param illegal'));
+                $this->error($error);
             }
         }
 

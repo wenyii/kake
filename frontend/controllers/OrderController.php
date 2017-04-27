@@ -54,6 +54,8 @@ class OrderController extends GeneralController
             'order_sub.*',
 
             'order.order_number',
+            'order.payment_method',
+            'order.payment_state',
 
             'product_package.name AS package_name',
 
@@ -75,7 +77,11 @@ class OrderController extends GeneralController
             'order_instructions_log.remark',
         ],
         'where' => [
-            ['order.payment_state' => 1]
+            [
+                '<>',
+                'order.state',
+                0
+            ]
         ],
         'order' => 'order_sub.add_time DESC, order_sub.id DESC',
         'distinct' => true,
@@ -107,7 +113,7 @@ class OrderController extends GeneralController
     public function actionIndex($type = 'ongoing')
     {
         if (!isset($this->orderListMap[$type])) {
-            $this->error('order list type error');
+            $this->error(Yii::t('common', 'order list type error'));
         }
 
         $this->sourceCss = null;
@@ -190,7 +196,7 @@ class OrderController extends GeneralController
             $this->fail($result);
         }
 
-        $this->success(null, '预约申请已提交');
+        $this->success(null, 'order request submitted');
     }
 
     /**
@@ -207,7 +213,7 @@ class OrderController extends GeneralController
             $this->fail($result);
         }
 
-        $this->success(null, '入住操作成功');
+        $this->success(null, 'check in success');
     }
 
     /**
@@ -237,12 +243,13 @@ class OrderController extends GeneralController
      * @access private
      *
      * @param integer $payCode
+     * @param boolean $checkUser
      *
      * @return array
      */
-    private function localOrder($payCode)
+    private function localOrder($payCode, $checkUser = true)
     {
-        $params = $this->validateSafeLink();
+        $params = $this->validateSafeLink($checkUser);
 
         $product = $this->getProduct($params['product_id']);
         if (empty($product)) {
@@ -342,12 +349,14 @@ class OrderController extends GeneralController
      */
     public function actionAli()
     {
-        list($outTradeNo) = $this->localOrder(self::PAY_CODE_ALI);
+        list($outTradeNo) = $this->localOrder(self::PAY_CODE_ALI, false);
 
-        return $this->createSafeLink([
+        $url = $this->createSafeLink([
             'order_number' => $outTradeNo,
             'first' => true
-        ], 'order/ali-pay');
+        ], 'order/ali-pay', false);
+
+        return $this->redirect($url);
     }
 
     /**
@@ -410,7 +419,7 @@ class OrderController extends GeneralController
 
         // 更新本地订单编号
         $result = $this->service('order.update-order-number', [
-            'id' => $params['order_id'],
+            'id' => $order['id'],
             'order_number' => $orderNumber
         ]);
 
@@ -444,22 +453,32 @@ class OrderController extends GeneralController
                 'openid' => $this->user->openid,
             ]);
         } catch (\Exception $e) {
-            Yii::error($e->getMessage());
             $this->error($e->getMessage());
 
             // 超时重试
-            // return $this->wxPay($outTradeNo, $body, $price);
+            return $this->wxPay($outTradeNo, $body, $price);
         }
 
         if (!is_string($prepayId)) {
             $this->error(json_encode($prepayId, JSON_UNESCAPED_UNICODE));
         }
 
-        $this->sourceJs = ['order/wx'];
+        $json = Yii::$app->wx->payment->configForPayment($prepayId);
+        $this->message([
+            '%s 或者 %s',
+            [
+                'text' => '我已完成支付',
+                'router' => ['order/index']
+            ],
+            [
+                'text' => '遇到问题重新支付',
+                'router' => $this->createSafeLink([
+                    'order_number' => $outTradeNo
+                ], 'order/wx-pay/')
+            ]
+        ], null, "<p ng-init='wxPayment(${json})'></p>");
 
-        return $this->render('wx', [
-            'json' => Yii::$app->wx->payment->configForPayment($prepayId)
-        ]);
+        return null;
     }
 
     /**
@@ -472,6 +491,8 @@ class OrderController extends GeneralController
     {
         if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
             return '请在普通浏览器中打开访问 ⚔';
+
+            return $this->render('open-with-browser');
         }
 
         $params = $this->validateSafeLink(false);
@@ -513,7 +534,63 @@ class OrderController extends GeneralController
             'total_amount' => intval($order['price']) / 100,
         ], $notifyUrl);
 
-        return true;
+        $this->message([
+            '%s 或者 %s',
+            [
+                'text' => '我已完成支付',
+                'router' => ['order/index']
+            ],
+            [
+                'text' => '遇到问题重新支付',
+                'router' => $this->createSafeLink([
+                    'order_number' => $params['order_number']
+                ], 'order/ali-pay', false)
+            ]
+        ]);
+
+        return null;
+    }
+
+    /**
+     * 立即支付
+     */
+    public function actionPaymentAgain()
+    {
+        $paymentMethod = Yii::$app->request->post('payment_method');
+        $orderNumber = Yii::$app->request->post('order_number');
+
+        $method = [
+            0 => 'wx',
+            1 => 'ali'
+        ];
+
+        if (!isset($method[$paymentMethod])) {
+            $this->error(Yii::t('common', 'param illegal', ['param' => 'payment_method']));
+        }
+        $paymentMethod = $method[$paymentMethod];
+
+        $this->success($this->createSafeLink([
+            'order_number' => $orderNumber
+        ], 'order/' . $paymentMethod . '-pay/', $paymentMethod == 'ali' ? false : true));
+    }
+
+    /**
+     * 取消订单
+     */
+    public function actionCancelOrder()
+    {
+        $orderNumber = Yii::$app->request->post('order_number');
+
+        $result = $this->service('order.cancel-order', [
+            'user_id' => $this->user->id,
+            'order_number' => $orderNumber
+        ]);
+
+        if (is_string($result)) {
+            $this->fail($result);
+        }
+
+        $this->success(null, 'cancel order success');
     }
 
     /**

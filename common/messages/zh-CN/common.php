@@ -58,4 +58,7 @@ return [
     'refund request submitted' => '退款申请已提交',
     'invoice request submitted' => '开具发票申请已提交',
     'order list type error' => '订单列表分类错误',
+    'cancel order success' => '取消订单操作成功',
+    'order request submitted' => '预约申请已提交',
+    'check in success' => '入住操作成功',
 ];
