@@ -14,14 +14,8 @@ $params = \Yii::$app->params;
                 <img src="<?= $params['frontend_source'] ?>/img/arrows.svg"/>
             </div>
         </a>
-
         <div class="menu" kk-menu="#menu">
             <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
-
-                <b>
-                    <img class="img-responsive"
-                         src="<?= $params['frontend_source'] ?>/img/triangle.svg"/>
-                </b>
             </div>
         </div>
         <div class="carousel" id="focus-hot" kk-focus=".point" style="overflow:hidden">
