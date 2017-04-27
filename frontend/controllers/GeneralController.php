@@ -448,7 +448,7 @@ class GeneralController extends MainController
         }
 
         $condition = OrderController::$orderSubCondition;
-        $condition['where'] = $where;
+        $condition['where'] = array_merge($condition['where'], $where);
         list($condition['offset'], $condition['limit']) = Helper::page($page, Yii::$app->params['order_page_size']);
 
         $list = $this->service('order.list', $condition);

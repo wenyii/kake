@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\components\Helper;
 use Yii;
+use yii\db\Exception;
 use yii\helpers\Url;
 
 /**
@@ -72,23 +73,51 @@ class OrderController extends GeneralController
             'bill.address',
 
             'order_instructions_log.remark',
+        ],
+        'where' => [
+            ['order.payment_state' => 1]
+        ],
+        'order' => 'order_sub.add_time DESC, order_sub.id DESC',
+        'distinct' => true,
+    ];
+
+    /**
+     * @var array Order list map
+     */
+    public $orderListMap = [
+        'ongoing' => [
+            0,
+            1,
+            2,
+            3
+        ],
+        'completed' => [
+            4,
+            5
         ]
     ];
 
     /**
      * 订单中心
+     *
+     * @param string $type
+     *
+     * @return string
      */
-    public function actionIndex()
+    public function actionIndex($type = 'ongoing')
     {
+        if (!isset($this->orderListMap[$type])) {
+            $this->error('order list type error');
+        }
+
         $this->sourceCss = null;
         $this->sourceJs = [
             'order/index'
         ];
 
-        $ongoing = $this->renderListPage(1, 'ongoing');
-        $completed = $this->renderListPage(1, 'completed');
+        $html = $this->renderListPage(1, $type);
 
-        return $this->render('index', compact('ongoing', 'completed'));
+        return $this->render('index-' . $type, compact('html'));
     }
 
     /**
@@ -110,22 +139,17 @@ class OrderController extends GeneralController
      * @access private
      *
      * @param integer $page
-     * @param string $type
+     * @param string  $type
      *
      * @return string
      */
     private function renderListPage($page, $type)
     {
-        $map = [
-            'ongoing' => [0, 1, 2, 3],
-            'completed' => [4, 5]
-        ];
-
-        if (!isset($map[$type])) {
+        if (!isset($this->orderListMap[$type])) {
             return null;
         }
 
-        $list = $this->listOrderSub($page, $map[$type]);
+        $list = $this->listOrderSub($page, $this->orderListMap[$type]);
         $content = $this->renderPartial('list-' . $type, compact('list'));
 
         return $content;
@@ -284,6 +308,7 @@ class OrderController extends GeneralController
             'product_id' => $product['id'],
             'payment_method' => $payCode,
             'price' => $price,
+            'order_contacts_id' => $params['order_contacts_id'],
             'package' => $_package
         ]);
 
@@ -416,13 +441,22 @@ class OrderController extends GeneralController
      */
     private function wxPay($outTradeNo, $body, $price)
     {
-        $prepayId = Yii::$app->wx->order([
-            'body' => $body,
-            'out_trade_no' => $outTradeNo,
-            'total_fee' => $price,
-            'notify_url' => Yii::$app->params['frontend_url'] . '/order/wx-paid',
-            'openid' => $this->user->openid,
-        ]);
+        try {
+            $prepayId = Yii::$app->wx->order([
+                'body' => $body,
+                'out_trade_no' => $outTradeNo,
+                'total_fee' => $price,
+                'notify_url' => Yii::$app->params['frontend_url'] . '/order/wx-paid',
+                'openid' => $this->user->openid,
+            ]);
+        } catch (\Exception $e) {
+            Yii::error($e->getMessage());
+            $this->error($e->getMessage());
+
+            // 超时重试
+            // return $this->wxPay($outTradeNo, $body, $price);
+        }
+
         if (!is_string($prepayId)) {
             $this->error(json_encode($prepayId, JSON_UNESCAPED_UNICODE));
         }
