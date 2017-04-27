@@ -449,10 +449,10 @@ class GeneralController extends MainController
     /**
      * @inheritDoc
      */
-    public function error($message, $title = null, $code = null)
+    public function error($message, $title = null, $code = null, $trace = null)
     {
         $this->commonParams();
-        parent::error($message, $title, $code);
+        parent::error($message, $title, $code, $trace);
     }
 
     /**

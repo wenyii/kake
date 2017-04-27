@@ -152,7 +152,12 @@ class OrderController extends GeneralController
             'update_time' => 'tip',
             'state' => [
                 'code',
-                'info'
+                'info',
+                'color' => [
+                    0 => 'danger',
+                    1 => 'info',
+                    2 => 'default'
+                ]
             ]
         ];
     }
