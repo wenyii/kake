@@ -22,7 +22,3 @@ $params = \Yii::$app->params;
     </div>
 </div>
 
-
-
-
-

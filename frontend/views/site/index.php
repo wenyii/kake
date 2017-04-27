@@ -40,9 +40,8 @@ $params = \Yii::$app->params;
                 </div>
             </a>
         </div>
-
-        <div class="carousel" id="scroll-near" kk-scroll>
-            <div class="carousel-scroller" id="carousel-scroller">
+       <div class="carousel" id="carousel-scroller" kk-scroll>
+            <div class="carousel-scroller">
                 <?php if (!empty($flashSalesList)): ?>
                     <?php foreach ($flashSalesList as $flashSales): ?>
                         <div>
@@ -52,14 +51,12 @@ $params = \Yii::$app->params;
                             ]) ?>">
                                 <img class="img-responsive"
                                      src="<?= current($flashSales['cover_preview_url']) ?>"/></a>
-
                             <p><?= $flashSales['name'] ?></p>
                         </div>
                     <?php endforeach ?>
                 <?php endif; ?>
             </div>
         </div>
-
     </div>
     <?php if (!empty($banner)): ?>
         <div class="activity">
