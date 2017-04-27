@@ -105,7 +105,7 @@ $params = \Yii::$app->params;
         <div class=" service">
             <a href="tel:<?= Yii::$app->params['company_tel'] ?>">
                 <img class="img-responsive"
-                     src="<?= $params['frontend_source'] ?>/img/_service_11.png"/>
+                     src="<?= $params['frontend_source'] ?>/img/customer-service.svg"/>
             </a>
         </div>
         <div class="back-top">
