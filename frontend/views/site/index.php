@@ -41,7 +41,7 @@ $params = \Yii::$app->params;
             </a>
         </div>
        <div class="carousel" id="carousel-scroller" kk-scroll>
-            <div class="carousel-scroller">
+            <div class="carousel-scroller scroll">
                 <?php if (!empty($flashSalesList)): ?>
                     <?php foreach ($flashSalesList as $flashSales): ?>
                         <div>
