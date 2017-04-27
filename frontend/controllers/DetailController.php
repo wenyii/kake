@@ -85,10 +85,12 @@ class DetailController extends GeneralController
             $this->error(Yii::t('common', 'payment link illegal'));
         }
 
-        return $this->createSafeLink([
+        $url = $this->createSafeLink([
             'product_id' => Yii::$app->request->get('product_id'),
             'package' => Yii::$app->request->get('package'),
             'order_contacts_id' => $contacts
-        ], 'order/' . $paymentMethod);
+        ], 'order/' . $paymentMethod, $paymentMethod == 'ali' ? false : true);
+
+        return $this->redirect($url);
     }
 }

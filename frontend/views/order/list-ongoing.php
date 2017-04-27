@@ -12,7 +12,7 @@ $params = \Yii::$app->params;
             <div class="order-status-no-appointment">
                 <img class="img-responsive"
                      src="<?= $params['frontend_source'] ?>/img/order-status_<?= $item['state'] ?>.svg"/>
-                订单状态: <?= $item['state_info'] ?>
+                订单状态: <?= empty($item['payment_state']) ? '未支付' : $item['state_info'] ?>
             </div>
             <div class="apply-refund">
                 <div class="apply-refund-lft">
@@ -28,7 +28,16 @@ $params = \Yii::$app->params;
                 </div>
             </div>
 
-            <?php if ($item['state'] == 0): ?> <!-- 未预约 -->
+            <?php if (empty($item['payment_state'])): ?>
+
+                <div class="order-status-button">
+                    <div>
+                        <button class="cancel-button" kk-tap="cancelOrder('<?= $item['order_number'] ?>')">取消订单</button>
+                        <button class="appointment-button" kk-tap="paymentAgain(<?= $item['payment_method'] ?>, '<?= $item['order_number'] ?>')">立即支付</button>
+                    </div>
+                </div>
+
+            <?php elseif ($item['state'] == 0): ?> <!-- 未预约 -->
 
                 <?php $refund = 'show_refund_form[' . $item['id'] . ']' ?>
                 <?php $order = 'show_order_form[' . $item['id'] . ']' ?>

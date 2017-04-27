@@ -137,7 +137,7 @@ class GeneralController extends MainController
      * @param string  $router
      * @param boolean $checkUser
      *
-     * @return \yii\web\Response
+     * @return string
      */
     protected function createSafeLink($params, $router, $checkUser = true)
     {
@@ -155,7 +155,7 @@ class GeneralController extends MainController
 
         $url = Helper::joinString('/', Yii::$app->params['frontend_url'], $router) . '/';
 
-        return $this->redirect($url . '?safe=' . $item);
+        return $url . '?safe=' . $item;
     }
 
     /**
@@ -296,7 +296,7 @@ class GeneralController extends MainController
         }, DAY);
     }
 
-        /**
+    /**
      * 列表产品
      *
      * @access public
@@ -314,6 +314,7 @@ class GeneralController extends MainController
     {
         list($offset, $limit) = Helper::page($page, $page_size ?: Yii::$app->params['product_page_size']);
         $params = compact('manifestation', 'classify', 'sale', 'keyword', 'limit', 'offset');
+
         return $this->cache([
             'list-product',
             func_get_args()
@@ -333,6 +334,7 @@ class GeneralController extends MainController
                     $item['min_price'] = min($item['sale_price'], $item['price']);
                 }
             }
+
             return $list;
         }, DAY);
     }
@@ -448,7 +450,12 @@ class GeneralController extends MainController
         }
 
         $condition = OrderController::$orderSubCondition;
-        $condition['where'] = array_merge($condition['where'], $where);
+
+        if (!empty($condition['where'])) {
+            $where = array_merge($condition['where'], $where);
+        }
+        $condition['where'] = $where;
+
         list($condition['offset'], $condition['limit']) = Helper::page($page, Yii::$app->params['order_page_size']);
 
         $list = $this->service('order.list', $condition);
