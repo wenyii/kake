@@ -40,7 +40,15 @@ class OrderInstructionsLogController extends GeneralController
      */
     public static function indexOperation()
     {
-        return [];
+        return [
+            [
+                'text' => '子订单',
+                'value' => 'order-sub/index',
+                'level' => 'info',
+                'icon' => 'link',
+                'params' => ['order_number']
+            ],
+        ];
     }
 
     /**

@@ -68,7 +68,7 @@ $params = \Yii::$app->params;
                     </div>
                     <div class="invoice-address">
                         <p>入住时间:</p>
-                        <input type="date" ng-model="<?= $sub ?>.time" placeholder="请选择入住时间"/>
+                        <input type="date" ng-model="<?= $sub ?>.date" placeholder="请选择入住日期"/>
                     </div>
                     <div class="invoice-confirm">
                         <p></p>
@@ -100,6 +100,7 @@ $params = \Yii::$app->params;
 
                 <div class="order-status-button">
                     <div>
+                        <button class="cancel-button" kk-tap="completed(<?= $item['id'] ?>)">我已入住</button>
                         <button class="appointment-button" kk-tap="<?= $info ?> = !<?= $info ?>">查看确认号</button>
                     </div>
                 </div>
@@ -116,7 +117,7 @@ $params = \Yii::$app->params;
                     <div class="confirmation-number-name">
                         确认号:
                     </div>
-                    <div class="confirmation-number-no"><?= $item['conformation_number'] ?></div>
+                    <div class="confirmation-number-no"><?= $item['conformation_number'] ?: '请联系客服更新' ?></div>
                     <div class="note">备注: 确认号可以唯一确定入住人的身份</div>
                 </div>
 
