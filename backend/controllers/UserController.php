@@ -57,7 +57,6 @@ class UserController extends GeneralController
     {
         return [
             'username' => 'input',
-            'real_name' => 'input',
             'phone' => 'input',
             'role' => [
                 'value' => 'all'
@@ -88,13 +87,9 @@ class UserController extends GeneralController
             'id' => 'code',
             'head_img_url' => [
                 'img',
-                'width' => '50px'
+                'width' => '64px'
             ],
             'username',
-            'real_name' => [
-                'empty',
-                'tip'
-            ],
             'phone',
             'role' => 'info',
             'sex' => [
@@ -126,9 +121,6 @@ class UserController extends GeneralController
     {
         return [
             'username' => [
-                'placeholder' => '建议填写'
-            ],
-            'real_name' => [
                 'placeholder' => '建议填写'
             ],
             'phone',

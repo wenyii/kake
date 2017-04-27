@@ -61,34 +61,18 @@ class DetailController extends GeneralController
      */
     public function actionPrefixPayment()
     {
-        /*
-        $_POST = [
-            'user_info' => [
-                'name' => 'Leon',
-                'phone' => '15021275672',
-                'captcha' => '256461'
-            ],
-            'payment_method' => 'wx',
-            'product_id' => 1,
-            'package' => [
-                // package_id => numbers
-                1 => 1,
-                2 => 4,
-            ]
-        ];
-        */
+        // 联系人信息
+        $contacts = Yii::$app->request->get('user_info');
+        if (!is_numeric($contacts)) {
+            $contacts = $this->service('order.add-contacts', [
+                'real_name' => $contacts['name'],
+                'phone' => $contacts['phone'],
+                'captcha' => $contacts['captcha']
+            ]);
 
-        // 用户信息
-        $userInfo = Yii::$app->request->get('user_info');
-        $result = $this->service('user.edit-real-info', [
-            'user_id' => $this->user->id,
-            'real_name' => $userInfo['name'],
-            'phone' => $userInfo['phone'],
-            'captcha' => $userInfo['captcha']
-        ]);
-
-        if (is_string($result)) {
-            $this->error(Yii::t('common', $result));
+            if (is_string($contacts)) {
+                $this->error(Yii::t('common', $contacts));
+            }
         }
 
         // 支付方式
@@ -103,7 +87,8 @@ class DetailController extends GeneralController
 
         return $this->createSafeLink([
             'product_id' => Yii::$app->request->get('product_id'),
-            'package' => Yii::$app->request->get('package')
+            'package' => Yii::$app->request->get('package'),
+            'order_contacts_id' => $contacts
         ], 'order/' . $paymentMethod);
     }
 }
