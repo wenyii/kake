@@ -17,7 +17,7 @@ $params = \Yii::$app->params;
     </div>
 </header>
 <div class="body">
-    <div class="recommend" kk-ajax-load="items/ajax-list" blank-message="没有更多的数据供加载~">
+    <div class="recommend" kk-ajax-load="items/ajax-list" blank-message="更多酒店关注公众号可及时了解~">
         <?= $html ?>
     </div>
 </div>

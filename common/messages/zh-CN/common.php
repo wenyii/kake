@@ -57,4 +57,5 @@ return [
     'phone captcha error' => '手机验证码不正确',
     'refund request submitted' => '退款申请已提交',
     'invoice request submitted' => '开具发票申请已提交',
+    'order list type error' => '订单列表分类错误',
 ];
