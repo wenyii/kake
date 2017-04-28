@@ -41,6 +41,6 @@ $params = \Yii::$app->params;
 
 <div class="blank-piece"></div>
 
-<div class="order-complete" kk-ajax-load="order/ajax-list" extra-params="type=completed" blank-message="所有订单已加载显示~">
+<div class="order-complete" kk-ajax-load="order/ajax-list" extra-params="type=completed" data-over="<?= $over ?>">
     <?= trim($html) ? $html : '<p class="no-order">暂无相关订单</p>' ?>
 </div>
