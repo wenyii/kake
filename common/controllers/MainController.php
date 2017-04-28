@@ -899,6 +899,16 @@ class MainController extends Controller
     }
 
     /**
+     * 获取引用地址
+     *
+     * @return mixed
+     */
+    public function reference()
+    {
+        return isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : null;
+    }
+
+    /**
      * 获取上一个调用者的方法名
      *
      * @access public
