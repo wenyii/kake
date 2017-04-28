@@ -36,6 +36,13 @@ class OrderSubController extends GeneralController
     {
         return array_merge(parent::indexOperation(), [
             [
+                'text' => '主订单',
+                'value' => 'order/index',
+                'level' => 'info',
+                'icon' => 'link',
+                'params' => ['order_number']
+            ],
+            [
                 'text' => '同意预约',
                 'value' => 'agree-order',
                 'level' => 'success confirm-button',
@@ -90,13 +97,6 @@ class OrderSubController extends GeneralController
                 'show_condition' => function ($record) {
                     return $record['state'] == 3;
                 }
-            ],
-            [
-                'text' => '主订单',
-                'value' => 'order/index',
-                'level' => 'info',
-                'icon' => 'link',
-                'params' => ['order_number']
             ],
         ]);
     }

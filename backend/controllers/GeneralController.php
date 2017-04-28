@@ -451,6 +451,7 @@ class GeneralController extends MainController
      */
     public function error($message, $title = null, $code = null, $trace = null)
     {
+        $this->sourceCss = false;
         $this->commonParams();
         parent::error($message, $title, $code, $trace);
     }
