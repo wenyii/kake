@@ -392,48 +392,17 @@ class GeneralController extends MainController
     }
 
     /**
-     * 获取子订单详情
-     *
-     * @access public
-     *
-     * @param integer $id
-     *
-     * @return array
-     */
-    public function getOrderSub($id)
-    {
-        $id = (int) $id;
-        if (empty($id)) {
-            $this->error(Yii::t('common', 'order sub id required'));
-        }
-
-        $condition = OrderController::$orderSubCondition;
-        $condition['where'] = [
-            ['order_sub.id' => $id]
-        ];
-        $detail = $this->service('order.detail', $condition);
-
-        $controller = $this->controller('order-sub');
-        $detail = $this->callMethod('sufHandleField', $detail, [
-            $detail,
-            'detail'
-        ], $controller);
-        $detail = $this->createAttachmentUrl($detail, ['attachment_cover' => 'cover']);
-
-        return $detail;
-    }
-
-    /**
      * 列表子订单
      *
      * @access public
      *
      * @param integer $page
      * @param mixed   $state
+     * @param integer $page_size
      *
      * @return array
      */
-    public function listOrderSub($page = 1, $state = null)
+    public function listOrderSub($page = 1, $state = null, $page_size = null)
     {
         $where = [
             ['order.user_id' => $this->user->id]
@@ -456,7 +425,7 @@ class GeneralController extends MainController
         }
         $condition['where'] = $where;
 
-        list($condition['offset'], $condition['limit']) = Helper::page($page, Yii::$app->params['order_page_size']);
+        list($condition['offset'], $condition['limit']) = Helper::page($page, $page_size ?: Yii::$app->params['order_page_size']);
 
         $list = $this->service('order.list', $condition);
 
