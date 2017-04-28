@@ -121,9 +121,9 @@ class OrderController extends GeneralController
             'order/index'
         ];
 
-        $html = $this->renderListPage(1, $type);
+        list($html, $over) = $this->renderListPage(1, $type);
 
-        return $this->render('index-' . $type, compact('html'));
+        return $this->render('index-' . $type, compact('html', 'over'));
     }
 
     /**
@@ -134,9 +134,8 @@ class OrderController extends GeneralController
         $page = Yii::$app->request->post('page');
         $type = Yii::$app->request->post('type');
 
-        $this->success([
-            'html' => $this->renderListPage($page, $type)
-        ]);
+        list($html, $over) = $this->renderListPage($page, $type);
+        $this->success(compact('html', 'over'));
     }
 
     /**
@@ -147,18 +146,25 @@ class OrderController extends GeneralController
      * @param integer $page
      * @param string  $type
      *
-     * @return string
+     * @return array
      */
     private function renderListPage($page, $type)
     {
         if (!isset($this->orderListMap[$type])) {
-            return null;
+            return [
+                null,
+                true
+            ];
         }
 
-        $list = $this->listOrderSub($page, $this->orderListMap[$type]);
+        $pageSize = Yii::$app->params['order_page_size'];
+        $list = $this->listOrderSub($page, $this->orderListMap[$type], $pageSize);
         $content = $this->renderPartial('list-' . $type, compact('list'));
 
-        return $content;
+        return [
+            $content,
+            count($list) == $pageSize ? false : true
+        ];
     }
 
     /**
@@ -467,14 +473,12 @@ class OrderController extends GeneralController
         $this->message([
             '%s 或者 %s',
             [
-                'text' => '我已完成支付',
+                'text' => '支付成功',
                 'router' => ['order/index']
             ],
             [
-                'text' => '遇到问题重新支付',
-                'router' => $this->createSafeLink([
-                    'order_number' => $outTradeNo
-                ], 'order/wx-pay/')
+                'text' => '重新支付',
+                'router' => 'javascript:alert(123)'
             ]
         ], null, "<p ng-init='wxPayment(${json})'></p>");
 
@@ -490,7 +494,7 @@ class OrderController extends GeneralController
     public function actionAliPay()
     {
         if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
-            return '请在普通浏览器中打开访问 ⚔';
+            $this->sourceCss = ['order/open-with-browser'];
 
             return $this->render('open-with-browser');
         }
@@ -533,20 +537,6 @@ class OrderController extends GeneralController
             'out_trade_no' => isset($orderNumber) ? $orderNumber : $order['order_number'],
             'total_amount' => intval($order['price']) / 100,
         ], $notifyUrl);
-
-        $this->message([
-            '%s 或者 %s',
-            [
-                'text' => '我已完成支付',
-                'router' => ['order/index']
-            ],
-            [
-                'text' => '遇到问题重新支付',
-                'router' => $this->createSafeLink([
-                    'order_number' => $params['order_number']
-                ], 'order/ali-pay', false)
-            ]
-        ]);
 
         return null;
     }
