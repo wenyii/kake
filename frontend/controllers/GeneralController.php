@@ -239,6 +239,9 @@ class GeneralController extends MainController
                 $detail,
                 'detail'
             ], $controller);
+            if (empty($detail['package'])) {
+                return false;
+            }
 
             if (!empty($detail)) {
                 $field = $detail['sale'] ? 'sale_price' : 'price';

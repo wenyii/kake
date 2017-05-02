@@ -21,6 +21,64 @@ class BillController extends GeneralController
     public static $hookPriceNumber = ['price'];
 
     /**
+     * @var array Hook
+     */
+    public static $hookLogic = ['handle'];
+
+    /**
+     * @var array Field
+     */
+    public static $_handle = [
+        0 => '待处理',
+        1 => '已处理'
+    ];
+
+    /**
+     * 是否处理
+     *
+     * @param array $record
+     *
+     * @return boolean
+     */
+    public static function handleLogic($record)
+    {
+        return !empty($record['courier_number']);
+    }
+
+    /**
+     * 是否处理反向逻辑
+     *
+     * @param integer $index
+     *
+     * @return array
+     */
+    public static function handleReverseWhereLogic($index)
+    {
+        $indexes = [
+            0 => [
+                [
+                    'or',
+                    'bill.courier_number=""',
+                    'bill.courier_number IS NULL',
+                ]
+            ],
+            1 => [
+                [
+                    '<>',
+                    'bill.courier_number',
+                    ''
+                ],
+                [
+                    'NOT',
+                    ['bill.courier_number' => null],
+                ]
+            ]
+        ];
+
+        return isset($indexes[$index]) ? $indexes[$index] : [];
+    }
+
+    /**
      * @inheritDoc
      */
     public static function indexOperations()
@@ -49,6 +107,10 @@ class BillController extends GeneralController
             'courier_company' => 'input',
             'invoice_title' => 'input',
             'address' => 'input',
+            'handle' => [
+                'title' => '状况',
+                'value' => 'all'
+            ],
             'state' => [
                 'value' => 'all'
             ]
@@ -74,6 +136,15 @@ class BillController extends GeneralController
             ],
             'invoice_title',
             'address',
+            'handle' => [
+                'title' => '状况',
+                'info',
+                'code',
+                'color' => [
+                    0 => 'warning',
+                    1 => 'success'
+                ]
+            ],
             'state' => [
                 'code',
                 'info'
