@@ -20,11 +20,11 @@ $params = \Yii::$app->params;
 </header>
 <div class="classify">
     <div class="classify-1">
-        <a href="<?= Url::to([
+        <a class="classify-1-1" href="<?= Url::to([
             'order/index',
             'type' => 'ongoing'
         ]) ?>">
-            <div class="classify-1-1 cur-1">
+            <div class="cur-1">
                 <span>进行中</span>
             </div>
         </a>
@@ -32,7 +32,7 @@ $params = \Yii::$app->params;
             'order/index',
             'type' => 'completed'
         ]) ?>">
-            <div class="classify-1-2">
+            <div">
                 <span>已完成</span>
             </div>
         </a>

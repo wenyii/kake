@@ -44,7 +44,6 @@ $params = \Yii::$app->params;
         </div>
         <div class="carousel" id="carousel-scroller" kk-scroll>
             <div class="carousel-scroller scroll">
-
                 <?php foreach ($flashSalesList as $flashSales): ?>
                     <div>
                         <a href="<?= Url::to([
@@ -53,6 +52,7 @@ $params = \Yii::$app->params;
                         ]) ?>">
                             <img class="img-responsive"
                                  src="<?= current($flashSales['cover_preview_url']) ?>"/></a>
+
                         <p><?= $flashSales['name'] ?></p>
                     </div>
                 <?php endforeach ?>
@@ -61,13 +61,23 @@ $params = \Yii::$app->params;
     </div>
 <?php endif; ?>
 
-<?php if (!empty($banner)): ?>
-    <div class="activity">
-        <a target="<?= $banner['target_info'] ?>" href="<?= $banner['link_url'] ?>">
+<div class="carousel" id="carousel-scroller-activity" kk-scroll>
+    <div class="carousel-scroller activity">
+        <a href="">
             <img class="img-responsive"
-                 src="<?= current($banner['preview_url']) ?>"></a>
+                 src="<?= $params['frontend_source'] ?>/img/bananer.jpg"/></a>
+        <a href="">
+            <img class="img-responsive"
+                 src="<?= $params['frontend_source'] ?>/img/bananer.jpg"/></a>
+        <a href="">
+            <img class="img-responsive"
+                 src="<?= $params['frontend_source'] ?>/img/bananer.jpg"/></a>
+        <a href="">
+            <img class="img-responsive"
+                 src="<?= $params['frontend_source'] ?>/img/bananer.jpg"/></a>
     </div>
-<?php endif; ?>
+</div>
+
 <div class="recommend">
     <?php if (!empty($standardList)): ?>
         <p><span class="recommend2">精品推荐</span></p>
@@ -92,5 +102,4 @@ $params = \Yii::$app->params;
             </div>
         <?php endforeach ?>
     <?php endif; ?>
-</div>
 </div>
