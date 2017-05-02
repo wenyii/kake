@@ -131,6 +131,7 @@ class UserController extends GeneralController
             ],
             'openid' => [
                 'label' => 4,
+                'readonly' => true
             ],
             'sex' => [
                 'elem' => 'select'
