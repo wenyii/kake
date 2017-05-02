@@ -61,22 +61,17 @@ $params = \Yii::$app->params;
     </div>
 <?php endif; ?>
 
-<div class="carousel" id="carousel-scroller-activity" kk-scroll>
-    <div class="carousel-scroller activity">
-        <a href="">
-            <img class="img-responsive"
-                 src="<?= $params['frontend_source'] ?>/img/bananer.jpg"/></a>
-        <a href="">
-            <img class="img-responsive"
-                 src="<?= $params['frontend_source'] ?>/img/bananer.jpg"/></a>
-        <a href="">
-            <img class="img-responsive"
-                 src="<?= $params['frontend_source'] ?>/img/bananer.jpg"/></a>
-        <a href="">
-            <img class="img-responsive"
-                 src="<?= $params['frontend_source'] ?>/img/bananer.jpg"/></a>
+<?php if (!empty($banner)): ?>
+    <div class="carousel" id="carousel-scroller-activity" kk-scroll>
+        <div class="carousel-scroller activity">
+            <?php foreach ($banner as $item): ?>
+                <a href="<?= $item['url'] ?>">
+                    <img class="img-responsive"
+                         src="<?= current($item['preview_url']) ?>"/></a>
+            <?php endforeach; ?>
+        </div>
     </div>
-</div>
+<?php endif; ?>
 
 <div class="recommend">
     <?php if (!empty($standardList)): ?>

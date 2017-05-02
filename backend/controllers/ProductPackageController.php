@@ -116,7 +116,9 @@ EOF
                 'empty',
                 'not_set_info' => '<span class="not-set">(无限量)</span>'
             ],
-            'info',
+            'info' => [
+                'max-width' => '200px'
+            ],
             'state' => [
                 'code',
                 'color' => 'auto',

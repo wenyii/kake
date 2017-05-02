@@ -1274,6 +1274,9 @@ class GeneralController extends MainController
         $_where = [];
         foreach ($where as $key => $item) {
             $_key = key($item);
+            if (strpos($_key, '.')) {
+                $_key = explode('.', $_key)[1];
+            }
             if (!isset($_container[$_key])) {
                 $_where[$key] = $item;
                 continue;
