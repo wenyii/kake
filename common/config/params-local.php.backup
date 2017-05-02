@@ -16,9 +16,9 @@ return [
     'backend_source' => "http://{$secondSource}.{$domain}/kake-backend",
 
     'upload_url' => "http://{$secondPic}.{$domain}/upload/kake",
-    'thrift_ip' => '127.0.0.1',
-    'thrift_port' => '8888',
 
     'wechat_callback' => "http://{$secondSite}.${domain}/",
     'alipay_callback' => "http://{$secondSite}.${domain}/",
+
+    'thrift_ip' => '192.168.0.222',
 ];
