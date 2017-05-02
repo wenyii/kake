@@ -37,7 +37,7 @@ AppAsset::register($this);
 $controller = \Yii::$app->controller->id;
 $action = \Yii::$app->controller->action->id;
 
-$minDirectory = (YII_ENV == 'dev' ? null : '_min');
+$minDirectory = (YII_ENV == 'dev' ? null : null);
 $suffix = (YII_ENV == 'dev' ? time() : VERSION);
 
 $sourceUrl = \Yii::$app->params['backend_source'];

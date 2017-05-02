@@ -109,7 +109,7 @@ foreach ($item as $type): ?>
 <?php $this->endBody() ?>
 
 <?php
-$minDirectory = (YII_ENV == 'dev' ? null : '_min');
+$minDirectory = (YII_ENV == 'dev' ? null : null);
 $suffix = (YII_ENV == 'dev' ? time() : VERSION);
 
 $sourceUrl = $params['backend_source'];

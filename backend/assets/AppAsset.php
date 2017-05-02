@@ -24,7 +24,7 @@ class AppAsset extends AssetBundle
     {
         $this->baseUrl = Yii::$app->params['backend_source'];
 
-        $minDirectory = (YII_ENV == 'dev' ? null : '_min');
+        $minDirectory = (YII_ENV == 'dev' ? null : null);
         $suffix = (YII_ENV == 'dev' ? time() : VERSION);
 
         $this->css = [
