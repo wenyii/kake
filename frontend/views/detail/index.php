@@ -56,7 +56,7 @@ $params = \Yii::$app->params;
         <div class="detail-hotel">
             <div class=" detail-hotel-1">
  <span> <img
-         src="<?= $params['frontend_source'] ?>/img/icon-7.png"/></span>
+         src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 简介
             </div>
             <div class=" detail-hotel-2">
@@ -66,7 +66,7 @@ $params = \Yii::$app->params;
         <div class="detail-hotel">
             <div class=" detail-hotel-1">
  <span> <img
-         src="<?= $params['frontend_source'] ?>/img/icon-7.png"/></span>
+         src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 特色介绍
             </div>
             <div class=" detail-hotel-2 detail-hotel_2">
@@ -78,7 +78,7 @@ $params = \Yii::$app->params;
         <div class="detail-hotel">
             <div class=" detail-hotel-1">
  <span> <img
-         src="<?= $params['frontend_source'] ?>/img/icon-7.png"/></span>
+         src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 券享说明
             </div>
             <div class="notice-money">
@@ -88,7 +88,7 @@ $params = \Yii::$app->params;
         <div class="detail-hotel">
             <div class=" detail-hotel-1">
  <span> <img
-         src="<?= $params['frontend_source'] ?>/img/icon-7.png"/></span>
+         src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 用券说明
             </div>
             <div class="notice-money">

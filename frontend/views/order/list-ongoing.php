@@ -55,7 +55,7 @@ $params = \Yii::$app->params;
 
                     <div class="invoice-address">
                         <p>退款原因:</p>
-                        <input type="text" ng-model="<?= $sub ?>.remark" placeholder="请填写退款原因"/>
+                        <textarea type="text" ng-model="<?= $sub ?>.remark" placeholder="请填写退款原因"/></textarea>
                     </div>
                     <div class="invoice-confirm">
                         <p></p>
@@ -141,7 +141,7 @@ $params = \Yii::$app->params;
                 </div>
 
                 <div class="refund-schedule kk-animate" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
-                    <div class="refund-schedule-name"><?= $item['remark'] ?></div>
+                    <div class="refund-schedule-name refund-schedule-name-refund"><?= $item['remark'] ?></div>
                 </div>
 
             <?php endif; ?>
