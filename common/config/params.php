@@ -22,6 +22,6 @@ return [
     'wechat_callback' => "http://{$secondSite}.${domain}/",
     'alipay_callback' => "http://{$secondSite}.${domain}/",
 
-    'thrift_ip' => '192.168.0.222',
+    'thrift_ip' => '106.14.65.39',
     'thrift_port' => '8888'
 ];
