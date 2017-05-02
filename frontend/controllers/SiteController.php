@@ -22,7 +22,7 @@ class SiteController extends GeneralController
         $flashSalesList = $this->listProduct(1, 2, 2);
 
         //广告模块
-        $banner = current($this->listBanner(1));
+        $banner = $this->listBanner(1);
 
         //精品推荐
         $standardList = $this->listProduct(1, 4, 0);
