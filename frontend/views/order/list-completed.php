@@ -39,7 +39,7 @@ $params = \Yii::$app->params;
                 </div>
 
                 <div class="refund-schedule kk-animate" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
-                    <div class="refund-schedule-name">退还款将按支付方式原路返回，不同的支付方式到账时间在及时~7个工作日不等，若逾期还未到账请咨询客服
+                    <div class="refund-schedule-name refund-schedule-name-refund">退还款将按支付方式原路返回，不同的支付方式到账时间在及时~7个工作日不等，若逾期还未到账请咨询客服
                     </div>
                 </div>
 
