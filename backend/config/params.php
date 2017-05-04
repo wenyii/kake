@@ -1,5 +1,7 @@
 <?php
 return [
+    'use_cache' => true,
+
     'menu' => [
         'a' => [
             'name' => '配置管理',

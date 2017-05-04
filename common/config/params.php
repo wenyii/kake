@@ -9,6 +9,11 @@ $domain = DOMAIN;
 return [
     'app_name' => 'KAKE',
     'socks_token' => '#maiqi$kk',
+    'use_cache' => true,
+
+    'app_title' => 'KAKE酒店预订',
+    'app_description' => 'KAKE酒店预订',
+    'app_keywords' => 'KAKE酒店预订',
 
     'frontend_url' => "http://{$secondSite}.{$domain}",
     'frontend_source' => "http://{$secondSource}.{$domain}/kake-frontend",

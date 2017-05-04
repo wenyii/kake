@@ -105,7 +105,9 @@ EOF
                 'link',
                 'url_info' => 'Preview'
             ],
-            'name',
+            'name' => [
+                'max-width' => '250px'
+            ],
             'price' => 'code',
             'sale_price' => [
                 'title' => '折后价格',
@@ -117,7 +119,7 @@ EOF
                 'not_set_info' => '<span class="not-set">(无限量)</span>'
             ],
             'info' => [
-                'max-width' => '200px'
+                'max-width' => '250px'
             ],
             'state' => [
                 'code',

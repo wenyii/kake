@@ -71,6 +71,15 @@ class OrderSubController extends GeneralController
                 }
             ],
             [
+                'text' => '备注',
+                'value' => 'order-instructions-log/index',
+                'params' => function ($record) {
+                    return ['order_sub_id' => $record['id']];
+                },
+                'level' => 'default',
+                'icon' => 'paperclip'
+            ],
+            [
                 'text' => '同意退款',
                 'value' => 'agree-refund',
                 'level' => 'success confirm-button',
@@ -183,7 +192,9 @@ class OrderSubController extends GeneralController
             ],
             'price' => 'code',
             'name' => [
-                'title' => '套餐'
+                'title' => '套餐',
+                'max-width' => '200px',
+                'tip'
             ],
             'conformation_number' => [
                 'empty'
