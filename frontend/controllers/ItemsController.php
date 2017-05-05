@@ -50,7 +50,7 @@ class ItemsController extends GeneralController
 
         return [
             $content,
-            count($list) == $pageSize ? false : true
+            count($list) < $pageSize
         ];
     }
 }
