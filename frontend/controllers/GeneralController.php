@@ -141,10 +141,7 @@ class GeneralController extends MainController
      */
     protected function createSafeLink($params, $router, $checkUser = true)
     {
-        $item = [
-            'item' => $params,
-            'ip' => Yii::$app->request->userIP
-        ];
+        $item = ['item' => $params];
 
         if ($checkUser) {
             $item['user_id'] = $this->user->id;
@@ -175,19 +172,15 @@ class GeneralController extends MainController
         $error = false;
 
         if (!$error && !$item) {
-            $error = true;
+            $error = '非法链接';
         }
 
         if (!$error && !Helper::validateSign($item, 'sign')) {
-            $error = true;
+            $error = '签名错误';
         }
 
         if (!$error && $checkUser && $this->user->id != $item['user_id']) {
-            $error = true;
-        }
-
-        if (!$error && Yii::$app->request->userIP != $item['ip']) {
-            $error = true;
+            $error = '非法代付';
         }
 
         if ($error) {
@@ -245,7 +238,11 @@ class GeneralController extends MainController
 
             if (!empty($detail)) {
                 $field = $detail['sale'] ? 'sale_price' : 'price';
-                $detail['max_sales'] = max($detail['virtual_sales'], $detail['real_sales']);
+                if ($detail['real_sales'] > $detail['virtual_sales']) {
+                    $detail['max_sales'] = $detail['real_sales'];
+                } else {
+                    $detail['max_sales'] = $detail['virtual_sales'] + $detail['real_sales'];
+                }
                 $detail['min_price'] = min(array_column($detail['package'], $field));
             }
 

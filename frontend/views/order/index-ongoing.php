@@ -8,10 +8,6 @@ $params = \Yii::$app->params;
 ?>
 
 <header>
-    <a href="javascript:history.go(-1);" class="return">
-        <img class="img-responsive"
-             src="<?= $params['frontend_source'] ?>/img/return.svg"/>
-    </a>
     订单中心
     <div class="menu detail" kk-menu="#menu">
         <img class="img-responsive"

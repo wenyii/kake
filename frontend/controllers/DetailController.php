@@ -33,6 +33,7 @@ class DetailController extends GeneralController
             $this->error(Yii::t('common', 'product data error'));
         }
 
+        $detail['slave_preview_url'] = array_merge($detail['cover_preview_url'], $detail['slave_preview_url']);
         if ($detail['min_price'] <= 0) {
             $this->error(Yii::t('common', 'product price error'));
         }
