@@ -392,7 +392,7 @@ class OrderController extends GeneralController
                 ['order.' . $field => $param],
                 ['order.state' => 1]
             ]
-        ]);
+        ], 'no');
 
         return $detail;
     }
@@ -468,23 +468,38 @@ class OrderController extends GeneralController
         }
 
         $json = Yii::$app->wx->payment->configForPayment($prepayId);
+        $this->sourceJs = [
+            'order/index'
+        ];
+
+        return $this->render('wx-pay', [
+            'json' => $json,
+            'order_number' => $outTradeNo
+        ]);
+    }
+
+    /**
+     * 微信支付结果页面
+     *
+     * @param string $order_number
+     *
+     * @return void
+     */
+    public function actionWxPayResult($order_number)
+    {
         $this->message([
-<<<<<<< Updated upstream
-            '%s 或者 %s',
-=======
             '订单支付 %s 或者遇到错误需 %s',
->>>>>>> Stashed changes
             [
-                'text' => '支付成功',
+                'text' => '已经完成',
                 'router' => ['order/index']
             ],
             [
                 'text' => '重新支付',
-                'router' => 'javascript:alert(123)'
+                'router' => $this->createSafeLink([
+                    'order_number' => $order_number
+                ], 'order/wx-pay/')
             ]
-        ], null, "<p ng-init='wxPayment(${json})'></p>");
-
-        return null;
+        ]);
     }
 
     /**
@@ -546,7 +561,7 @@ class OrderController extends GeneralController
     /**
      * 立即支付
      */
-    public function actionPaymentAgain()
+    public function actionAjaxPaymentAgain()
     {
         $paymentMethod = Yii::$app->request->post('payment_method');
         $orderNumber = Yii::$app->request->post('order_number');
@@ -569,7 +584,7 @@ class OrderController extends GeneralController
     /**
      * 取消订单
      */
-    public function actionCancelOrder()
+    public function actionAjaxCancelOrder()
     {
         $orderNumber = Yii::$app->request->post('order_number');
 

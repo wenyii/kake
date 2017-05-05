@@ -141,10 +141,7 @@ class GeneralController extends MainController
      */
     protected function createSafeLink($params, $router, $checkUser = true)
     {
-        $item = [
-            'item' => $params,
-            'ip' => Yii::$app->request->userIP
-        ];
+        $item = ['item' => $params];
 
         if ($checkUser) {
             $item['user_id'] = $this->user->id;
@@ -175,19 +172,15 @@ class GeneralController extends MainController
         $error = false;
 
         if (!$error && !$item) {
-            $error = true;
+            $error = '非法链接';
         }
 
         if (!$error && !Helper::validateSign($item, 'sign')) {
-            $error = true;
+            $error = '签名错误';
         }
 
         if (!$error && $checkUser && $this->user->id != $item['user_id']) {
-            $error = true;
-        }
-
-        if (!$error && Yii::$app->request->userIP != $item['ip']) {
-            $error = true;
+            $error = '非法代付';
         }
 
         if ($error) {
@@ -230,7 +223,7 @@ class GeneralController extends MainController
                 ]
             ]);
 
-            $detail = $this->service('product.detail', $condition);
+            $detail = $this->service('product.detail', $condition, 'no');
             if (empty($detail)) {
                 return false;
             }
@@ -245,7 +238,11 @@ class GeneralController extends MainController
 
             if (!empty($detail)) {
                 $field = $detail['sale'] ? 'sale_price' : 'price';
-                $detail['max_sales'] = max($detail['virtual_sales'], $detail['real_sales']);
+                if ($detail['real_sales'] > $detail['virtual_sales']) {
+                    $detail['max_sales'] = $detail['real_sales'];
+                } else {
+                    $detail['max_sales'] = $detail['virtual_sales'] + $detail['real_sales'];
+                }
                 $detail['min_price'] = min(array_column($detail['package'], $field));
             }
 
@@ -290,7 +287,7 @@ class GeneralController extends MainController
                 ],
                 'limit' => $limit,
             ];
-            $list = $this->service('product.list', $condition);
+            $list = $this->service('product.list', $condition, 'no');
             array_walk($list, function (&$item) use ($controller) {
                 $item = $this->createAttachmentUrl($item, ['attachment_cover' => 'cover']);
             });
@@ -323,7 +320,7 @@ class GeneralController extends MainController
             func_get_args()
         ], function () use ($params) {
             $controller = $this->controller('product-package');
-            $list = $this->service('product.product-list', $params);
+            $list = $this->service('product.product-list', $params, 'no');
             foreach ($list as $key => &$item) {
                 if (empty($item['price'])) {
                     unset($list[$key]);
@@ -358,7 +355,7 @@ class GeneralController extends MainController
             $this->error(Yii::t('common', 'product package id required'));
         }
 
-        $list = $this->service('product.package-list', ['product_id' => $product_id]);
+        $list = $this->service('product.package-list', ['product_id' => $product_id], 'no');
 
         $purchaseTimes = [];
         if ($this->user) {
@@ -430,7 +427,7 @@ class GeneralController extends MainController
 
         list($condition['offset'], $condition['limit']) = Helper::page($page, $page_size ?: Yii::$app->params['order_page_size']);
 
-        $list = $this->service('order.list', $condition);
+        $list = $this->service('order.list', $condition, 'no');
 
         $controller = $this->controller('order');
         array_walk($list, function (&$item) use ($controller) {
