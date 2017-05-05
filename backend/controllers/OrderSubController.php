@@ -2,7 +2,6 @@
 
 namespace backend\controllers;
 
-use common\components\Helper;
 use Yii;
 
 /**
@@ -71,6 +70,18 @@ class OrderSubController extends GeneralController
                 }
             ],
             [
+<<<<<<< Updated upstream
+=======
+                'text' => '日志',
+                'value' => 'order-instructions-log/index',
+                'params' => function ($record) {
+                    return ['order_sub_id' => $record['id']];
+                },
+                'level' => 'default',
+                'icon' => 'paperclip'
+            ],
+            [
+>>>>>>> Stashed changes
                 'text' => '同意退款',
                 'value' => 'agree-refund',
                 'level' => 'success confirm-button',
@@ -183,7 +194,12 @@ class OrderSubController extends GeneralController
             ],
             'price' => 'code',
             'name' => [
+<<<<<<< Updated upstream
                 'title' => '套餐'
+=======
+                'title' => '套餐',
+                'max-width' => '200px'
+>>>>>>> Stashed changes
             ],
             'conformation_number' => [
                 'empty'
