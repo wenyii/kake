@@ -280,7 +280,9 @@ $action = \Yii::$app->controller->action->id;
 
                 <?php if (!empty($operation)): ?>
                     <td>
-                        <div>
+                        <div <?= $getStyle([
+                            'max-width' => '250px'
+                        ]) ?> class="operation">
                             <?php foreach ($operation as $value): ?>
                                 <?php
                                 $show = true;
