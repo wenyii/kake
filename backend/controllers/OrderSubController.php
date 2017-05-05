@@ -190,18 +190,19 @@ class OrderSubController extends GeneralController
                 'color' => 'default',
                 'tip'
             ],
-            'price' => 'code',
             'name' => [
                 'title' => '套餐',
                 'max-width' => '200px',
                 'tip'
             ],
             'conformation_number' => [
-                'empty'
+                'empty',
+                'tip'
             ],
             'check_in_name' => 'empty',
             'check_in_phone' => 'empty',
             'check_in_time' => 'empty',
+            'price' => 'code',
             'payment_state' => [
                 'table' => 'order',
                 'code',

@@ -90,5 +90,14 @@ foreach ($items as $item) {
 ?>
 
 </body>
+<script>
+    var _hmt = _hmt || [];
+    (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?0dbdcd4d413051d54182fbda00151c4a";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
 </html>
 <?php $this->endPage() ?>
