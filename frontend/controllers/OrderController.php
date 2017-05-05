@@ -4,8 +4,6 @@ namespace frontend\controllers;
 
 use common\components\Helper;
 use Yii;
-use yii\db\Exception;
-use yii\helpers\Url;
 
 /**
  * Order controller
@@ -471,7 +469,11 @@ class OrderController extends GeneralController
 
         $json = Yii::$app->wx->payment->configForPayment($prepayId);
         $this->message([
+<<<<<<< Updated upstream
             '%s 或者 %s',
+=======
+            '订单支付 %s 或者遇到错误需 %s',
+>>>>>>> Stashed changes
             [
                 'text' => '支付成功',
                 'router' => ['order/index']
