@@ -223,7 +223,7 @@ class GeneralController extends MainController
                 ]
             ]);
 
-            $detail = $this->service('product.detail', $condition);
+            $detail = $this->service('product.detail', $condition, 'no');
             if (empty($detail)) {
                 return false;
             }
@@ -287,7 +287,7 @@ class GeneralController extends MainController
                 ],
                 'limit' => $limit,
             ];
-            $list = $this->service('product.list', $condition);
+            $list = $this->service('product.list', $condition, 'no');
             array_walk($list, function (&$item) use ($controller) {
                 $item = $this->createAttachmentUrl($item, ['attachment_cover' => 'cover']);
             });
@@ -320,7 +320,7 @@ class GeneralController extends MainController
             func_get_args()
         ], function () use ($params) {
             $controller = $this->controller('product-package');
-            $list = $this->service('product.product-list', $params);
+            $list = $this->service('product.product-list', $params, 'no');
             foreach ($list as $key => &$item) {
                 if (empty($item['price'])) {
                     unset($list[$key]);
@@ -355,7 +355,7 @@ class GeneralController extends MainController
             $this->error(Yii::t('common', 'product package id required'));
         }
 
-        $list = $this->service('product.package-list', ['product_id' => $product_id]);
+        $list = $this->service('product.package-list', ['product_id' => $product_id], 'no');
 
         $purchaseTimes = [];
         if ($this->user) {
@@ -427,7 +427,7 @@ class GeneralController extends MainController
 
         list($condition['offset'], $condition['limit']) = Helper::page($page, $page_size ?: Yii::$app->params['order_page_size']);
 
-        $list = $this->service('order.list', $condition);
+        $list = $this->service('order.list', $condition, 'no');
 
         $controller = $this->controller('order');
         array_walk($list, function (&$item) use ($controller) {

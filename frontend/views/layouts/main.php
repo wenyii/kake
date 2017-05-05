@@ -24,10 +24,10 @@ $ngCtl = empty($params['ng_ctrl']) ? null : (' ng-controller="' . $params['ng_ct
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <meta name="keywords" content="KAKE酒店预订">
-    <meta name="description" content="KAKE酒店预订">
+    <meta name="keywords" content="<?= $params['app_keywords'] ?>">
+    <meta name="description" content="<?= $params['app_description'] ?>">
     <?= Html::csrfMetaTags() ?>
-    <title>KAKE酒店预订</title>
+    <title><?= $params['app_title'] ?></title>
     <?php $this->head() ?>
 </head>
 
