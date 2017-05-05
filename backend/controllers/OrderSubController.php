@@ -71,6 +71,18 @@ class OrderSubController extends GeneralController
                 }
             ],
             [
+<<<<<<< Updated upstream
+=======
+                'text' => '查询',
+                'value' => 'order-instructions-log/index',
+                'params' => function ($record) {
+                    return ['order_sub_id' => $record['id']];
+                },
+                'level' => 'default',
+                'icon' => 'paperclip'
+            ],
+            [
+>>>>>>> Stashed changes
                 'text' => '同意退款',
                 'value' => 'agree-refund',
                 'level' => 'success confirm-button',
@@ -181,16 +193,22 @@ class OrderSubController extends GeneralController
                 'color' => 'default',
                 'tip'
             ],
-            'price' => 'code',
             'name' => [
+<<<<<<< Updated upstream
                 'title' => '套餐'
+=======
+                'title' => '套餐',
+                'max-width' => '200px'
+>>>>>>> Stashed changes
             ],
             'conformation_number' => [
-                'empty'
+                'empty',
+                'tip'
             ],
             'check_in_name' => 'empty',
             'check_in_phone' => 'empty',
             'check_in_time' => 'empty',
+            'price' => 'code',
             'payment_state' => [
                 'table' => 'order',
                 'code',

@@ -30,7 +30,7 @@ class OrderController extends GeneralController
     {
         return array_merge(parent::indexOperation(), [
             [
-                'text' => '查询订单',
+                'text' => '状态',
                 'value' => 'select-order',
                 'level' => 'primary',
                 'icon' => 'globe',

@@ -9,11 +9,6 @@ $params = \Yii::$app->params;
 
 <div class="body" ng-init="service.goToTop('.back-top')">
     <div class="banner">
-        <a href="javascript:history.go(-1);">
-            <div class="arrows">
-                <img src="<?= $params['frontend_source'] ?>/img/arrows.svg"/>
-            </div>
-        </a>
         <div class="menu" kk-menu="#menu">
             <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
             </div>
