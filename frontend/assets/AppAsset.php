@@ -4,6 +4,7 @@ namespace frontend\assets;
 
 use yii\web\AssetBundle;
 use yii;
+use yii\web\View;
 
 /**
  * Main frontend application asset bundle.
@@ -15,6 +16,9 @@ class AppAsset extends AssetBundle
     public $css = [];
     public $js = [];
     public $depends = [];
+    public $jsOptions = [
+        'position' => View::POS_END
+    ];
 
     /**
      * @inheritdoc

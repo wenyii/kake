@@ -39,6 +39,13 @@ class UserController extends GeneralController
     {
         return array_merge(parent::indexOperation(), [
             [
+                'text' => '同步',
+                'value' => 'sync-user',
+                'level' => 'success',
+                'icon' => 'retweet',
+                'params' => ['openid']
+            ],
+            [
                 'text' => '配置权限',
                 'value' => 'edit-auth',
                 'level' => 'info',
@@ -90,7 +97,7 @@ class UserController extends GeneralController
                 'width' => '64px'
             ],
             'username',
-            'phone',
+            'phone' => 'empty',
             'role' => 'info',
             'sex' => [
                 'code',
@@ -224,6 +231,42 @@ class UserController extends GeneralController
 
         Yii::$app->session->setFlash('success', '权限配置成功');
         $this->goReference($this->getControllerName());
+    }
+
+    /**
+     * 同步用户信息
+     *
+     * @access public
+     * @param string $openid
+     */
+    public function actionSyncUser($openid)
+    {
+        $user = Yii::$app->wx->user->get($openid);
+
+        $key = $this->getControllerName();
+        if (!isset($user->nickname)) {
+            Yii::$app->session->setFlash('info', '该用户未关注公众号，无法同步');
+            $this->goReference($key);
+        }
+
+        $result = $this->service(static::$editApiName, [
+            'table' => 'user',
+            'where' => ['openid' => $openid],
+            'username' => $user['nickname'],
+            'sex' => $user['sex'],
+            'city' => $user['city'],
+            'province' => $user['province'],
+            'country' => $user['country'],
+            'head_img_url' => $user['headimgurl'],
+        ]);
+
+        if (is_string($result)) {
+            Yii::$app->session->setFlash('danger', Yii::t('common', $result));
+            $this->goReference($key);
+        }
+
+        Yii::$app->session->setFlash('success', '同步用户信息成功');
+        $this->goReference($key);
     }
 
     /**

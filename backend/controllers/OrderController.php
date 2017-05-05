@@ -110,7 +110,8 @@ class OrderController extends GeneralController
                 'color' => 'default'
             ],
             'username' => [
-                'title' => '下单用户'
+                'title' => '下单用户',
+                'tip'
             ],
             'real_name' => [
                 'title' => '订单联系人'
@@ -129,6 +130,7 @@ class OrderController extends GeneralController
             'price' => 'code',
             'package_info' => [
                 'title' => '套餐详情',
+                'max-width' => '200px',
                 'html'
             ],
             'payment_state' => [
