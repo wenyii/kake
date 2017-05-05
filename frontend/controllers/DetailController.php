@@ -78,11 +78,7 @@ class DetailController extends GeneralController
 
         // 支付方式
         $paymentMethod = Yii::$app->request->get('payment_method');
-        if (!in_array($paymentMethod, [
-            'wx',
-            'ali'
-        ])
-        ) {
+        if (!in_array($paymentMethod, OrderController::$paymentMethod)) {
             $this->error(Yii::t('common', 'payment link illegal'));
         }
 
