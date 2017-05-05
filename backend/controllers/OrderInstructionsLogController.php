@@ -67,6 +67,10 @@ class OrderInstructionsLogController extends GeneralController
                 'elem' => 'input',
                 'equal' => true
             ],
+            'order_sub_id' => [
+                'elem' => 'input',
+                'equal' => true
+            ],
             'type' => [
                 'value' => 'all'
             ],
@@ -89,6 +93,7 @@ class OrderInstructionsLogController extends GeneralController
                 'code',
                 'table' => 'order'
             ],
+            'order_sub_id' => 'code',
             'type' => [
                 'code',
                 'info',
@@ -99,7 +104,9 @@ class OrderInstructionsLogController extends GeneralController
                     3 => 'warning',
                 ]
             ],
-            'remark',
+            'remark' => [
+                'max-width' => '400px'
+            ],
             'add_time'
         ];
     }

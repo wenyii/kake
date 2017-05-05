@@ -257,8 +257,12 @@ class ProductController extends GeneralController
                 'code',
                 'color' => 'default'
             ],
-            'title',
-            'destination',
+            'title' => [
+                'max-width' => '250px'
+            ],
+            'destination' => [
+                'max-width' => '150px'
+            ],
             'hotel_name' => [
                 'table' => 'hotel',
                 'field' => 'name',

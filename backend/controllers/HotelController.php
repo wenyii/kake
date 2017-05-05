@@ -90,11 +90,14 @@ class HotelController extends GeneralController
     {
         return [
             'id' => 'code',
-            'name',
+            'name' => [
+                'max-width' => '250px'
+            ],
             'principal',
             'contact',
             'address' => [
-                'title' => '地址'
+                'title' => '地址',
+                'max-width' => '400px'
             ],
             'state' => [
                 'code',
