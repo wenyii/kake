@@ -471,9 +471,13 @@ class OrderController extends GeneralController
 
         $json = Yii::$app->wx->payment->configForPayment($prepayId);
         $this->message([
+<<<<<<< Updated upstream
             '%s 或者 %s',
+=======
+            '订单支付 %s 或者遇到错误需 %s',
+>>>>>>> Stashed changes
             [
-                'text' => '支付成功',
+                'text' => '已经完成',
                 'router' => ['order/index']
             ],
             [
@@ -544,7 +548,7 @@ class OrderController extends GeneralController
     /**
      * 立即支付
      */
-    public function actionPaymentAgain()
+    public function actionAjaxPaymentAgain()
     {
         $paymentMethod = Yii::$app->request->post('payment_method');
         $orderNumber = Yii::$app->request->post('order_number');
@@ -567,7 +571,7 @@ class OrderController extends GeneralController
     /**
      * 取消订单
      */
-    public function actionCancelOrder()
+    public function actionAjaxCancelOrder()
     {
         $orderNumber = Yii::$app->request->post('order_number');
 
