@@ -4,8 +4,6 @@ namespace frontend\controllers;
 
 use common\components\Helper;
 use Yii;
-use yii\db\Exception;
-use yii\helpers\Url;
 
 /**
  * Order controller

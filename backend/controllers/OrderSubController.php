@@ -2,7 +2,6 @@
 
 namespace backend\controllers;
 
-use common\components\Helper;
 use Yii;
 
 /**
@@ -71,7 +70,7 @@ class OrderSubController extends GeneralController
                 }
             ],
             [
-                'text' => '备注',
+                'text' => '日志',
                 'value' => 'order-instructions-log/index',
                 'params' => function ($record) {
                     return ['order_sub_id' => $record['id']];
