@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\components\Helper;
 use Yii;
+use yii\helpers\Url;
 
 /**
  * Order controller
@@ -15,6 +16,14 @@ class OrderController extends GeneralController
      */
     const PAY_CODE_WX = 0;
     const PAY_CODE_ALI = 1;
+
+    /**
+     * @var array 支付方式
+     */
+    public static $paymentMethod = [
+        0 => 'wx',
+        1 => 'ali'
+    ];
 
     /**
      * @var array 子订单查询条件
@@ -102,6 +111,29 @@ class OrderController extends GeneralController
     ];
 
     /**
+     * @inheritdoc
+     */
+    public function beforeAction($action)
+    {
+        if (!in_array($action->id, [
+            'ali-pay',
+            'ali-paid'
+        ])
+        ) {
+            $this->mustLogin();
+        }
+
+        if (in_array($action->id, [
+            'wx-paid',
+            'ali-paid'
+        ])) {
+            $action->controller->enableCsrfValidation = false;
+        }
+
+        return parent::beforeAction($action);
+    }
+
+    /**
      * 订单中心
      *
      * @param string $type
@@ -161,8 +193,45 @@ class OrderController extends GeneralController
 
         return [
             $content,
-            count($list) == $pageSize ? false : true
+            count($list) < $pageSize
         ];
+    }
+
+    /**
+     * 立即支付
+     */
+    public function actionAjaxPaymentAgain()
+    {
+        $paymentMethod = Yii::$app->request->post('payment_method');
+        $orderNumber = Yii::$app->request->post('order_number');
+
+        if (!isset(self::$paymentMethod[$paymentMethod])) {
+            $this->error(Yii::t('common', 'param illegal', ['param' => 'payment_method']));
+        }
+        $paymentMethod = self::$paymentMethod[$paymentMethod];
+
+        $this->success($this->createSafeLink([
+            'order_number' => $orderNumber
+        ], 'order/' . $paymentMethod . '-pay/', $paymentMethod == 'ali' ? false : true));
+    }
+
+    /**
+     * 取消订单
+     */
+    public function actionAjaxCancelOrder()
+    {
+        $orderNumber = Yii::$app->request->post('order_number');
+
+        $result = $this->service('order.cancel-order', [
+            'user_id' => $this->user->id,
+            'order_number' => $orderNumber
+        ]);
+
+        if (is_string($result)) {
+            $this->fail($result);
+        }
+
+        $this->success(null, 'cancel order success');
     }
 
     /**
@@ -239,7 +308,39 @@ class OrderController extends GeneralController
         $this->success(null, 'invoice request submitted');
     }
 
-    // --↓↓- Payment -↓↓--
+    /**
+     * 获取主订单详情
+     *
+     * @access public
+     *
+     * @param string $param
+     * @param string $field
+     *
+     * @return array
+     */
+    public function getOrder($param, $field = 'id')
+    {
+        if (empty($param)) {
+            $this->error(Yii::t('common', 'order param required'));
+        }
+
+        $detail = $this->service('order.detail', [
+            'join' => [
+                ['table' => 'product'],
+            ],
+            'select' => [
+                'product.*',
+                'order.*'
+            ],
+            'order' => 'order.id DESC',
+            'where' => [
+                ['order.' . $field => $param],
+                ['order.state' => 1]
+            ]
+        ], 'no');
+
+        return $detail;
+    }
 
     /**
      * 第三方下单前的本地下单
@@ -328,6 +429,8 @@ class OrderController extends GeneralController
         ];
     }
 
+    // --↓↓- WeChat Payment -↓↓--
+
     /**
      * 微信下单
      *
@@ -341,60 +444,6 @@ class OrderController extends GeneralController
         list($outTradeNo, $body, $price) = $this->localOrder(self::PAY_CODE_WX);
 
         return $this->wxPay($outTradeNo, $body, $price);
-    }
-
-    /**
-     * 支付宝下单
-     *
-     * @access  public
-     * @link    http://leon.m.kakehotels.com/order/ali?xxx
-     * @license link create by $this->createSafeLink()
-     * @return string
-     */
-    public function actionAli()
-    {
-        list($outTradeNo) = $this->localOrder(self::PAY_CODE_ALI, false);
-
-        $url = $this->createSafeLink([
-            'order_number' => $outTradeNo,
-            'first' => true
-        ], 'order/ali-pay', false);
-
-        return $this->redirect($url);
-    }
-
-    /**
-     * 获取主订单详情
-     *
-     * @access public
-     *
-     * @param string $param
-     * @param string $field
-     *
-     * @return array
-     */
-    public function getOrder($param, $field = 'id')
-    {
-        if (empty($param)) {
-            $this->error(Yii::t('common', 'order param required'));
-        }
-
-        $detail = $this->service('order.detail', [
-            'join' => [
-                ['table' => 'product'],
-            ],
-            'select' => [
-                'product.*',
-                'order.*'
-            ],
-            'order' => 'order.id DESC',
-            'where' => [
-                ['order.' . $field => $param],
-                ['order.state' => 1]
-            ]
-        ], 'no');
-
-        return $detail;
     }
 
     /**
@@ -479,27 +528,50 @@ class OrderController extends GeneralController
     }
 
     /**
-     * 微信支付结果页面
-     *
-     * @param string $order_number
-     *
-     * @return void
+     * 微信支付回调
      */
-    public function actionWxPayResult($order_number)
+    public function actionWxPaid()
     {
-        $this->message([
-            '订单支付 %s 或者遇到错误需 %s',
-            [
-                'text' => '已经完成',
-                'router' => ['order/index']
-            ],
-            [
-                'text' => '重新支付',
-                'router' => $this->createSafeLink([
-                    'order_number' => $order_number
-                ], 'order/wx-pay/')
-            ]
-        ]);
+        $payment = Yii::$app->wx->payment;
+        $response = $payment->handleNotify(function ($notify, $successful) {
+
+            $result = $this->service('order.pay-handler', [
+                'order_number' => $notify->out_trade_no,
+                'paid_result' => $successful
+            ]);
+
+            if (is_string($result)) {
+                Yii::error(Yii::t('common', $result));
+
+                return $result;
+            }
+
+            return true;
+        });
+
+        return $response;
+    }
+
+    // --↓↓- Ali Payment -↓↓--
+
+    /**
+     * 支付宝下单
+     *
+     * @access  public
+     * @link    http://leon.m.kakehotels.com/order/ali?xxx
+     * @license link create by $this->createSafeLink()
+     * @return string
+     */
+    public function actionAli()
+    {
+        list($outTradeNo) = $this->localOrder(self::PAY_CODE_ALI, false);
+
+        $url = $this->createSafeLink([
+            'order_number' => $outTradeNo,
+            'first' => true
+        ], 'order/ali-pay', false);
+
+        return $this->redirect($url);
     }
 
     /**
@@ -510,13 +582,23 @@ class OrderController extends GeneralController
      */
     public function actionAliPay()
     {
-        if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
-            $this->sourceCss = ['order/open-with-browser'];
+        $params = $this->validateSafeLink(false);
 
-            return $this->render('open-with-browser');
+        // 微信浏览器
+        if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
+
+            $this->mustLogin();
+
+            $this->sourceCss = ['order/open-with-browser'];
+            $this->sourceJs = ['order/index'];
+
+            return $this->render('open-with-browser', [
+                'order_number' => $params['order_number'],
+                'user_id' => $this->user->id,
+                'time' => date('Y-m-d H:i:s')
+            ]);
         }
 
-        $params = $this->validateSafeLink(false);
         $order = $this->getOrder($params['order_number'], 'order_number');
 
         // 查询订单
@@ -559,70 +641,21 @@ class OrderController extends GeneralController
     }
 
     /**
-     * 立即支付
+     * 支付宝轮询订单支付状态
      */
-    public function actionAjaxPaymentAgain()
+    public function actionAjaxPollOrder()
     {
-        $paymentMethod = Yii::$app->request->post('payment_method');
-        $orderNumber = Yii::$app->request->post('order_number');
+        $params = Yii::$app->request->post();
+        $result = $this->service('order.poll-order', $params);
 
-        $method = [
-            0 => 'wx',
-            1 => 'ali'
-        ];
-
-        if (!isset($method[$paymentMethod])) {
-            $this->error(Yii::t('common', 'param illegal', ['param' => 'payment_method']));
+        if ($result) {
+            $this->success(Url::to([
+                'order/pay-result',
+                'order_number' => $params['order_number'],
+                'payment_method' => 'wx'
+            ]));
         }
-        $paymentMethod = $method[$paymentMethod];
-
-        $this->success($this->createSafeLink([
-            'order_number' => $orderNumber
-        ], 'order/' . $paymentMethod . '-pay/', $paymentMethod == 'ali' ? false : true));
-    }
-
-    /**
-     * 取消订单
-     */
-    public function actionAjaxCancelOrder()
-    {
-        $orderNumber = Yii::$app->request->post('order_number');
-
-        $result = $this->service('order.cancel-order', [
-            'user_id' => $this->user->id,
-            'order_number' => $orderNumber
-        ]);
-
-        if (is_string($result)) {
-            $this->fail($result);
-        }
-
-        $this->success(null, 'cancel order success');
-    }
-
-    /**
-     * 微信支付回调
-     */
-    public function actionWxPaid()
-    {
-        $payment = Yii::$app->wx->payment;
-        $response = $payment->handleNotify(function ($notify, $successful) {
-
-            $result = $this->service('order.pay-handler', [
-                'order_number' => $notify->out_trade_no,
-                'paid_result' => $successful
-            ]);
-
-            if (is_string($result)) {
-                Yii::error(Yii::t('common', $result));
-
-                return $result;
-            }
-
-            return true;
-        });
-
-        return $response;
+        $this->fail('order non-exists');
     }
 
     /**
@@ -651,26 +684,34 @@ class OrderController extends GeneralController
         }
     }
 
+    // --↓↓- Common Payment -↓↓--
+
     /**
-     * @inheritdoc
+     * 支付结果页面
+     *
+     * @param string $order_number
+     * @param string $payment_method
+     *
+     * @return void
      */
-    public function beforeAction($action)
+    public function actionPayResult($order_number, $payment_method = 'ali')
     {
-        if (!in_array($action->id, [
-            'ali-pay',
-            'ali-paid'
-        ])
-        ) {
-            $this->mustLogin();
+        if (!in_array($payment_method, self::$paymentMethod)) {
+            $this->error(Yii::t('common', 'param illegal', ['param' => 'payment_method']));
         }
 
-        if (in_array($action->id, [
-            'wx-paid',
-            'ali-paid'
-        ])) {
-            $action->controller->enableCsrfValidation = false;
-        }
-
-        return parent::beforeAction($action);
+        $this->message([
+            '订单支付 %s 或者遇到错误需 %s',
+            [
+                'text' => '已经完成',
+                'router' => ['order/index']
+            ],
+            [
+                'text' => '重新支付',
+                'router' => $this->createSafeLink([
+                    'order_number' => $order_number
+                ], 'order/' . $payment_method . '-pay/', $payment_method == 'ali' ? true : false)
+            ]
+        ]);
     }
 }

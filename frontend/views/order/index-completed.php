@@ -14,7 +14,7 @@ $params = \Yii::$app->params;
              src="<?= $params['frontend_source'] ?>/img/menu1.svg"/>
     </div>
 </header>
-<div class="classify">
+<div class="classify" kk-fixed>
     <div class="classify-1">
         <a class="classify-1-1" href="<?= Url::to([
             'order/index',

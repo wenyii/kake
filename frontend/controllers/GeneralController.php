@@ -426,7 +426,6 @@ class GeneralController extends MainController
         $condition['where'] = $where;
 
         list($condition['offset'], $condition['limit']) = Helper::page($page, $page_size ?: Yii::$app->params['order_page_size']);
-
         $list = $this->service('order.list', $condition, 'no');
 
         $controller = $this->controller('order');
