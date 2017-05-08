@@ -94,7 +94,25 @@ class ProductController extends GeneralController
      */
     public static function saleReverseWhereLogic($index)
     {
+        $now = date('Y-m-d H:i:s', TIME);
         $indexes = [
+            0 => [
+                [
+                    'or',
+                    ['product.sale_rate' => null],
+                    ['product.sale_rate' => 0],
+                    [
+                        '>',
+                        'product.sale_from',
+                        $now
+                    ],
+                    [
+                        '<',
+                        'product.sale_to',
+                        $now
+                    ]
+                ]
+            ],
             1 => [
                 [
                     '>',
@@ -104,12 +122,12 @@ class ProductController extends GeneralController
                 [
                     '<',
                     'product.sale_from',
-                    date('Y-m-d H:i:s', TIME)
+                    $now
                 ],
                 [
                     '>',
                     'product.sale_to',
-                    date('Y-m-d H:i:s', TIME)
+                    $now
                 ]
             ]
         ];
@@ -169,7 +187,7 @@ class ProductController extends GeneralController
                 'value' => 'product-package/index',
                 'level' => 'info',
                 'icon' => 'link',
-                'params' => function($record) {
+                'params' => function ($record) {
                     return ['product_id' => $record['id']];
                 }
             ],
@@ -657,7 +675,7 @@ class ProductController extends GeneralController
             // 生成其他图附件地址
             $record = $this->createAttachmentUrls($record, ['attachment_ids' => 'slave']);
             // 获取套餐数据
-            $record = $this->listForeignData($record, 'package', function($item) {
+            $record = $this->listForeignData($record, 'package', function ($item) {
                 return Helper::pullSome($item, [
                     'sale_type',
                     'sale_rate',
