@@ -13,13 +13,11 @@ $params = \Yii::$app->params;
             <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
             </div>
         </div>
-        <div class="carousel" id="focus-hot" kk-focus=".point" style="overflow:hidden">
-            <div class="carousel-scroller">
-
+        <div class="carousel" id="focus-hot" kk-focus style="overflow:hidden">
+            <div class="carousel-scroller product-focus">
                 <?php if (!empty($detail['slave_preview_url'])): ?>
                     <?php foreach ($detail['slave_preview_url'] as $photo): ?>
-                        <img style="width: 25%;float:left"
-                             src="<?= $photo ?>"/>
+                        <img src="<?= $photo ?>"/>
                     <?php endforeach ?>
                 <?php endif; ?>
             </div>

@@ -302,7 +302,7 @@ class GeneralController extends MainController
      * @access public
      *
      * @param integer $page
-     * @param integer $page_size
+     * @param integer $pageSize
      * @param integer $manifestation
      * @param integer $classify
      * @param boolean $sale
@@ -310,17 +310,55 @@ class GeneralController extends MainController
      *
      * @return array
      */
-    public function listProduct($page = 1, $page_size = null, $manifestation = null, $classify = null, $sale = null, $keyword = null)
+    public function listProduct($page = 1, $pageSize = null, $manifestation = null, $classify = null, $sale = null, $keyword = null)
     {
-        list($offset, $limit) = Helper::page($page, $page_size ?: Yii::$app->params['product_page_size']);
-        $params = compact('manifestation', 'classify', 'sale', 'keyword', 'limit', 'offset');
+        $where = [];
+
+        if (is_numeric($manifestation)) {
+            $where[] = ['product.manifestation' => $manifestation];
+        }
+
+        if (is_numeric($classify)) {
+            $where[] = ['product.classify' => $classify];
+        }
+
+        if (isset($sale)) {
+            $controller = $this->controller('product');
+            $_where = $this->callStatic('saleReverseWhereLogic', [], [$sale ? 1 : 0], $controller);
+            $where = array_merge($where, $_where);
+        }
+
+        if (isset($keyword)) {
+            $where[] = [
+                'or',
+                [
+                    'like',
+                    'product.title',
+                    $keyword
+                ],
+                [
+                    'like',
+                    'product.info',
+                    $keyword
+                ],
+                [
+                    'like',
+                    'product.destination',
+                    $keyword
+                ]
+            ];
+        }
+
+        $condition = DetailController::$productListCondition;
+        $condition['where'] = array_merge($condition['where'], $where);
+        list($condition['offset'], $condition['limit']) = Helper::page($page, $pageSize ?: Yii::$app->params['product_page_size']);
 
         return $this->cache([
             'list-product',
             func_get_args()
-        ], function () use ($params) {
+        ], function () use ($condition) {
             $controller = $this->controller('product-package');
-            $list = $this->service('product.product-list', $params, 'no');
+            $list = $this->service('product.list', $condition, 'no');
             foreach ($list as $key => &$item) {
                 if (empty($item['price'])) {
                     unset($list[$key]);
