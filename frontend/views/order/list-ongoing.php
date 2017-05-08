@@ -22,8 +22,8 @@ $params = \Yii::$app->params;
                 <div class="apply-refund-right">
                     <div class="apply-refund-right-1"><?= $item['title'] ?></div>
                     <p>订单金额: <span>￥<?= $item['price'] ?></span></p>
-                    <p>酒店: <span><?= $item['hotel_name'] ?></span></p>
-                    <p>套餐: <span><?= $item['package_name'] ?></span></p>
+                    <p>酒店名称: <span><?= $item['hotel_name'] ?></span></p>
+                    <p>套餐名称: <span><?= $item['package_name'] ?></span></p>
                     <p>订单编号: <span><?= $item['order_number'] ?></span></p>
                 </div>
             </div>
@@ -59,7 +59,7 @@ $params = \Yii::$app->params;
                     </div>
                     <div class="invoice-confirm">
                         <p></p>
-                        <span kk-tap="applyRefund(<?= $item['id'] ?>)">确定</span>
+                        <span kk-tap="applyRefund(<?= $item['id'] ?>)">提交</span>
                     </div>
                 </div>
 
@@ -72,16 +72,16 @@ $params = \Yii::$app->params;
                         <input type="text" ng-model="<?= $sub ?>.name" placeholder="请填写入住人姓名"/>
                     </div>
                     <div class="invoice-address">
-                        <p>入住人联系方式:</p>
+                        <p>入住人电话:</p>
                         <input type="text" ng-model="<?= $sub ?>.phone" placeholder="请填写入住人联系方式"/>
                     </div>
                     <div class="invoice-address">
-                        <p>入住时间:</p>
+                        <p>入住预约日:</p>
                         <input type="date" ng-model="<?= $sub ?>.date" placeholder="请选择入住日期"/>
                     </div>
                     <div class="invoice-confirm">
                         <p></p>
-                        <span kk-tap="applyOrder(<?= $item['id'] ?>)">确定</span>
+                        <span kk-tap="applyOrder(<?= $item['id'] ?>)">提交</span>
                     </div>
                 </div>
 
@@ -91,15 +91,15 @@ $params = \Yii::$app->params;
 
                 <div class="order-status-button">
                     <div>
-                        <button class="appointment-button" kk-tap="<?= $info ?> = !<?= $info ?>">查看信息</button>
+                        <button class="appointment-button" kk-tap="<?= $info ?> = !<?= $info ?>">预约信息</button>
                     </div>
                 </div>
 
                 <div class="refund-schedule kk-animate" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
                     <div class="refund-schedule-name">
-                        <p>入住人：<?= $item['check_in_name'] ?></p>
+                        <p>入住人姓名：<?= $item['check_in_name'] ?></p>
                         <p>入住人电话：<?= $item['check_in_phone'] ?></p>
-                        <p>入住时间：<?= $item['check_in_time'] ?></p>
+                        <p>入住预约日：<?= $item['check_in_time'] ?></p>
                     </div>
                 </div>
 
@@ -116,9 +116,9 @@ $params = \Yii::$app->params;
 
                 <div class="refund-schedule kk-animate" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
                     <div class="refund-schedule-name">
-                        <p>入住人：<?= $item['check_in_name'] ?></p>
+                        <p>入住人姓名：<?= $item['check_in_name'] ?></p>
                         <p>入住人电话：<?= $item['check_in_phone'] ?></p>
-                        <p>入住时间：<?= $item['check_in_time'] ?></p>
+                        <p>入住预约日：<?= $item['check_in_time'] ?></p>
                     </div>
                 </div>
 
@@ -136,7 +136,7 @@ $params = \Yii::$app->params;
 
                 <div class="order-status-button">
                     <div>
-                        <button class="appointment-button" kk-tap="<?= $info ?> = !<?= $info ?>">查看信息</button>
+                        <button class="appointment-button" kk-tap="<?= $info ?> = !<?= $info ?>">退款信息</button>
                     </div>
                 </div>
 
