@@ -21,6 +21,56 @@ class DetailController extends GeneralController
     }
 
     /**
+     * @var array 产品列表查询条件
+     */
+    public static $productListCondition = [
+        'join' => [
+            [
+                'table' => 'product_package',
+                'sub' => [
+                    'select' => [
+                        'product_id',
+                        'min(price) AS price'
+                    ],
+                    'group' => 'product_id'
+                ],
+                'left_on_field' => 'id',
+                'right_on_field' => 'product_id'
+            ],
+            [
+                'table' => 'attachment',
+                'as' => 'cover',
+                'left_on_field' => 'attachment_cover',
+                'right_on_field' => 'id'
+            ],
+            [
+                'table' => 'hotel',
+                'left_on_field' => 'hotel_id',
+                'right_on_field' => 'id'
+            ]
+        ],
+        'select' => [
+            'product.id',
+            'product.title',
+            'product.attachment_cover',
+            'product.sale_type',
+            'product.sale_rate',
+            'product.sale_from',
+            'product.sale_to',
+            'product.virtual_sales',
+            'product.real_sales',
+            'product_package.price',
+            'cover.deep_path AS cover_deep_path',
+            'cover.filename AS cover_filename',
+            'hotel.name'
+        ],
+        'where' => [
+            ['product.state' => 1]
+        ],
+        'order' => 'product.top DESC, product.update_time DESC'
+    ];
+
+    /**
      * Displays detail.
      */
     public function actionIndex()

@@ -58,8 +58,8 @@ class BillController extends GeneralController
             0 => [
                 [
                     'or',
-                    'bill.courier_number=""',
-                    'bill.courier_number IS NULL',
+                    ['bill.courier_number' => ''],
+                    ['bill.courier_number' => null],
                 ]
             ],
             1 => [
