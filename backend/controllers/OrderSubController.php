@@ -42,13 +42,23 @@ class OrderSubController extends GeneralController
                 'params' => ['order_number']
             ],
             [
+                'text' => '日志',
+                'value' => 'order-instructions-log/index',
+                'params' => function ($record) {
+                    return ['order_sub_id' => $record['id']];
+                },
+                'level' => 'default',
+                'icon' => 'paperclip'
+            ],
+            [
                 'text' => '同意预约',
                 'value' => 'agree-order',
                 'level' => 'success confirm-button',
                 'icon' => 'thumbs-up',
                 'show_condition' => function ($record) {
                     return $record['state'] == 1;
-                }
+                },
+                'br' => true
             ],
             [
                 'text' => '拒绝预约',
@@ -70,22 +80,14 @@ class OrderSubController extends GeneralController
                 }
             ],
             [
-                'text' => '日志',
-                'value' => 'order-instructions-log/index',
-                'params' => function ($record) {
-                    return ['order_sub_id' => $record['id']];
-                },
-                'level' => 'default',
-                'icon' => 'paperclip'
-            ],
-            [
                 'text' => '同意退款',
                 'value' => 'agree-refund',
                 'level' => 'success confirm-button',
                 'icon' => 'thumbs-up',
                 'show_condition' => function ($record) {
                     return $record['state'] == 3;
-                }
+                },
+                'br' => true
             ],
             [
                 'text' => '拒绝退款',
