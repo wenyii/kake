@@ -280,9 +280,7 @@ $action = \Yii::$app->controller->action->id;
 
                 <?php if (!empty($operation)): ?>
                     <td>
-                        <div <?= $getStyle([
-                            'max-width' => '250px'
-                        ]) ?> class="operation">
+                        <div class="operation">
                             <?php foreach ($operation as $value): ?>
                                 <?php
                                 $show = true;
@@ -315,7 +313,7 @@ $action = \Yii::$app->controller->action->id;
 
                                 $icon = empty($value['icon']) ? null : '<span class="glyphicon glyphicon-' . $value['icon'] . '"></span>';
                                 ?>
-
+                                <?= !empty($value['br']) ? '<br>' : null ?>
                                 <a href="<?= $url ?>"
                                    class="btn btn-<?= $level ?> btn-xs"><?= $icon ?> <?= $value['text'] ?></a>
                             <?php endforeach; ?>

@@ -22,8 +22,8 @@ $params = \Yii::$app->params;
                 <div class="apply-refund-right">
                     <div class="apply-refund-right-1"><?= $item['title'] ?></div>
                     <p>订单金额: <span>￥<?= $item['price'] ?></span></p>
-                    <p>酒店: <span><?= $item['hotel_name'] ?></span></p>
-                    <p>套餐: <span><?= $item['package_name'] ?></span></p>
+                    <p>酒店名称: <span><?= $item['hotel_name'] ?></span></p>
+                    <p>套餐名称: <span><?= $item['package_name'] ?></span></p>
                     <p>订单编号: <span><?= $item['order_number'] ?></span></p>
                 </div>
             </div>
@@ -34,7 +34,7 @@ $params = \Yii::$app->params;
 
                 <div class="order-status-button">
                     <div>
-                        <button class="appointment-button" kk-tap="<?= $info ?> = !<?= $info ?>">查看信息</button>
+                        <button class="appointment-button" kk-tap="<?= $info ?> = !<?= $info ?>">退款说明</button>
                     </div>
                 </div>
 
@@ -62,7 +62,7 @@ $params = \Yii::$app->params;
                         <?php $company = $sub . '.company' ?>
 
                         <div class="invoice-name">
-                            选择发票抬头:
+                            发票抬头:
                         </div>
                         <div class="invoice-title">
                             <span kk-tap="<?= $company ?> = 0" ng-class="{active: !<?= $company ?>}">个人</span>
@@ -78,7 +78,7 @@ $params = \Yii::$app->params;
                         </div>
                         <div class="invoice-confirm">
                             <p></p>
-                            <span kk-tap="applyBill(<?= $item['id'] ?>)">确定</span>
+                            <span kk-tap="applyBill(<?= $item['id'] ?>)">提交</span>
                         </div>
                     </div>
 
@@ -86,7 +86,7 @@ $params = \Yii::$app->params;
 
                     <div class="order-status-button">
                         <div>
-                            <button class="invoice-schedule" kk-tap="<?= $schedule ?> = !<?= $schedule ?>">查看发票进度
+                            <button class="invoice-schedule" kk-tap="<?= $schedule ?> = !<?= $schedule ?>">发票进度
                             </button>
                         </div>
                     </div>
