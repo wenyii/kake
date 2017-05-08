@@ -4,6 +4,7 @@
 use yii\helpers\Url;
 
 $params = \Yii::$app->params;
+\Yii::$app->params['ng_ctrl'] = 'generic';
 ?>
 
 <div class="body">
@@ -14,15 +15,15 @@ $params = \Yii::$app->params;
     </div>
 
     <?php if (!empty($focusList)): ?>
-        <div class="carousel" id="focus-hot" kk-focus=".point" style="overflow:hidden">
-            <div class="carousel-scroller">
+        <div class="carousel" id="focus-hot" kk-focus style="overflow:hidden">
+            <div class="carousel-scroller product-focus">
                 <?php foreach ($focusList as $focus): ?>
                     <a href="<?= Url::to([
                         'detail/index',
                         'id' => $focus['id']
                     ]) ?>">
-                        <img style="width: 25%;float:left"
-                             src="<?= current($focus['cover_preview_url']) ?>"/></a>
+                        <img src="<?= current($focus['cover_preview_url']) ?>"/>
+                    </a>
                 <?php endforeach ?>
             </div>
         </div>
@@ -62,7 +63,7 @@ $params = \Yii::$app->params;
 <?php endif; ?>
 
 <?php if (!empty($banner)): ?>
-    <div class="carousel" id="carousel-scroller-activity" kk-scroll>
+    <div class="carousel-scroll" id="carousel-scroller-activity" kk-scroll>
         <div class="carousel-scroller activity">
             <?php foreach ($banner as $item): ?>
                 <a href="<?= $item['url'] ?>">

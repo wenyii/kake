@@ -661,7 +661,7 @@ class OrderController extends GeneralController
             $this->success(Url::to([
                 'order/pay-result',
                 'order_number' => $params['order_number'],
-                'payment_method' => 'wx'
+                'payment_method' => 'ali'
             ]));
         }
         $this->fail('order non-exists');
@@ -703,7 +703,7 @@ class OrderController extends GeneralController
      *
      * @return void
      */
-    public function actionPayResult($order_number, $payment_method = 'ali')
+    public function actionPayResult($order_number, $payment_method = 'wx')
     {
         if (!in_array($payment_method, self::$paymentMethod)) {
             $this->error(Yii::t('common', 'param illegal', ['param' => 'payment_method']));
@@ -719,7 +719,7 @@ class OrderController extends GeneralController
                 'text' => '重新支付',
                 'router' => $this->createSafeLink([
                     'order_number' => $order_number
-                ], 'order/' . $payment_method . '-pay/', $payment_method == 'ali' ? true : false)
+                ], 'order/' . $payment_method . '-pay/', $payment_method == 'wx' ? true : false)
             ]
         ]);
     }
