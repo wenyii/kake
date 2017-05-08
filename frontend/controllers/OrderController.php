@@ -53,6 +53,15 @@ class OrderController extends GeneralController
             ],
             [
                 'table' => 'order_instructions_log',
+                'sub' => [
+                    'select' => [
+                        'order_sub_id',
+                        'remark'
+                    ],
+                    'order' => 'add_time DESC',
+                    'group' => 'order_sub_id'
+                ],
+                'as' => 'log',
                 'left_on_field' => 'id',
                 'right_on_field' => 'order_sub_id'
             ]
@@ -81,7 +90,7 @@ class OrderController extends GeneralController
             'bill.invoice_title',
             'bill.address',
 
-            'order_instructions_log.remark',
+            'log.remark',
         ],
         'where' => [
             [
