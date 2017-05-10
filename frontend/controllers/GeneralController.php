@@ -303,55 +303,55 @@ class GeneralController extends MainController
      *
      * @param integer $page
      * @param integer $pageSize
-     * @param integer $manifestation
-     * @param integer $classify
-     * @param boolean $sale
-     * @param string  $keyword
+     * @param integer $time
+     * @param array   $options
      *
      * @return array
      */
-    public function listProduct($page = 1, $pageSize = null, $manifestation = null, $classify = null, $sale = null, $keyword = null)
+    public function listProduct($page = 1, $pageSize = null, $time = DAY, $options = [])
     {
         $where = [];
 
-        if (is_numeric($manifestation)) {
-            $where[] = ['product.manifestation' => $manifestation];
+        if (isset($options['manifestation']) && is_numeric($options['manifestation'])) {
+            $where[] = ['product.manifestation' => $options['manifestation']];
         }
 
-        if (is_numeric($classify)) {
-            $where[] = ['product.classify' => $classify];
+        if (isset($options['classify']) && is_numeric($options['classify'])) {
+            $where[] = ['product.classify' => $options['classify']];
         }
 
-        if (isset($sale)) {
+        if (isset($options['sale'])) {
             $controller = $this->controller('product');
-            $_where = $this->callStatic('saleReverseWhereLogic', [], [$sale ? 1 : 0], $controller);
+            $_where = $this->callStatic('saleReverseWhereLogic', [], [$options['sale'] ? 1 : 0], $controller);
             $where = array_merge($where, $_where);
         }
 
-        if (isset($keyword)) {
+        if (!empty($options['keyword'])) {
             $where[] = [
                 'or',
                 [
                     'like',
                     'product.title',
-                    $keyword
+                    $options['keyword']
                 ],
                 [
                     'like',
                     'product.info',
-                    $keyword
+                    $options['keyword']
                 ],
                 [
                     'like',
                     'product.destination',
-                    $keyword
+                    $options['keyword']
                 ]
             ];
         }
 
         $condition = DetailController::$productListCondition;
         $condition['where'] = array_merge($condition['where'], $where);
-        list($condition['offset'], $condition['limit']) = Helper::page($page, $pageSize ?: Yii::$app->params['product_page_size']);
+
+        $pageParams = Helper::page($page, $pageSize ?: Yii::$app->params['product_page_size']);
+        list($condition['offset'], $condition['limit']) = $pageParams;
 
         return $this->cache([
             'list-product',
@@ -374,7 +374,7 @@ class GeneralController extends MainController
             }
 
             return $list;
-        }, DAY);
+        }, $time);
     }
 
     /**

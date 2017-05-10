@@ -147,7 +147,9 @@ class MainController extends Controller
      * 解析提示数据中的链接
      *
      * @access public
+     *
      * @param array $message
+     *
      * @return string
      */
     public function messageParseLink($message)
@@ -170,7 +172,7 @@ class MainController extends Controller
      *
      * @param string  $message
      * @param integer $code
-     * @param string $trace
+     * @param string  $trace
      *
      * @return void
      */
@@ -1003,6 +1005,33 @@ class MainController extends Controller
         }
 
         $this->success(null, 'phone captcha send success');
+    }
+
+    /**
+     * Debug
+     *
+     * @param callable $callback
+     * @param int      $userId
+     *
+     * @return mixed
+     */
+    public function debug($callback, $userId = 1)
+    {
+        if (!$this->user) {
+            return null;
+        }
+
+        if ($this->user->id != $userId) {
+            return false;
+        }
+
+        $result = call_user_func($callback);
+        if ($result === null) {
+            return false;
+        }
+        $this->dump($result, false, true);
+
+        return true;
     }
 
     /**

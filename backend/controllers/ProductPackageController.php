@@ -45,7 +45,7 @@ class ProductPackageController extends GeneralController
                 'value' => 'product/index',
                 'level' => 'info',
                 'icon' => 'link',
-                'params' => function($record) {
+                'params' => function ($record) {
                     return ['id' => $record['product_id']];
                 }
             ],
@@ -145,8 +145,12 @@ EOF
                 'value' => '选择酒店产品',
                 'script' => '$.showPage("product.list")'
             ],
-            'name',
-            'price',
+            'name' => [
+                'placeholder' => '32个字以内'
+            ],
+            'price' => [
+                'placeholder' => '保留到小数点后两位'
+            ],
             'purchase_limit' => [
                 'placeholder' => '留空或0表示不限制',
                 'tip' => '以用户为单位进行限购',
@@ -170,10 +174,12 @@ EOF
     {
         return [
             'name' => [
-                'label' => 5
+                'label' => 5,
+                'placeholder' => '32个字以内'
             ],
             'price' => [
-                'label' => 5
+                'label' => 5,
+                'placeholder' => '保留到小数点后两位'
             ],
             'purchase_limit' => [
                 'placeholder' => '留空或0表示不限制',
