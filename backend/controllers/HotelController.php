@@ -129,11 +129,16 @@ class HotelController extends GeneralController
     public static function editAssist($action = null)
     {
         return [
-            'name',
-            'principal',
+            'name' => [
+                'placeholder' => '64个字以内'
+            ],
+            'principal' => [
+                'placeholder' => '32个字以内'
+            ],
             'contact',
             'address' => [
-                'label' => 5
+                'label' => 5,
+                'placeholder' => '64个字以内'
             ],
             'state' => [
                 'elem' => 'select',

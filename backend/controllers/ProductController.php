@@ -394,7 +394,7 @@ class ProductController extends GeneralController
                 'tip' => [
                     '此处填写的是折扣掉的值',
                     '',
-                    '<span class=text-danger>打折效果对所有套餐生效</span>',
+                    '<span class=text-danger>打折效果对所有套餐生效，保留到小数点后两位</span>',
                     '固定折扣价' => '按实际需要折扣的金额额度直接填写',
                     '百分比折扣' => '如需打 85 折则填写 15 (100-85)',
                 ]
@@ -485,7 +485,7 @@ class ProductController extends GeneralController
                 'rules' => [
                     'suffix' => 'jpg,jpeg,png',
                     'pic_sizes' => '750*500',
-                    'max_size' => 256
+                    'max_size' => 512
                 ],
                 'preview_name' => 'cover_preview_url',
                 'field_name' => 'attachment_cover'
@@ -522,7 +522,7 @@ class ProductController extends GeneralController
                 'rules' => [
                     'suffix' => 'jpg,jpeg,png',
                     'pic_sizes' => '750*500',
-                    'max_size' => 256
+                    'max_size' => 512
                 ],
                 'preview_name' => 'slave_preview_url',
                 'field_name' => 'attachment_ids',
@@ -647,7 +647,7 @@ class ProductController extends GeneralController
             $record['sale_rate'] = 0;
         }
 
-        if ($action === 'edit' && empty($record['package_ids']) && empty($record['new_package_ids'])) {
+        if (in_array($action, ['add', 'edit']) && empty($record['package_ids']) && empty($record['new_package_ids'])) {
             Yii::$app->session->setFlash('warning', '酒店产品至少设定一个套餐');
             $this->goReference('product/edit');
         }

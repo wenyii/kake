@@ -207,7 +207,11 @@ $action = \Yii::$app->controller->action->id;
                     </td>
                 <?php endif; ?>
                 <td>
-                    <?= ($page->getPage() * $page->getPageSize()) + $key + 1 ?>
+                    <?php
+                    $number =  ($page->getPage() * $page->getPageSize()) + $key + 1;
+                    $number = str_pad($number, 3, '0', STR_PAD_LEFT);
+                    ?>
+                    <p class="text-muted"><?= $number ?></p>
                 </td>
 
                 <?php foreach ($assist as $field => $value): ?>

@@ -1534,7 +1534,7 @@ class GeneralController extends MainController
         if (!empty(static::$listFunctionName)) {
             $result = $this->callMethod(static::$listFunctionName, 'function non-exists');
         } else {
-            $result = $this->service(static::$listApiName, array_merge($params, $condition, $get));
+            $result = $this->service(static::$listApiName, array_merge($params, $condition, $get), 'no');
         }
         if (is_string($result)) {
             $this->error(Yii::t('common', $result));
@@ -1698,7 +1698,7 @@ class GeneralController extends MainController
         if (!empty(static::$getFunctionName)) {
             $result = $this->callMethod(static::$getFunctionName, 'function non-exists');
         } else {
-            $result = $this->service(static::$getApiName, ArrayHelper::merge($params, $condition));
+            $result = $this->service(static::$getApiName, ArrayHelper::merge($params, $condition), 'no');
         }
         if (is_string($result)) {
             $this->error(Yii::t('common', $result));
