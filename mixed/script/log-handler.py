@@ -14,16 +14,18 @@ sys.setrecursionlimit(1000000)
 
 config_map = {
     'kake': dict(
-        host = 'localhost',
+        host = 'maiqi-kake-external.mysql.rds.aliyuncs.com',
         user = 'maiqi_kake_write',
         passwd = 'maiqi@KAKE2016',
-        db = 'kake'
+        db = 'maiqi_kake',
+        charset = 'utf8'
     ),
     'service': dict(
-        host = 'localhost',
-        user = 'maiqi_service_write',
+        host = 'maiqi-kake-external.mysql.rds.aliyuncs.com',
+        user = 'maiqi_service_w',
         passwd = 'maiqi@SERVICE2016',
-        db = 'service'
+        db = 'maiqi_service',
+        charset = 'utf8'
     )
 }
 

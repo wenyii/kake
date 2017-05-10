@@ -50,7 +50,7 @@ $params = \Yii::$app->params;
             <div class=" detail-hotel-1">
  <span> <img
          src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
-                简介
+                产品简介
             </div>
             <div class=" detail-hotel-2">
                 <?= $detail['info'] ?>
