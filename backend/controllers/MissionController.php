@@ -108,7 +108,7 @@ class MissionController extends GeneralController
     private function flushLog($projectName, $db, $maxLogFiles = 20)
     {
         $script = Yii::getAlias('@script/log-handler.py');
-        $logPath = Yii::getAlias('@root/maiqi-' . $projectName . '/runtime/logs');
+        $logPath = Yii::getAlias('@root/' . $projectName . '/runtime/logs');
 
         // `> /dev/null 2>&1 &` 是为不阻塞执行 shell
         $cmd = sprintf('python %s %s %s %d > /dev/null 2>&1 &', ...[

@@ -408,7 +408,7 @@ class OrderController extends GeneralController
 
             $_package[$id] = $packageData[$id];
             $_package[$id]['number'] = $number;
-            $_package[$id]['price'] = intval($packageData[$id]['price'] * 100);
+            $_package[$id]['price'] = intval($packageData[$id]['min_price'] * 100);
 
             $price += $_package[$id]['price'] * $number;
         }

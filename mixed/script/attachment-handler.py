@@ -21,10 +21,16 @@ if 2 not in range(len(sys.argv)):
 
 config = {
     'kake': dict(
-        host = 'localhost',
+        host = 'maiqi-kake-external.mysql.rds.aliyuncs.com',
         user = 'maiqi_kake_write',
         passwd = 'maiqi@KAKE2016',
-        db = 'kake'
+        db = 'maiqi_kake'
+    ),
+    'service': dict(
+        host = 'maiqi-kake-external.mysql.rds.aliyuncs.com',
+        user = 'maiqi_service_w',
+        passwd = 'maiqi@SERVICE2016',
+        db = 'maiqi_service'
     )
 }
 
