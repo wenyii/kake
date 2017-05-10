@@ -360,11 +360,13 @@ class ProductController extends GeneralController
 
         return [
             'title' => [
-                'placeholder' => '64个字以内'
+                'placeholder' => '64个字以内',
+                'label' => 4
             ],
             'info' => [
                 'elem' => 'textarea',
-                'placeholder' => '256个字以内'
+                'placeholder' => '256个字以内',
+                'row' => 6
             ],
             'destination' => [
                 'placeholder' => '32个字以内'
@@ -454,16 +456,25 @@ class ProductController extends GeneralController
             ],
             'stock' => [
                 'value' => 0,
+                'placeholder' => '抢购商品硬性库存'
             ],
             'virtual_sales' => [
-                'value' => rand(99, 999)
+                'value' => rand(99, 999),
+                'tip' => [
+                    '前台显示销量规则',
+                    '',
+                    '虚拟销量 > 真实销量' => '虚拟销量 + 真实销量',
+                    '虚拟销量 ≤ 真实销量' => '真实销量'
+                ]
             ],
             'night_times' => [
                 'value' => 1,
+                'placeholder' => '套餐晚间次数'
             ],
             'manifestation' => [
                 'elem' => 'select',
-                'value' => 0
+                'value' => 0,
+                'tip' => '针对首页显示的位置'
             ],
 
             'attachment_cover' => [
