@@ -179,7 +179,7 @@ class Main extends ActiveRecord
         if (false === $data) {
             Yii::trace('缓存命中失败并重新获取写入: ' . $key);
             $data = call_user_func($fetchFn);
-            $time = $time ?: Yii::$app->params['cache_time'];
+            $time = isset($time) ? $time : Yii::$app->params['cache_time'];
             $result = Yii::$app->cache->set($key, $data, $time, $dependent);
 
             if ($result === false) {
