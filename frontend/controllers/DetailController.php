@@ -11,16 +11,6 @@ use yii\helpers\ArrayHelper;
 class DetailController extends GeneralController
 {
     /**
-     * @inheritDoc
-     */
-    public function init()
-    {
-        parent::init();
-
-        $this->mustLogin();
-    }
-
-    /**
      * @var array 产品列表查询条件
      */
     public static $productListCondition = [
@@ -96,6 +86,8 @@ class DetailController extends GeneralController
      */
     public function actionChoosePackage()
     {
+        $this->mustLogin();
+
         $this->sourceCss = null;
         $this->sourceJs = [
             'detail/index'
@@ -112,6 +104,8 @@ class DetailController extends GeneralController
      */
     public function actionPrefixPayment()
     {
+        $this->mustLogin();
+
         // 联系人信息
         $contacts = Yii::$app->request->get('user_info');
         if (!is_numeric($contacts)) {
