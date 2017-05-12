@@ -52,12 +52,19 @@ return [
             ]
         ],
         'g' => [
+            'name' => '活动管理',
+            'sub' => [
+                'activity-lottery-code.index' => '抽奖码领取记录'
+            ]
+        ],
+        'h' => [
             'name' => '通用',
             'sub' => [
                 'ad.index' => '广告管理',
                 'attachment.index' => '附件管理',
+                'wx-menu.index' => '编辑服务号菜单'
             ]
-        ],
+        ]
     ],
 
     'service_app_id' => 'kk_096a64b5359a74d',
