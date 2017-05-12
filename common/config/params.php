@@ -11,9 +11,9 @@ return [
     'socks_token' => '#maiqi$kk',
     'use_cache' => true,
 
-    'app_title' => 'KAKE酒店预订',
-    'app_description' => 'KAKE酒店预订',
-    'app_keywords' => 'KAKE酒店预订',
+    'app_title' => 'KAKE旅行',
+    'app_description' => 'KAKE旅行',
+    'app_keywords' => 'KAKE旅行',
 
     'frontend_url' => "http://{$secondSite}.{$domain}",
     'frontend_source' => "http://{$secondSource}.{$domain}/kake-frontend",
