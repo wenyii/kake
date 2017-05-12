@@ -850,7 +850,7 @@ class GeneralController extends MainController
                     empty($value['type']) && $value['type'] = 'text';
 
                     if (!empty($get[$key])) {
-                        $value['value'] = $get[$key];
+                        $value['value'] = html($get[$key]);
                     }
 
                     $from = '_from';
