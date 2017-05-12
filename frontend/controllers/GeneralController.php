@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\components\Helper;
 use common\controllers\MainController;
+use common\models\Main;
 use yii\helpers\ArrayHelper;
 use yii;
 use yii\helpers\Url;
@@ -53,6 +54,15 @@ class GeneralController extends MainController
     {
         $wx = Yii::$app->wx;
 
+        if (Yii::$app->request->get('signature')) {
+            $wx->listen(function ($message) {
+                return $this->replyEvent($message);
+            }, function ($message) use ($wx) {
+                return $this->replyText($message);
+            });
+        }
+
+        // 授权相关
         if (!Yii::$app->request->get('code')) {
             return;
         }
@@ -66,6 +76,81 @@ class GeneralController extends MainController
 
             $this->loginUser($result, isset($result['state']) ? 'we-chat-login' : 'we-chat-bind');
         }
+    }
+
+    /**
+     * 监听微信事件
+     *
+     * @param object $message
+     *
+     * @return string
+     */
+    private function replyEvent($message)
+    {
+        $reply = null;
+        switch (strtolower($message->Event)) {
+            case 'subscribe' :
+                $reply = '终于等到你~';
+                break;
+
+            case 'click' :
+                switch ($message->EventKey) {
+                    case 'get_lottery_code' :
+                        $reply = '回复贵公司简称获取抽奖码';
+                        break;
+                }
+                break;
+        }
+
+        return $reply;
+    }
+
+    /**
+     * 监听微信文本消息
+     *
+     * @param object $message
+     *
+     * @return string
+     */
+    private function replyText($message)
+    {
+        $user = Yii::$app->wx->user->get($message->FromUserName);
+
+        if (TIME < strtotime($startTime = '2017-05-13 09:00:00')) {
+            return '活动开始时间：' . $startTime;
+        }
+
+        if (TIME > strtotime($endTime = '2017-05-14 18:00:00')) {
+            return '本次活动已结束，感谢您的参与~';
+        }
+
+        $model = new Main('ActivityLotteryCode');
+        $text = trim($message->Content);
+
+        if (false === ($company = array_search($text, $model->_company))) {
+            return '请回复公司简称 - - !';
+        }
+
+        $result = $this->service('general.detail', [
+            'table' => $model->tableName,
+            'where' => [
+                ['openid' => $message->FromUserName]
+            ]
+        ]);
+
+        if (!empty($result)) {
+            return "您已参与抽奖，抽奖码为：{$result['code']}，请等待开奖。";
+        }
+
+        $code = $this->service('general.log-lottery-code', [
+            'openid' => $user->openid,
+            'nickname' => $user->nickname,
+            'company' => $company
+        ]);
+
+        $looks = $user->sex < 2 ? '帅' : '美';
+
+        return "虽然我妒忌你 {$user->nickname} 的才华和你的{$looks}，但是抽奖码还是要给你的：{$code}";
     }
 
     /**

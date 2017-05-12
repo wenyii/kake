@@ -30,6 +30,7 @@ class WeChat extends Object
     public function __construct($config = [])
     {
         $request = Yii::$app->request;
+
         if ($valid = $request->get('echostr')) {
             $signatureArray = [
                 $config['token'],
@@ -49,7 +50,38 @@ class WeChat extends Object
         $config['oauth']['callback'] = Yii::$app->params['wechat_callback'];
 
         $this->app = new Application($config);
+
         parent::__construct();
+    }
+
+    /**
+     * Listen message
+     *
+     * @param callable $replyEvent
+     * @param callable $replyText
+     *
+     * @return object
+     */
+    public function listen($replyEvent, $replyText)
+    {
+        $this->server->setMessageHandler(function ($message) use ($replyEvent, $replyText) {
+
+            $reply = null;
+            switch ($message->MsgType) {
+
+                case 'event':
+                    $reply = call_user_func($replyEvent, $message);
+                    break;
+
+                case 'text':
+                    $reply = call_user_func($replyText, $message);
+                    break;
+            }
+
+            return $reply;
+        });
+
+        return $this->server->serve()->send();
     }
 
     /**
