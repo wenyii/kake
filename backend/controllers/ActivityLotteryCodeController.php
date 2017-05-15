@@ -10,6 +10,8 @@ use yii\helpers\Html;
 /**
  * 活动抽奖码管理
  *
+ * @auth-inherit-except add
+ * @auth-inherit-except edit
  * @auth-inherit-except front
  */
 class ActivityLotteryCodeController extends GeneralController
