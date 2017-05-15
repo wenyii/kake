@@ -62,7 +62,7 @@ return [
             'sub' => [
                 'ad.index' => '广告管理',
                 'attachment.index' => '附件管理',
-                'wx-menu.index' => '编辑服务号菜单'
+                'wx-menu.index' => '服务号菜单',
             ]
         ]
     ],
