@@ -8,13 +8,12 @@ use Yii;
  * 服务号菜单管理
  *
  * @auth-inherit-except add
- * @auth-inherit-except edit
  * @auth-inherit-except front
  */
 class WxMenuController extends GeneralController
 {
     /**
-     * 菜单预览
+     * 服务号菜单预览
      *
      * @auth-pass-all
      */
@@ -34,17 +33,18 @@ class WxMenuController extends GeneralController
     }
 
     /**
-     * 菜单编辑
+     * 服务号菜单编辑
      */
     public function actionEdit()
     {
+        $wx = Yii::$app->wx;
         $menu = json_decode(Yii::$app->request->post('menu'), true);
         if (empty($menu)) {
             $this->error('菜单JSON代码为空或非法');
         }
 
-        Yii::$app->wx->menu->destroy();
-        $result = Yii::$app->wx->menu->add($menu);
+        $wx->menu->destroy();
+        $result = $wx->menu->add($menu);
 
         if ($result->errmsg == 'ok') {
             Yii::$app->session->setFlash('success', '菜单编辑成功，等待5分钟或重新关注后可见');

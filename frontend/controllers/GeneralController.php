@@ -7,7 +7,6 @@ use common\controllers\MainController;
 use common\models\Main;
 use yii\helpers\ArrayHelper;
 use yii;
-use yii\helpers\Url;
 
 /**
  * General controller
@@ -58,15 +57,14 @@ class GeneralController extends MainController
             $wx->listen(function ($message) {
                 return $this->replyEvent($message);
             }, function ($message) use ($wx) {
-                return $this->replyText($message);
+                return $this->replyText($message, $wx);
             });
         }
 
-        // 授权相关
+        // 授权请求
         if (!Yii::$app->request->get('code')) {
             return;
         }
-
         if (!$this->user) {
             $result = $wx->user();
             $result = $this->service('user.get-with-we-chat', $result);
@@ -109,12 +107,13 @@ class GeneralController extends MainController
      * 监听微信文本消息
      *
      * @param object $message
+     * @param object $wx
      *
      * @return string
      */
-    private function replyText($message)
+    private function replyText($message, $wx)
     {
-        $user = Yii::$app->wx->user->get($message->FromUserName);
+        $user = $wx->user->get($message->FromUserName);
 
         if (TIME < strtotime($startTime = '2017-05-13 09:00:00')) {
             return '活动开始时间：' . $startTime;
