@@ -87,7 +87,7 @@ class AliPay extends Object
 
         $params['product_code'] = 'QUICK_WAP_PAY';
         if (!isset($params['timeout_express'])) {
-            $params['timeout_express'] = '60m';
+            $params['timeout_express'] = '30m';
         }
 
         $this->request($params);

@@ -45,10 +45,12 @@ class WeChat extends Object
             }
         }
 
-        $config['payment']['cert_path'] = Yii::getAlias($config['payment']['cert_path']);
-        $config['payment']['key_path'] = Yii::getAlias($config['payment']['key_path']);
-        $config['oauth']['callback'] = Yii::$app->params['wechat_callback'];
-
+        // Payment
+        if (isset($config['payment']) && isset($config['oauth'])) {
+            $config['payment']['cert_path'] = Yii::getAlias($config['payment']['cert_path']);
+            $config['payment']['key_path'] = Yii::getAlias($config['payment']['key_path']);
+            $config['oauth']['callback'] = Yii::$app->params['wechat_callback'];
+        }
         $this->app = new Application($config);
 
         parent::__construct();

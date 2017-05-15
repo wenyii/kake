@@ -4,7 +4,7 @@
 use yii\helpers\Url;
 ?>
 
-<div class="title col-sm-offset-1"><span class="glyphicon glyphicon-cog"></span> 配置用户权限</div>
+<div class="title col-sm-offset-1"><span class="glyphicon glyphicon-cog"></span> 编辑菜单接口</div>
 
 <form class="form-horizontal" method="post" action="<?= Url::to(['/wx-menu/edit']) ?>">
 
