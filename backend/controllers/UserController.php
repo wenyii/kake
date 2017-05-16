@@ -23,13 +23,7 @@ class UserController extends GeneralController
      */
     public static function indexOperations()
     {
-        return [
-            [
-                'text' => '新增用户',
-                'value' => 'user/add',
-                'icon' => 'plus'
-            ]
-        ];
+        return [];
     }
 
     /**

@@ -1655,6 +1655,7 @@ class GeneralController extends MainController
             'add'
         ]);
 
+
         if (!empty(static::$addFunctionName)) {
             $result = $this->callMethod(static::$addFunctionName, 'function non-exists');
         } else {

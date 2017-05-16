@@ -163,7 +163,7 @@ if ($modal) {
             var <?= $av_name ?> =
             CKEDITOR.replace('<?= $av_name ?>', {
                 width: <?= $empty('width', 700) ?>,
-                height: <?= $empty('height', 200) ?>,
+                height: <?= $empty('height', 300) ?>,
                 files: []
             });
         </script>

@@ -47,45 +47,45 @@ $params = \Yii::$app->params;
     </div>
     <div class="detail-hotel_1 card_first">
         <div class="detail-hotel">
-            <div class=" detail-hotel-1">
+            <div class="detail-hotel-1">
  <span> <img
          src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
-                产品简介
+                费用包含
             </div>
-            <div class=" detail-hotel-2">
-                <?= $detail['info'] ?>
+            <div class="detail-hotel-2">
+                <?= $detail['cost'] ?>
             </div>
         </div>
         <div class="detail-hotel">
-            <div class=" detail-hotel-1">
+            <div class="detail-hotel-1">
  <span> <img
          src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
-                特色介绍
+                推荐理由
             </div>
-            <div class=" detail-hotel-2 detail-hotel_2">
-                <?= $detail['characteristic'] ?>
+            <div class="detail-hotel-2 detail-hotel_2">
+                <?= $detail['recommend'] ?>
             </div>
         </div>
     </div>
     <div class="notice card_second">
         <div class="detail-hotel">
-            <div class=" detail-hotel-1">
+            <div class="detail-hotel-1">
  <span> <img
          src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
-                券享说明
-            </div>
-            <div class="notice-money">
-                <?= $detail['enjoy'] ?>
-            </div>
-        </div>
-        <div class="detail-hotel">
-            <div class=" detail-hotel-1">
- <span> <img
-         src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
-                用券说明
+                使用说明
             </div>
             <div class="notice-money">
                 <?= $detail['use'] ?>
+            </div>
+        </div>
+        <div class="detail-hotel">
+            <div class="detail-hotel-1">
+ <span> <img
+         src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
+                改退规则
+            </div>
+            <div class="notice-money">
+                <?= $detail['back'] ?>
             </div>
         </div>
     </div>
