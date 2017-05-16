@@ -54,9 +54,7 @@ class GeneralController extends MainController
         $wx = Yii::$app->wx;
 
         if (Yii::$app->request->get('signature')) {
-            $wx->listen(function ($message) {
-                return $this->replyEvent($message);
-            }, function ($message) use ($wx) {
+            $wx->listen(null, function ($message) use ($wx) {
                 return $this->replyText($message, $wx);
             });
         }
@@ -77,33 +75,6 @@ class GeneralController extends MainController
     }
 
     /**
-     * 监听微信事件
-     *
-     * @param object $message
-     *
-     * @return string
-     */
-    private function replyEvent($message)
-    {
-        $reply = null;
-        switch (strtolower($message->Event)) {
-            case 'subscribe' :
-                $reply = '终于等到你~';
-                break;
-
-            case 'click' :
-                switch ($message->EventKey) {
-                    case 'get_lottery_code' :
-                        $reply = '回复贵公司简称获取抽奖码';
-                        break;
-                }
-                break;
-        }
-
-        return $reply;
-    }
-
-    /**
      * 监听微信文本消息
      *
      * @param object $message
@@ -113,21 +84,33 @@ class GeneralController extends MainController
      */
     private function replyText($message, $wx)
     {
-        $user = $wx->user->get($message->FromUserName);
-
+        // 时间判断
         if (TIME < strtotime($startTime = '2017-05-13 09:00:00')) {
             return '活动开始时间：' . $startTime;
         }
-
-        if (TIME > strtotime($endTime = '2017-05-14 18:00:00')) {
+        if (TIME > strtotime($endTime = '2018-05-13 18:00:00')) {
             return '本次活动已结束，感谢您的参与~';
         }
 
         $model = new Main('ActivityLotteryCode');
         $text = trim($message->Content);
 
-        if (false === ($company = array_search($text, $model->_company))) {
-            return '请回复公司简称 - - !';
+        // 格式判断
+        $char = substr_count($text, '+');
+        if ($char < 2) {
+            return '回复抽奖格式不正确' . PHP_EOL . '正确格式：公司简称+姓名+手机号码';
+        }
+
+        list($company, $name, $phone) = explode('+', $text);
+
+        // 公司代码验证
+        if (false === ($code = array_search($company, $model->_company))) {
+            return '该公司不在活动抽奖范围内~';
+        }
+
+        // 名字/手机号码验证
+        if (empty($name) || empty($phone)) {
+            return '名字和手机号码用于中奖联系，请妥善填写。';
         }
 
         $result = $this->service('general.detail', [
@@ -137,19 +120,21 @@ class GeneralController extends MainController
             ]
         ]);
 
+        // 已参与判断
         if (!empty($result)) {
             return "您已参与抽奖，抽奖码为：{$result['code']}，请等待开奖。";
         }
 
+        $user = $wx->user->get($message->FromUserName);
         $code = $this->service('general.log-lottery-code', [
             'openid' => $user->openid,
             'nickname' => $user->nickname,
-            'company' => $company
+            'company' => $code,
+            'real_name' => $name,
+            'phone' => $phone
         ]);
 
-        $looks = $user->sex < 2 ? '帅' : '美';
-
-        return "虽然我妒忌你 {$user->nickname} 的才华和你的{$looks}，但是抽奖码还是要给你的：{$code}";
+        return "参与成功，您的抽奖码：{$code}";
     }
 
     /**
@@ -564,22 +549,24 @@ class GeneralController extends MainController
      *
      * @access public
      *
-     * @param mixed $limit
+     * @param integer $type
+     * @param integer $limit
      *
      * @return array
      */
-    public function listBanner($limit = null)
+    public function listAd($type, $limit = null)
     {
         return $this->cache([
-            'list-banner',
+            'list-ad',
             $limit
-        ], function () use ($limit) {
+        ], function () use ($type, $limit) {
             $controller = $this->controller('ad');
             $condition = $this->callMethod('editCondition', [], null, $controller);
 
             $condition = ArrayHelper::merge($condition, [
                 'where' => [
                     ['ad.state' => 1],
+                    ['ad.type' => $type],
                     [
                         '<',
                         'ad.from',
@@ -594,12 +581,12 @@ class GeneralController extends MainController
                 'limit' => $limit
             ]);
 
-            $bannerList = $this->service('general.list-ad', $condition);
-            array_walk($bannerList, function (&$item) use ($controller) {
+            $adList = $this->service('general.list-ad', $condition);
+            array_walk($adList, function (&$item) use ($controller) {
                 $item = $this->callMethod('sufHandleField', $item, [$item], $controller);
             });
 
-            return $bannerList;
+            return $adList;
         }, HOUR);
     }
 }

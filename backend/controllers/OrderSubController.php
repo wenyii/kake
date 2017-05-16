@@ -153,6 +153,10 @@ class OrderSubController extends GeneralController
                 'elem' => 'input',
                 'equal' => true
             ],
+            'payment_state' => [
+                'table' => 'order',
+                'value' => 'all'
+            ],
             'state' => [
                 'value' => 'all'
             ]

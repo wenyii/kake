@@ -58,6 +58,12 @@ class LoginController extends GeneralController
         Helper::popOne($user, 'password');
         Yii::$app->session->set(self::USER, $user);
 
+        $this->service('user.login-log', [
+            'id' => $user['id'],
+            'ip' => Yii::$app->request->userIP,
+            'type' => 'backend-login'
+        ]);
+
         $this->success($user, '登录成功');
     }
 
@@ -70,7 +76,7 @@ class LoginController extends GeneralController
      */
     public function actionLogout()
     {
-        Yii::$app->session->remove(self::USER);
+        Yii::$app->session->destroy();
 
         return $this->redirect(['/login/index']);
     }

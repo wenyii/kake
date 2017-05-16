@@ -40,6 +40,9 @@ class AdController extends GeneralController
     public static function indexFilter()
     {
         return [
+            'type' => [
+                'value' => 'all'
+            ],
             'target' => [
                 'value' => 'all'
             ],
@@ -55,6 +58,10 @@ class AdController extends GeneralController
     public static function indexAssist()
     {
         return [
+            'type' => [
+                'code',
+                'info'
+            ],
             'target' => [
                 'code',
                 'info'
@@ -81,6 +88,10 @@ class AdController extends GeneralController
     public static function editAssist($action = null)
     {
         return [
+            'type' => [
+                'elem' => 'select',
+                'value' => 1
+            ],
             'target' => [
                 'elem' => 'select',
                 'value' => 0,
@@ -134,7 +145,7 @@ class AdController extends GeneralController
                 'tag' => 1,
                 'rules' => [
                     'suffix' => 'jpg,jpeg,png',
-                    'pic_sizes' => '750*160',
+                    'pic_sizes' => '750*160-500',
                     'max_size' => 128
                 ],
                 'preview_name' => 'preview_url',
