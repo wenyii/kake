@@ -59,12 +59,12 @@ class WeChat extends Object
     /**
      * Listen message
      *
-     * @param callable $replyEvent
+     * @param mixed $replyEvent
      * @param callable $replyText
      *
      * @return object
      */
-    public function listen($replyEvent, $replyText)
+    public function listen($replyEvent = false, $replyText)
     {
         $this->server->setMessageHandler(function ($message) use ($replyEvent, $replyText) {
 
@@ -72,10 +72,16 @@ class WeChat extends Object
             switch ($message->MsgType) {
 
                 case 'event':
+                    if ($replyEvent === false) {
+                        $replyEvent = [$this, 'replyEvent'];
+                    }
                     $reply = call_user_func($replyEvent, $message);
                     break;
 
                 case 'text':
+                    if ($replyText === false) {
+                        $replyText = [$this, 'replyText'];
+                    }
                     $reply = call_user_func($replyText, $message);
                     break;
             }
@@ -84,6 +90,46 @@ class WeChat extends Object
         });
 
         return $this->server->serve()->send();
+    }
+
+    /**
+     * Listen event
+     *
+     * @param object $message
+     *
+     * @return string
+     */
+    public function replyEvent($message)
+    {
+        $reply = null;
+        switch (strtolower($message->Event)) {
+            case 'subscribe' :
+                $reply = 'welcome subscribe us.';
+                break;
+
+            case 'click' :
+                switch ($message->EventKey) {
+                    case 'key_code' :
+                        $reply = 'do something.';
+                        break;
+                }
+                break;
+        }
+
+        return $reply;
+    }
+
+    /**
+     * Listen text
+     *
+     * @param object $message
+     *
+     * @return string
+     */
+    public function replyText($message)
+    {
+        // return 'you say: ' . $message->Content;
+        return null;
     }
 
     /**

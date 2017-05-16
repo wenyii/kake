@@ -2,6 +2,8 @@
 
 namespace frontend\controllers;
 
+use Yii;
+
 /**
  * Site controller
  */
@@ -16,18 +18,19 @@ class SiteController extends GeneralController
         $this->sourceJs = false;
 
         // 焦点图
-        $focusList = $this->listProductFocus(2);
+        $params = Yii::$app->params;
+        $focusList = $this->listProductFocus($params['site_focus_limit']);
 
         // 闪购模块
-        $flashSalesList = $this->listProduct(1, null, 0, [
+        $flashSalesList = $this->listProduct(1, $params['site_sale_limit'], 0, [
             'manifestation' => 2
         ]);
 
-        // 广告模块
-        $banner = $this->listBanner(1);
+        // banner 模块
+        $banner = $this->listAd(1, $params['site_banner_limit']);
 
         // 精品推荐
-        $standardList = $this->listProduct(1, 4, DAY, [
+        $standardList = $this->listProduct(1, $params['site_product_limit'], DAY, [
             'manifestation' => 0
         ]);
 
