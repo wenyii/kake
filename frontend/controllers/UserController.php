@@ -30,7 +30,7 @@ class UserController extends GeneralController
      */
     public function actionLogout()
     {
-        Yii::$app->session->remove(self::USER);
+        Yii::$app->session->destroy();
 
         return $this->redirect('site/index');
     }

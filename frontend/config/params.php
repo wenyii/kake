@@ -8,6 +8,11 @@ return [
     'site_search_ad_keyword' => null,
     'site_search_ad_url' => null,
 
+    'site_focus_limit' => 6,
+    'site_sale_limit' => 6,
+    'site_banner_limit' => 3,
+    'site_product_limit' => 10,
+
     'product_page_size' => 8,
     'order_page_size' => 8,
 ];

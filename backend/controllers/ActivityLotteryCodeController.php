@@ -37,6 +37,8 @@ class ActivityLotteryCodeController extends GeneralController
     {
         return [
             'nickname' => 'input',
+            'real_name' => 'input',
+            'phone' => 'input',
             'company' => [
                 'value' => 'all'
             ],
@@ -58,14 +60,12 @@ class ActivityLotteryCodeController extends GeneralController
     {
         return [
             'nickname',
+            'real_name',
+            'phone',
             'company' => 'info',
             'code' => [
                 'empty',
                 'code'
-            ],
-            'openid' => [
-                'code',
-                'color' => 'default'
             ],
             'add_time',
             'state' => [

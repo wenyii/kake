@@ -40,9 +40,10 @@ class ProductController extends GeneralController
      * @var array Hook
      */
     public static $hookUbbAndHtml = [
-        'enjoy',
-        'characteristic',
-        'use'
+        'cost',
+        'recommend',
+        'use',
+        'back'
     ];
 
     /**
@@ -363,11 +364,6 @@ class ProductController extends GeneralController
                 'placeholder' => '64个字以内',
                 'label' => 4
             ],
-            'info' => [
-                'elem' => 'textarea',
-                'placeholder' => '256个字以内',
-                'row' => 6
-            ],
             'destination' => [
                 'placeholder' => '32个字以内'
             ],
@@ -540,27 +536,32 @@ class ProductController extends GeneralController
                 'multiple' => true
             ],
 
-            'enjoy' => [
+            'cost' => [
                 'elem' => 'ckeditor',
-                'row' => 6,
-                'title' => $description['enjoy'],
+                'title' => $description['cost'],
                 'placement' => 'left',
                 'tip' => '必须填写',
                 'width' => 414
             ],
-            'characteristic' => [
+            'recommend' => [
                 'elem' => 'ckeditor',
-                'row' => 6,
-                'title' => $description['characteristic'],
+                'title' => $description['recommend'],
                 'placement' => 'left',
                 'tip' => '必须填写',
-                'width' => 414,
-                'height' => 500
+                'width' => 414
             ],
             'use' => [
                 'elem' => 'ckeditor',
                 'row' => 6,
                 'title' => $description['use'],
+                'placement' => 'left',
+                'tip' => '必须填写',
+                'width' => 414
+            ],
+            'back' => [
+                'elem' => 'ckeditor',
+                'row' => 6,
+                'title' => $description['back'],
                 'placement' => 'left',
                 'tip' => '必须填写',
                 'width' => 414
@@ -652,7 +653,7 @@ class ProductController extends GeneralController
         if (!empty($record['sale_rate'])) {
             if ($record['sale_type'] == 2 && ($record['sale_rate'] < 1 || $record['sale_rate'] > 99)) {
                 Yii::$app->session->setFlash('warning', '百分比折扣时折扣率请填写 1 ~ 99 之间的数');
-                $this->goReference('product/edit');
+                $this->goReference('product/' . $action);
             }
         } else {
             $record['sale_rate'] = 0;
@@ -660,7 +661,7 @@ class ProductController extends GeneralController
 
         if (in_array($action, ['add', 'edit']) && empty($record['package_ids']) && empty($record['new_package_ids'])) {
             Yii::$app->session->setFlash('warning', '酒店产品至少设定一个套餐');
-            $this->goReference('product/edit');
+            $this->goReference('product/' . $action);
         }
 
         // TODO
