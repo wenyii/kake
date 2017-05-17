@@ -82,7 +82,7 @@ $params = \Yii::$app->params;
             <div class="detail-hotel-1">
  <span> <img
          src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
-                改退规则
+                退改规则
             </div>
             <div class="notice-money">
                 <?= $detail['back'] ?>

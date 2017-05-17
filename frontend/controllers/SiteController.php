@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\components\Helper;
 use Yii;
 
 /**
@@ -17,9 +18,12 @@ class SiteController extends GeneralController
         $this->sourceCss = null;
         $this->sourceJs = false;
 
-        // 焦点图
         $params = Yii::$app->params;
+
+        // 焦点图
         $focusList = $this->listProductFocus($params['site_focus_limit']);
+        $focusList = array_merge($focusList, $this->listAd(0, $params['site_ad_focus_limit']));
+        $focusList = Helper::arraySort($focusList, 'update_time', 'DESC');
 
         // 闪购模块
         $flashSalesList = $this->listProduct(1, $params['site_sale_limit'], 0, [
@@ -27,7 +31,7 @@ class SiteController extends GeneralController
         ]);
 
         // banner 模块
-        $banner = $this->listAd(1, $params['site_banner_limit']);
+        $banner = $this->listAd(1, $params['site_ad_banner_limit']);
 
         // 精品推荐
         $standardList = $this->listProduct(1, $params['site_product_limit'], DAY, [
