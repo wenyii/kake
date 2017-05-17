@@ -55,12 +55,19 @@ foreach ($item as $type): ?>
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" target="_blank" href="<?= $params['frontend_url'] . Url::toRoute(['site/index']) ?>"><?= $params['app_name'] ?></a>
+            <a class="navbar-brand" target="_blank"
+               href="<?= $params['frontend_url'] . Url::toRoute(['site/index']) ?>"><?= $params['app_name'] ?></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
                 <li>
                     <a href="javascript:void(0);">欢迎 <?= !empty($this->params['user_info']->username) ? Html::encode($this->params['user_info']->username) : $this->params['user_info']->phone ?></a>
+                </li>
+                <li>
+                    <a class="btn btn-link mission-button" data-action-tag="clear-frontend-cache">清前台缓存</a>
+                </li>
+                <li>
+                    <a class="btn btn-link mission-button" data-action-tag="clear-backend-cache">清后台缓存</a>
                 </li>
                 <li><a href="<?= Url::to(['login/logout']) ?>">退出登录</a></li>
             </ul>
@@ -85,7 +92,7 @@ foreach ($item as $type): ?>
                                 }
                                 ?>
                                 <li <?= $_class ?>><a
-                                        href="<?= Url::to(['/' . $slave['controller'] . '/' . $slave['action']]) ?>"><?= $slave['title'] ?></a>
+                                            href="<?= Url::to(['/' . $slave['controller'] . '/' . $slave['action']]) ?>"><?= $slave['title'] ?></a>
                                 </li>
                             <?php } ?>
                         </ul>

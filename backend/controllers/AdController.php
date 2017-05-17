@@ -37,6 +37,21 @@ class AdController extends GeneralController
     /**
      * @inheritDoc
      */
+    public static function indexOperation()
+    {
+        return array_merge(parent::indexOperation(), [
+            [
+                'text' => '前置',
+                'value' => 'front',
+                'level' => 'info',
+                'icon' => 'sort'
+            ]
+        ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function indexFilter()
     {
         return [
@@ -146,7 +161,7 @@ class AdController extends GeneralController
                 'rules' => [
                     'suffix' => 'jpg,jpeg,png',
                     'pic_sizes' => '750*160-500',
-                    'max_size' => 128
+                    'max_size' => 512
                 ],
                 'preview_name' => 'preview_url',
                 'field_name' => 'attachment_id'
