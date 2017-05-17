@@ -20,7 +20,7 @@ $params = \Yii::$app->params;
                 <?php foreach ($focusList as $focus): ?>
                     <?php
                     $ad = !empty($focus['preview_url']);
-                    $url = $ad ? $focus['url'] : Url::to([
+                    $url = $ad ? $focus['link_url'] : Url::to([
                         'detail/index',
                         'id' => $focus['id']
                     ]);
