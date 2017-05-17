@@ -18,11 +18,18 @@ $params = \Yii::$app->params;
         <div class="carousel" id="focus-hot" kk-focus style="overflow:hidden">
             <div class="carousel-scroller product-focus">
                 <?php foreach ($focusList as $focus): ?>
-                    <a href="<?= Url::to([
+                    <?php
+                    $ad = !empty($focus['preview_url']);
+                    $url = $ad ? $focus['url'] : Url::to([
                         'detail/index',
                         'id' => $focus['id']
-                    ]) ?>">
-                        <img src="<?= current($focus['cover_preview_url']) ?>"/>
+                    ]);
+                    $target = $ad ? $focus['target'] : '_self';
+                    $img = $ad ? current($focus['preview_url']) : current($focus['cover_preview_url']);
+                    ?>
+
+                    <a href="<?= $url ?>" target="<?= $target ?>">
+                        <img src="<?= $img ?>"/>
                     </a>
                 <?php endforeach ?>
             </div>
@@ -66,7 +73,7 @@ $params = \Yii::$app->params;
     <div class="carousel-scroll" id="carousel-scroller-activity" kk-scroll>
         <div class="carousel-scroller activity">
             <?php foreach ($banner as $item): ?>
-                <a href="<?= $item['url'] ?>">
+                <a href="<?= $item['url'] ?>" target="<?= $item['target'] ?>">
                     <img class="img-responsive"
                          src="<?= current($item['preview_url']) ?>"/></a>
             <?php endforeach; ?>
