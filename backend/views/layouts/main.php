@@ -69,7 +69,7 @@ foreach ($item as $type): ?>
                 <li>
                     <a class="btn btn-link mission-button" data-action-tag="clear-backend-cache">清后台缓存</a>
                 </li>
-                <li><a href="<?= Url::to(['login/logout']) ?>">退出登录</a></li>
+                <li><a class="confirm-button" href="<?= Url::to(['login/logout']) ?>">退出登录</a></li>
             </ul>
         </div>
     </div>

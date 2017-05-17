@@ -119,7 +119,8 @@ class AdController extends GeneralController
                 'label' => 4,
                 'tip' => [
                     '格式1' => 'site/index 表示网站域名 + ?r=site/index',
-                    '格式2' => '以 http(s):// 开头的完整地址串'
+                    '格式2' => '以 http(s):// 开头的完整地址串',
+                    '格式3' => '脚本代码，如：javascript:void(null)'
                 ],
             ],
             'remark' => [
