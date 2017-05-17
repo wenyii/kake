@@ -682,8 +682,13 @@ class MainController extends Controller
     {
         $item = (array) $item;
         $str = $item[0];
+        $str = !empty($str) ? $str : 'javascript:void(null);';
 
         if (strpos($str, 'http') === 0) {
+            return $str;
+        }
+
+        if (strpos($str, 'javascript:') === 0) {
             return $str;
         }
 
@@ -725,7 +730,7 @@ class MainController extends Controller
             }
 
             $preKey = empty($newKey) ? null : $newKey . '_';
-            if (!empty($record[$oldKey])) {
+            if (isset($record[$oldKey])) {
                 if (is_callable($preHandler)) {
                     $item = call_user_func($preHandler, $record[$oldKey]);
                 } else {

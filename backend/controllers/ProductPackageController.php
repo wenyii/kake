@@ -101,12 +101,8 @@ EOF
     {
         return [
             'product_id' => 'code',
-            'link_url' => [
-                'link',
-                'url_info' => 'Preview'
-            ],
             'name' => [
-                'max-width' => '250px'
+                'max-width' => '180px'
             ],
             'price' => 'code',
             'sale_price' => [
@@ -119,7 +115,8 @@ EOF
                 'not_set_info' => '<span class="not-set">(无限量)</span>'
             ],
             'info' => [
-                'max-width' => '250px'
+                'max-width' => '280px',
+                'tpl' => '<pre>%s</pre>'
             ],
             'state' => [
                 'code',
@@ -158,6 +155,7 @@ EOF
             ],
             'info' => [
                 'elem' => 'textarea',
+                'row' => 8,
                 'placeholder' => '256个字以内'
             ],
             'state' => [
@@ -189,6 +187,7 @@ EOF
             'info' => [
                 'elem' => 'textarea',
                 'label' => 8,
+                'row' => 8,
                 'placeholder' => '256个字以内'
             ]
         ];
@@ -199,13 +198,6 @@ EOF
      */
     public function sufHandleField($record, $action = null, $callback = null)
     {
-        $record = $this->createLinkUrl($record, 'product_id', function ($id) {
-            return [
-                'detail/index',
-                'id' => $id
-            ];
-        });
-
         return parent::sufHandleField($record, $action, function ($record) {
 
             if (empty($record['id'])) {

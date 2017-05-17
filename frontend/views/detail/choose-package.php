@@ -43,12 +43,10 @@ $params = \Yii::$app->params;
                                  ng-show="<?= $number ?>">
                                 <i><img src="<?= $params['frontend_source'] ?>/img/triangle_top.png"/></i>
 
-                                <div class="combo-3"><?= $item['info'] ?></div>
+                                <div class="combo-3"><pre><?= $item['info'] ?></pre></div>
                                 <div class="combo-4">
                                     <div class="combo-4-1">
-                                        购买数量
-                                        (<?= $item['min_purchase_limit'] < 0 ? '无限制' : '≤' . $item['min_purchase_limit'] . '份' ?>
-                                        )
+                                        购买数量 (<?= $item['min_purchase_limit'] < 0 ? '无限制' : '≤' . $item['min_purchase_limit'] . '份' ?>)
                                     </div>
                                     <div class="combo-4-2">
                                         <span class="reduction" kk-tap="goodsDel(<?= $id ?>)">-</span>
