@@ -10,7 +10,8 @@ return [
 
     'site_focus_limit' => 6,
     'site_sale_limit' => 6,
-    'site_banner_limit' => 3,
+    'site_ad_banner_limit' => 3,
+    'site_ad_focus_limit' => 3,
     'site_product_limit' => 10,
 
     'product_page_size' => 8,
