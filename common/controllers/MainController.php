@@ -15,7 +15,7 @@ use yii\helpers\Html;
  * Main controller
  * @method mixed service($api, $params = [], $cache = 'yes', $lang = 'zh-CN')
  * @method mixed dump($var, $strict = false, $exit = true)
- * @method mixed cache($key, $fetchFn, $time = null, $dependent = null)
+ * @method mixed cache($key, $fetchFn, $time = null, $dependent = null, $useCache = true)
  */
 class MainController extends Controller
 {
@@ -52,7 +52,7 @@ class MainController extends Controller
             Yii::trace('开始读取配置表中的配置');
             $config = $this->cache('config.list.kvp', function () {
                 return $this->service('general.config-kvp');
-            }, DAY);
+            }, DAY, null, Yii::$app->params['use_cache']);
 
             Yii::$app->params = array_merge($config['file'], Yii::$app->params, $config['db']);
         });

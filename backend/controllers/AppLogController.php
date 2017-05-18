@@ -55,6 +55,7 @@ class AppLogController extends GeneralController
     public static function indexAssist()
     {
         return [
+            'id' => 'code',
             'level' => [
                 'min-width' => '70px',
                 'info',
@@ -75,7 +76,7 @@ class AppLogController extends GeneralController
     public function indexCondition()
     {
         return [
-            'order' => 'log_time DESC'
+            'order' => 'log_time DESC, id DESC'
         ];
     }
 

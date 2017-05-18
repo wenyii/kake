@@ -240,7 +240,7 @@ class GeneralController extends MainController
             !$keepModule && $_list = array_merge(...array_values($_list));
 
             return $_list;
-        }, YEAR);
+        }, YEAR, null, Yii::$app->params['use_cache']);
     }
 
     /**
@@ -274,7 +274,7 @@ class GeneralController extends MainController
             }
 
             return $_record;
-        }, YEAR);
+        }, YEAR, null, Yii::$app->params['use_cache']);
     }
 
     /**
@@ -1654,7 +1654,6 @@ class GeneralController extends MainController
             $params,
             'add'
         ]);
-
 
         if (!empty(static::$addFunctionName)) {
             $result = $this->callMethod(static::$addFunctionName, 'function non-exists');
