@@ -318,7 +318,7 @@ class GeneralController extends MainController
             }
 
             return $detail;
-        }, DAY);
+        }, DAY, null, Yii::$app->params['use_cache']);
     }
 
     /**
@@ -365,7 +365,7 @@ class GeneralController extends MainController
             });
 
             return $list;
-        }, DAY);
+        }, DAY, null, Yii::$app->params['use_cache']);
     }
 
     /**
@@ -446,7 +446,7 @@ class GeneralController extends MainController
             }
 
             return $list;
-        }, $time);
+        }, $time, null, Yii::$app->params['use_cache']);
     }
 
     /**
@@ -590,6 +590,6 @@ class GeneralController extends MainController
             });
 
             return $adList;
-        }, HOUR);
+        }, HOUR, null, Yii::$app->params['use_cache']);
     }
 }
