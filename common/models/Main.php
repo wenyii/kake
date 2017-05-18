@@ -35,14 +35,21 @@ class Main extends ActiveRecord
     public static $model;
 
     /**
+     * @var boolean use cache
+     */
+    public $useCache;
+
+    /**
      * Constructor
      *
-     * @param string $name
-     * @param array  $config
+     * @param string  $name
+     * @param array   $config
+     * @param boolean $useCache
      */
-    public function __construct($name = null, $config = [])
+    public function __construct($name = null, $config = [], $useCache = true)
     {
         $this->tableName = Helper::camelToUnder($name);
+        $this->useCache = $useCache;
         parent::__construct($config);
 
         $model = ($this->tableName ? Helper::underToCamel($this->tableName, false) : 'Main');
@@ -54,7 +61,7 @@ class Main extends ActiveRecord
      */
     public function rules()
     {
-        $meta = $this->meta();
+        $meta = $this->meta($this->useCache);
 
         return empty($meta['fnRules']) ? [] : $meta['fnRules'];
     }
@@ -64,7 +71,7 @@ class Main extends ActiveRecord
      */
     public function attributeLabels()
     {
-        $meta = $this->meta();
+        $meta = $this->meta($this->useCache);
 
         return empty($meta['fnAttributeLabels']) ? [] : $meta['fnAttributeLabels'];
     }
@@ -161,17 +168,18 @@ class Main extends ActiveRecord
      * @param callable                $fetchFn
      * @param int                     $time
      * @param \yii\caching\Dependency $dependent
+     * @param boolean                 $useCache
      *
      * @return mixed
      */
-    public function cache($key, $fetchFn, $time = null, $dependent = null)
+    public function cache($key, $fetchFn, $time = null, $dependent = null, $useCache = true)
     {
-        if (!Yii::$app->params['use_cache'] || Yii::$app->session->getFlash('no_cache')) {
+        if (!$useCache || Yii::$app->session->getFlash('no_cache')) {
             return call_user_func($fetchFn);
         }
 
         if (!(is_string($key) && strpos($key, '.') !== false)) {
-            $key = static::className() . '-' . md5(json_encode($key));
+            $key = strtolower(static::className()) . '-' . md5(json_encode($key));
         }
 
         $data = Yii::$app->cache->get($key);
@@ -179,7 +187,7 @@ class Main extends ActiveRecord
         if (false === $data) {
             Yii::trace('缓存命中失败并重新获取写入: ' . $key);
             $data = call_user_func($fetchFn);
-            $time = isset($time) ? $time : Yii::$app->params['cache_time'];
+            $time = isset($time) ? $time : DAY;
             $result = Yii::$app->cache->set($key, $data, $time, $dependent);
 
             if ($result === false) {
@@ -196,9 +204,12 @@ class Main extends ActiveRecord
      * Get meta data of model
      *
      * @access public
+     *
+     * @param boolean $useCache
+     *
      * @return array
      */
-    public function meta()
+    public function meta($useCache = true)
     {
         if (empty($this->tableName)) {
             return [];
@@ -214,7 +225,7 @@ class Main extends ActiveRecord
             return $this->service('main.model-meta', [
                 'table' => $this->tableName
             ], 'no');
-        }, YEAR);
+        }, YEAR, null, $useCache);
 
         return self::$model[$this->tableName];
     }
@@ -224,7 +235,7 @@ class Main extends ActiveRecord
      */
     public function __get($name)
     {
-        $meta = $this->meta();
+        $meta = $this->meta($this->useCache);
         if (isset($meta[$name])) {
             return $meta[$name];
         }

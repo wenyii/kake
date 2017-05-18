@@ -73,16 +73,26 @@ class WeChat extends Object
 
                 case 'event':
                     if ($replyEvent === false) {
-                        $replyEvent = [$this, 'replyEvent'];
+                        $replyEvent = [
+                            $this,
+                            'replyEvent'
+                        ];
                     }
-                    $reply = call_user_func($replyEvent, $message);
+                    if ($replyEvent) {
+                        $reply = call_user_func($replyEvent, $message);
+                    }
                     break;
 
                 case 'text':
                     if ($replyText === false) {
-                        $replyText = [$this, 'replyText'];
+                        $replyText = [
+                            $this,
+                            'replyText'
+                        ];
                     }
-                    $reply = call_user_func($replyText, $message);
+                    if ($replyText) {
+                        $reply = call_user_func($replyText, $message);
+                    }
                     break;
             }
 
