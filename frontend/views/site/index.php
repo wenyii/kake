@@ -62,6 +62,8 @@ $params = \Yii::$app->params;
                                  src="<?= current($flashSales['cover_preview_url']) ?>"/></a>
 
                         <p><?= $flashSales['name'] ?></p>
+                        <div class="flashsales-icon"><img src="<?= $params['frontend_source'] ?>/img/flashsales-icon.png"/><span><i>￥</i><?= $flashSales['min_price'] ?></span></div>
+						<p><?= $flashSales['name'] ?></p>
                     </div>
                 <?php endforeach ?>
             </div>
