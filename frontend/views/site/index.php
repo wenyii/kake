@@ -63,7 +63,6 @@ $params = \Yii::$app->params;
 
                         <p><?= $flashSales['name'] ?></p>
                         <div class="flashsales-icon"><img src="<?= $params['frontend_source'] ?>/img/flashsales-icon.png"/><span><i>￥</i><?= $flashSales['min_price'] ?></span></div>
-						<p><?= $flashSales['name'] ?></p>
                     </div>
                 <?php endforeach ?>
             </div>
@@ -83,28 +82,9 @@ $params = \Yii::$app->params;
     </div>
 <?php endif; ?>
 
-<div class="recommend">
-    <?php if (!empty($standardList)): ?>
+<div class="recommend" kk-ajax-load="site/ajax-list" data-over="<?= $over ?>">
+    <?php if (!empty($standardHtml)): ?>
         <p><span class="recommend2">精品推荐</span></p>
-        <?php foreach ($standardList as $standard): ?>
-            <div class="recommend3">
-                <div class="recommend3-1">
-                    <a href="<?= Url::to([
-                        'detail/index',
-                        'id' => $standard['id']
-                    ]) ?>">
-                        <img class="img-responsive"
-                             src="<?= current($standard['cover_preview_url']) ?>"/></a>
-
-                    <div class="recommend3-1-1">￥<span><?= $standard['price'] ?></span></div>
-                </div>
-                <div class="recommend3-2">
-                    <?= $standard['name'] ?>
-                </div>
-                <div class="recommend3-3">
-                    <?= $standard['title'] ?>
-                </div>
-            </div>
-        <?php endforeach ?>
+        <?= $standardHtml ?>
     <?php endif; ?>
 </div>

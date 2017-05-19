@@ -34,10 +34,42 @@ class SiteController extends GeneralController
         $banner = $this->listAd(1, $params['site_ad_banner_limit']);
 
         // 精品推荐
-        $standardList = $this->listProduct(1, $params['site_product_limit'], DAY, [
+        list($standardHtml, $over) = $this->renderListPage(1);
+
+        return $this->render('index', compact('focusList', 'flashSalesList', 'banner', 'standardHtml', 'over'));
+    }
+
+    /**
+     * ajax 获取下一页列表
+     */
+    public function actionAjaxList()
+    {
+        $page = Yii::$app->request->post('page');
+
+        list($html, $over) = $this->renderListPage($page);
+        $this->success(compact('html', 'over'));
+    }
+
+    /**
+     * 渲染列表视图并返回 html
+     *
+     * @access private
+     *
+     * @param integer $page
+     *
+     * @return array
+     */
+    private function renderListPage($page)
+    {
+        $pageSize = Yii::$app->params['site_product_limit'];
+        $list = $this->listProduct($page, $pageSize, DAY, [
             'manifestation' => 0
         ]);
+        $content = $this->renderPartial('list', compact('list'));
 
-        return $this->render('index', compact('focusList', 'flashSalesList', 'banner', 'standardList'));
+        return [
+            $content,
+            count($list) < $pageSize
+        ];
     }
 }

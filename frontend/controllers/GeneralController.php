@@ -98,6 +98,7 @@ class GeneralController extends MainController
         $text = trim($message->Content);
 
         // 格式判断
+        $text = str_replace('＋', '+', $text);
         $char = substr_count($text, '+');
         if ($char < 2) {
             return "【回复的格式不正确】{$br}回复格式不正确，小喀无法识别！{$br}正确格式：品牌名+姓名+手机号{$br}“+”一定要打出来哦~";
@@ -120,7 +121,7 @@ class GeneralController extends MainController
             'where' => [
                 ['openid' => $message->FromUserName]
             ]
-        ]);
+        ], 'no');
 
         // 已参与判断
         if (!empty($result)) {
