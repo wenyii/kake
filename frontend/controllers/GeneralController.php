@@ -112,7 +112,7 @@ class GeneralController extends MainController
         }
 
         // 公司代码验证
-        if (false === ($code = array_search($company, $model->_company))) {
+        if (false === ($code = array_search(strtolower($company), $model->_company))) {
             return "【公司不在抽奖范围内】{$br}啊哦，你关注的品牌还不是喀客旅行的小伙伴~{$br}不如快介绍他们给喀客认识，下次说不定就有你的份！";
         }
 
