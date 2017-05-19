@@ -114,6 +114,25 @@ class OrderSubController extends GeneralController
     /**
      * @inheritDoc
      */
+    public static function editOperation()
+    {
+        return [
+            [
+                'text' => '违约退款',
+                'type' => 'script',
+                'value' => 'alert("刺不刺激，功能待完善")',
+                'level' => 'warning confirm-button',
+                'icon' => 'exclamation-sign',
+                'show_condition' => function ($record) {
+                    return $record['state'] == 0;
+                }
+            ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function ajaxModalListOperations()
     {
         return [

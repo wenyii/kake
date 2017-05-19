@@ -4,6 +4,7 @@
 use yii\helpers\Url;
 use yii\helpers\Html;
 use common\components\Helper;
+use backend\components\ViewHelper;
 
 $flash = \Yii::$app->session->hasFlash('list') ? \Yii::$app->session->getFlash('list') : [];
 
@@ -13,21 +14,14 @@ $modal = empty($view['modal']) ? false : true;
 ?>
 
 <?php if (!$modal): ?>
-    <div class="title col-sm-offset-1"><span
-            class="glyphicon glyphicon-<?= $view['title_icon'] ?>"></span> <?= $view['title_info'] ?><?= $modelInfo ?>
+    <div class="title col-sm-offset-1">
+        <span class="glyphicon glyphicon-<?= $view['title_icon'] ?>"></span> <?= $view['title_info'] ?><?= $modelInfo ?>
     </div>
 <?php endif; ?>
 
 <?php
-
-$escapeScript = function ($script) {
-    $script = str_replace('"', '&quot;', $script);
-    $script = str_replace('\'', '&apos;', $script);
-    return $script;
-};
-
 if ($modal) {
-    $script = empty($view['action']) ? 'false' : $escapeScript($view['action']);
+    $script = empty($view['action']) ? 'false' : ViewHelper::escapeScript($view['action']);
     $action = 'onsubmit="return ' . $script . '"';
 } else {
     $action = 'method="post" action="' . Url::to(['/' . $controller . '/' . $view['action']]) . '"';
@@ -170,25 +164,25 @@ if ($modal) {
     <?php elseif ($item['elem'] == 'tag'): ?>  <!-- tag -->
         <div class="col-sm-<?= $empty('label', 6) ?>" <?= $as_tip ?> <?= $as_name ?>
              format="<?= $empty('format') ?>"></div>
-        <?php if (!empty($av_value)): ?>
-            <script type="text/javascript">
-                $(function () {
-                    <?php foreach ($av_value as $pk): ?>
-                    $.createTag({
-                        data: <?= json_encode($pk, JSON_UNESCAPED_UNICODE) ?>,
-                        containerName: '<?= $av_name ?>',
-                        fieldName: '<?= $empty('field_name') ?>',
-                        fieldNameNew: 'new_<?= $empty('field_name') ?>'
-                    });
-                    <?php endforeach; ?>
+    <?php if (!empty($av_value)): ?>
+        <script type="text/javascript">
+            $(function () {
+                <?php foreach ($av_value as $pk): ?>
+                $.createTag({
+                    data: <?= json_encode($pk, JSON_UNESCAPED_UNICODE) ?>,
+                    containerName: '<?= $av_name ?>',
+                    fieldName: '<?= $empty('field_name') ?>',
+                    fieldNameNew: 'new_<?= $empty('field_name') ?>'
                 });
-            </script>
-        <?php endif; ?>
+                <?php endforeach; ?>
+            });
+        </script>
+    <?php endif; ?>
     <?php elseif ($item['elem'] == 'button'): ?>  <!-- button -->
-    <?php
-    $script = $escapeScript($empty('script'));
-    $script = empty($script) ? '' : 'onclick="' . $script . '"';
-    ?>
+        <?php
+        $script = ViewHelper::escapeScript($empty('script'));
+        $script = empty($script) ? '' : 'onclick="' . $script . '"';
+        ?>
         <div class="col-sm-<?= $empty('label', 6) ?>" <?= $as_tip ?> <?= $as_name ?> format="<?= $empty('format') ?>">
             <button type="button"
                     class="btn btn-<?= $empty('level', 'primary') ?>" <?= $script ?>><?= $av_value ?></button>
@@ -243,9 +237,13 @@ if ($modal) {
     <?php endforeach; ?>
 
     <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-2">
-            <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span>
-                <?= $view['button_info'] ?><?= $modal ? null : $modelInfo ?></button>
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-primary">
+                <span class="glyphicon glyphicon-ok"></span>
+                <?= $view['button_info'] ?><?= $modal ? null : $modelInfo ?>
+            </button>
+
+            <?= ViewHelper::createButtonForRecord($operation, $result, $controller) ?>
         </div>
     </div>
     <br>
