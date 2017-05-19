@@ -41,7 +41,7 @@ $params = \Yii::$app->params;
                             </div>
                             <div class="combo-2 kk-animate" ng-class="{'kk-b2s': <?= $number ?>}"
                                  ng-show="<?= $number ?>">
-                                <i><img src="<?= $params['frontend_source'] ?>/img/triangle_top.png"/></i>
+                                <i></i>
 
                                 <div class="combo-3"><pre><?= $item['info'] ?></pre></div>
                                 <div class="combo-4">
