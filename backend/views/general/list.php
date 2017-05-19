@@ -2,10 +2,9 @@
 /* @var $this yii\web\View */
 
 use yii\widgets\LinkPager;
-use yii\web\View;
-use yii\helpers\Url;
 use yii\helpers\Html;
 use common\components\Helper;
+use backend\components\ViewHelper;
 
 $flash = \Yii::$app->session->hasFlash('list') ? \Yii::$app->session->getFlash('list') : [];
 
@@ -14,27 +13,6 @@ $action = \Yii::$app->controller->action->id;
 ?>
 
 <div id="<?= $action ?>">
-    <?php
-    $escapeScript = function ($script) {
-        $script = str_replace('"', '&quot;', $script);
-        $script = str_replace('\'', '&apos;', $script);
-
-        return $script;
-    };
-
-    $escapeParams = function ($params) use ($escapeScript) {
-        $paramsStr = '';
-        foreach ($params as $item) {
-            if (is_array($item)) {
-                $paramsStr .= $escapeScript(json_encode($item)) . ', ';
-            } else {
-                $paramsStr .= '&quot;' . $item . '&quot;, ';
-            }
-        }
-
-        return '(' . rtrim($paramsStr, ', ') . ')';
-    };
-    ?>
     <?php if (!empty($filter)): ?>
         <form class="form-inline filter">
             <input type="hidden" name="r" value="<?= $controller ?>/<?= $action ?>">
@@ -94,31 +72,7 @@ $action = \Yii::$app->controller->action->id;
         <hr>
     <?php endif; ?>
 
-    <?php
-    if (!empty($operations)) {
-        $operationsHtml = '';
-        foreach ($operations as $value) {
-            $script = Helper::emptyDefault($value, 'script', false);
-            $level = Helper::emptyDefault($value, 'level', 'primary');
-            $params = Helper::emptyDefault($value, 'params', []);
-
-            if ($script) {
-                $url = 'javascript:' . $escapeScript($value['value']);
-            } else {
-                if (strpos($value['value'], 'http') === 0) {
-                    $url = $value['value'];
-                } else {
-                    $url = strpos($value['value'], '/') ? $value['value'] : ($controller . '/' . $value['value']);
-                    $url = Url::to(array_merge([$url], $params));
-                }
-            }
-
-            $icon = empty($value['icon']) ? null : '<span class="glyphicon glyphicon-' . $value['icon'] . '"></span>';
-            $operationsHtml .= '<a href="' . $url . '" class="btn btn-' . $level . '">' . $icon . ' ' . $value['text'] . '</a>';
-        }
-    }
-    ?>
-
+    <?php $operationsHtml = ViewHelper::createButton($operations, $controller) ?>
     <?php if (!empty($operations) && $operationsPosition == 'top'): ?>
         <?= $operationsHtml ?>
         <hr>
@@ -193,7 +147,7 @@ $action = \Yii::$app->controller->action->id;
                     $content = $empty($field, $adorn['not_set_info'], null, $notSetFn);
                     $content = (empty($adorn['tpl']) || $content === $notSetStr) ? $content : sprintf($adorn['tpl'], $content);
 
-                    $tip .= $value['title'] . ': ' . $escapeScript($content) . '<br>';
+                    $tip .= $value['title'] . ': ' . ViewHelper::escapeScript($content) . '<br>';
                 }
             }
             if ($tip) {
@@ -285,42 +239,7 @@ $action = \Yii::$app->controller->action->id;
                 <?php if (!empty($operation)): ?>
                     <td>
                         <div class="operation">
-                            <?php foreach ($operation as $value): ?>
-                                <?php
-                                $show = true;
-                                if (!empty($value['show_condition']) && is_callable($value['show_condition'])) {
-                                    $show = $value['show_condition']($item);
-                                }
-
-                                if (!$show) {
-                                    continue;
-                                }
-
-                                $type = Helper::emptyDefault($value, 'type', 'url');
-                                $level = Helper::emptyDefault($value, 'level', 'primary');
-
-                                $defaultParams = $type == 'url' ? ['id'] : null;
-                                $params = Helper::emptyDefault($value, 'params', $defaultParams);
-                                if (is_callable($params)) {
-                                    $params = $params($item);
-                                } else {
-                                    $params = Helper::pullSome($item, $params);
-                                }
-
-                                if ($type == 'url') {
-                                    $url = strpos($value['value'], '/') ? $value['value'] : ($controller . '/' . $value['value']);
-                                    $url = Url::to(array_merge([$url], $params));
-                                } else if ($type == 'script') {
-                                    $params = $params ? $escapeParams($params) : '';
-                                    $url = 'javascript:' . $escapeScript($value['value']) . $params . ';';
-                                }
-
-                                $icon = empty($value['icon']) ? null : '<span class="glyphicon glyphicon-' . $value['icon'] . '"></span>';
-                                ?>
-                                <?= !empty($value['br']) ? '<br>' : null ?>
-                                <a href="<?= $url ?>"
-                                   class="btn btn-<?= $level ?> btn-xs"><?= $icon ?> <?= $value['text'] ?></a>
-                            <?php endforeach; ?>
+                            <?= ViewHelper::createButtonForRecord($operation, $item, $controller, 'xs') ?>
                         </div>
                     </td>
                 <?php endif; ?>

@@ -1709,7 +1709,10 @@ class GeneralController extends MainController
         $list = $this->handleAssistForForm($assist, $result, $tag);
         $view = $this->pageDocuments($tag);
 
-        return $this->display('//general/action', compact('id', 'list', 'modelInfo', 'view'));
+        // 单记录操作
+        $operation = $this->callStatic($caller . 'Operation');
+
+        return $this->display('//general/action', compact('id', 'list', 'result', 'modelInfo', 'view', 'operation'));
     }
 
     /**
