@@ -30,7 +30,7 @@ $params = \Yii::$app -> params;
                     $url = $ad ? $focus['link_url'] : Url::to([
                         'detail/index',
                         'id' => $focus['id']
-                    ]);
+                    ])；
                     $target = $ad ? $focus['target'] : '_self';
                     $img = $ad ? current($focus['preview_url']) : current($focus['cover_preview_url']);
                     ?>
@@ -70,7 +70,9 @@ $params = \Yii::$app -> params;
                                  src="<?= current($flashSales['cover_preview_url']) ?>"/></a>
 
                         <p><?= $flashSales['name'] ?></p>
-                        <div class="flashsales-icon"><img src="<?= $params['frontend_source'] ?>/img/flashsales-icon.png"/><span><i>￥</i><?= $flashSales['min_price'] ?></span></div>
+                        	<div class="flashsales-icon">
+                        		<i>￥</i><span><?= $flashSales['min_price'] ?></span>
+                        	</div>
                     </div>
                 <?php endforeach ?>
             </div>
