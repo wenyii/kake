@@ -3,8 +3,8 @@
 
 use yii\helpers\Url;
 
-$params = \Yii::$app->params;
-\Yii::$app->params['ng_ctrl'] = 'generic';
+$params = \Yii::$app -> params;
+\Yii::$app -> params['ng_ctrl'] = 'generic';
 ?>
 
 <div class="body">
@@ -12,10 +12,17 @@ $params = \Yii::$app->params;
         <div class="menu" kk-menu="#menu">
             <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
         </div>
+        <?php if (!empty($focusList)): ?>
+	        <ul class="focus-point">
+	        		<?php foreach ($focusList as $focus): ?>
+	        			<li></li>
+	        		<?php endforeach ?>
+	        	</ul>
+        	<?php endif ?>
     </div>
 
     <?php if (!empty($focusList)): ?>
-        <div class="carousel" id="focus-hot" kk-focus style="overflow:hidden">
+        <div class="carousel" id="focus-hot" kk-focus=".focus-point" focus-point-current="on" style="overflow:hidden">
             <div class="carousel-scroller product-focus">
                 <?php foreach ($focusList as $focus): ?>
                     <?php
@@ -34,6 +41,7 @@ $params = \Yii::$app->params;
                 <?php endforeach ?>
             </div>
         </div>
+        
     <?php endif; ?>
 </div>
 <?php if (!empty($flashSalesList)): ?>
