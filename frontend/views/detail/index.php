@@ -12,7 +12,9 @@ $params = \Yii::$app->params;
         <div class="menu" kk-menu="#menu">
             <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
         </div>
-        <div class="carousel" id="focus-hot" kk-focus=".focus-number" focus-number-tpl="< {NOW} / {TOTAL} >">
+
+        <div class="carousel" id="focus-hot" kk-focus=".focus-number" focus-number-tpl="< {NOW} / {TOTAL} >"
+             style="overflow: hidden">
             <div class="carousel-scroller product-focus">
                 <?php if (!empty($detail['slave_preview_url'])): ?>
                     <?php foreach ($detail['slave_preview_url'] as $photo): ?>
@@ -20,9 +22,8 @@ $params = \Yii::$app->params;
                     <?php endforeach ?>
                 <?php endif; ?>
             </div>
-            
         </div>
-        <span class="focus-number">abc</span>
+        <span class="focus-number"></span>
     </div>
     <div class="hotel-detail">
         <div class="hotel-detail-price">￥<span><?= $detail['min_price'] ?></span></div>
@@ -49,7 +50,7 @@ $params = \Yii::$app->params;
         <div class="detail-hotel">
             <div class="detail-hotel-1">
  <span> <img
-         src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
+             src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 费用包含
             </div>
             <div class="detail-hotel-2">
@@ -59,7 +60,7 @@ $params = \Yii::$app->params;
         <div class="detail-hotel">
             <div class="detail-hotel-1">
  <span> <img
-         src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
+             src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 推荐理由
             </div>
             <div class="detail-hotel-2 detail-hotel_2">
@@ -71,7 +72,7 @@ $params = \Yii::$app->params;
         <div class="detail-hotel">
             <div class="detail-hotel-1">
  <span> <img
-         src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
+             src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 使用说明
             </div>
             <div class="notice-money">
@@ -81,7 +82,7 @@ $params = \Yii::$app->params;
         <div class="detail-hotel">
             <div class="detail-hotel-1">
  <span> <img
-         src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
+             src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 退改规则
             </div>
             <div class="notice-money">
@@ -94,7 +95,10 @@ $params = \Yii::$app->params;
     <footer>
         <div class="price"><p>￥<span><?= $detail['min_price'] ?></span> 起/<?= $detail['night_times'] ?>晚</p></div>
 
-        <div class="buy"><a href="<?= Url::to(['detail/choose-package', 'id' => $detail['id']]) ?>">立即购买</a></div>
+        <div class="buy"><a href="<?= Url::to([
+                'detail/choose-package',
+                'id' => $detail['id']
+            ]) ?>">立即购买</a></div>
         <div class=" service">
             <a href="tel:<?= Yii::$app->params['company_tel'] ?>">
                 <img class="img-responsive"
