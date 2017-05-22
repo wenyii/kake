@@ -1,6 +1,6 @@
 <?php
 return [
-    'bootstrap' => ['debug'],
+    'bootstrap' => [],
     'modules' => [
         'debug' => [
             'class' => 'yii\debug\Module',

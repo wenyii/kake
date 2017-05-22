@@ -3,6 +3,7 @@ Yii::setAlias('@common', dirname(__DIR__));
 Yii::setAlias('@root', dirname(dirname(dirname(__DIR__))));
 Yii::setAlias('@frontend', dirname(dirname(__DIR__)) . '/frontend');
 Yii::setAlias('@backend', dirname(dirname(__DIR__)) . '/backend');
+Yii::setAlias('@console', dirname(dirname(__DIR__)) . '/console');
 
 Yii::setAlias('@rsa', dirname(dirname(__DIR__)) . '/mixed/rsa');
 Yii::setAlias('@wechat', dirname(dirname(__DIR__)) . '/mixed/wechat');
@@ -13,6 +14,7 @@ Yii::setAlias('@script', dirname(dirname(__DIR__)) . '/mixed/script');
 define('TIME', $_SERVER['REQUEST_TIME']);
 define('DS', DIRECTORY_SEPARATOR);
 define('DOMAIN', 'kakehotels.com');
+define('PROJECT', 'kake');
 
 define('DB_KAKE', 'kake');
 define('DB_SERVICE', 'service');
