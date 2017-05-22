@@ -239,11 +239,12 @@ if ($modal) {
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <button type="submit" class="btn btn-primary">
-                <span class="glyphicon glyphicon-ok"></span>
                 <?= $view['button_info'] ?><?= $modal ? null : $modelInfo ?>
             </button>
 
+            <?php if (!empty($operation)): ?>
             <?= ViewHelper::createButtonForRecord($operation, $result, $controller) ?>
+            <?php endif; ?>
         </div>
     </div>
     <br>

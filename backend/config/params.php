@@ -1,7 +1,6 @@
 <?php
 return [
     'use_cache' => true,
-
     'menu' => [
         'a' => [
             'name' => '配置管理',
@@ -66,7 +65,6 @@ return [
             ]
         ]
     ],
-
     'service_app_id' => 'kk_096a64b5359a74d',
     'service_app_secret' => '6819c5a31ab3f36be3cc18eedd5d60f7',
 ];

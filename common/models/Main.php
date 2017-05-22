@@ -84,12 +84,13 @@ class Main extends ActiveRecord
      * @param string $api
      * @param array  $params
      * @param string $cache
+     * @param string $project
      * @param string $lang
      *
      * @return mixed
      * @throws \Exception
      */
-    public function service($api, $params = [], $cache = 'true', $lang = 'zh-CN')
+    public function service($api, $params = [], $cache = 'true', $project = PROJECT, $lang = 'zh-CN')
     {
         $conf = Yii::$app->params;
 
@@ -107,6 +108,7 @@ class Main extends ActiveRecord
         });
 
         // merge params
+        $api = $project . '.' . $api;
         $params = array_merge($params, [
             'app_api' => $api,
             'app_id' => $conf['service_app_id'],
@@ -219,10 +221,10 @@ class Main extends ActiveRecord
             return self::$model[$this->tableName];
         }
 
-        self::$model[$this->tableName] = $this->cache('main.model-meta.' . $this->tableName, function () {
+        self::$model[$this->tableName] = $this->cache('general.model-meta.' . $this->tableName, function () {
             Yii::trace('获取模型表原数据: ' . $this->tableName);
 
-            return $this->service('main.model-meta', [
+            return $this->service('general.model-meta', [
                 'table' => $this->tableName
             ], 'no');
         }, YEAR, null, $useCache);
