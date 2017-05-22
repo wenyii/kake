@@ -43,31 +43,31 @@ class GeneralController extends MainController
     /**
      * @var string 列表接口名
      */
-    public static $listApiName = 'main.list-for-backend';
+    public static $listApiName = 'general.list-for-backend';
     public static $listFunctionName;
 
     /**
      * @var string 获取单条接口名
      */
-    public static $getApiName = 'main.get-for-backend';
+    public static $getApiName = 'general.get-for-backend';
     public static $getFunctionName;
 
     /**
      * @var string 编辑接口名
      */
-    public static $editApiName = 'main.update-for-backend';
+    public static $editApiName = 'general.update-for-backend';
     public static $editFunctionName;
 
     /**
      * @var string 新增接口名
      */
-    public static $addApiName = 'main.add-for-backend';
+    public static $addApiName = 'general.add-for-backend';
     public static $addFunctionName;
 
     /**
      * @var string 前置记录接口名
      */
-    public static $frontApiName = 'main.front-for-backend';
+    public static $frontApiName = 'general.front-for-backend';
     public static $frontFunctionName;
 
     /**

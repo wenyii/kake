@@ -30,7 +30,7 @@ $params = \Yii::$app -> params;
                     $url = $ad ? $focus['link_url'] : Url::to([
                         'detail/index',
                         'id' => $focus['id']
-                    ])；
+                    ]);
                     $target = $ad ? $focus['target'] : '_self';
                     $img = $ad ? current($focus['preview_url']) : current($focus['cover_preview_url']);
                     ?>

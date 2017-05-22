@@ -1,5 +1,4 @@
 <?php
-
 $secondSite = 'www';
 $secondBackend = 'backend';
 $secondSource = 'source';
@@ -16,10 +15,10 @@ return [
     'app_keywords' => 'KAKE旅行',
 
     'frontend_url' => "http://{$secondSite}.{$domain}",
-    'frontend_source' => "http://{$secondSource}.{$domain}/kake-frontend",
+    'frontend_source' => "http://{$secondSource}.{$domain}/kake/frontend",
 
     'backend_url' => "http://{$secondBackend}.{$domain}",
-    'backend_source' => "http://{$secondSource}.{$domain}/kake-backend",
+    'backend_source' => "http://{$secondSource}.{$domain}/kake/backend",
 
     'upload_path' => '/upload/kake',
     'upload_url' => "http://{$secondPic}.{$domain}/upload/kake",
