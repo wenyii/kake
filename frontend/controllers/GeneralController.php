@@ -409,11 +409,6 @@ class GeneralController extends MainController
                 ],
                 [
                     'like',
-                    'product.info',
-                    $options['keyword']
-                ],
-                [
-                    'like',
                     'product.destination',
                     $options['keyword']
                 ]
@@ -422,6 +417,10 @@ class GeneralController extends MainController
 
         $condition = DetailController::$productListCondition;
         $condition['where'] = array_merge($condition['where'], $where);
+
+        if (!empty($options['hot'])) {
+            $condition['order'] = '(product.virtual_sales + product.real_sales) DESC';
+        }
 
         $pageParams = Helper::page($page, $pageSize ?: Yii::$app->params['product_page_size']);
         list($condition['offset'], $condition['limit']) = $pageParams;

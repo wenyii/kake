@@ -69,7 +69,7 @@ $params = \Yii::$app -> params;
                             <img class="img-responsive"
                                  src="<?= current($flashSales['cover_preview_url']) ?>"/></a>
 
-                        <p><?= $flashSales['name'] ?></p>
+                        <p><?= $flashSales['title'] ?></p>
                         	<div class="flashsales-icon">
                         		<i>￥</i><span><?= $flashSales['min_price'] ?></span>
                         	</div>
