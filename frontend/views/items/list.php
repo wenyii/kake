@@ -15,10 +15,10 @@ use yii\helpers\Url;
                 <div class="recommend3-1-1">￥<span><?= $item['min_price'] ?></span></div>
             </div>
             <div class="recommend3-2">
-                <?= $item['name'] ?>
+                <?= $item['title'] ?>
             </div>
             <div class="recommend3-3">
-                <?= $item['title'] ?>
+                <?= $item['name'] ?>
             </div>
         </div>
     <?php endforeach ?>
