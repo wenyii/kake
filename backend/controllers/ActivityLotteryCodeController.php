@@ -34,6 +34,9 @@ class ActivityLotteryCodeController extends GeneralController
             'company' => [
                 'value' => 'all'
             ],
+            'subscribe' => [
+                'value' => 'all'
+            ],
             'add_time' => [
                 'elem' => 'input',
                 'type' => 'date',
@@ -58,6 +61,11 @@ class ActivityLotteryCodeController extends GeneralController
             'code' => [
                 'empty',
                 'code'
+            ],
+            'subscribe' => [
+                'code',
+                'color' => 'auto',
+                'info'
             ],
             'add_time',
             'state' => [

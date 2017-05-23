@@ -17,7 +17,7 @@ class ItemsController extends GeneralController
         $this->sourceCss = null;
         $this->sourceJs = false;
 
-        list($html, $over) = $this->renderListPage(1);
+        list($html, $over) = $this->renderListPage(Yii::$app->request->get());
 
         return $this->render('index', compact('html', 'over'));
     }
@@ -27,9 +27,7 @@ class ItemsController extends GeneralController
      */
     public function actionAjaxList()
     {
-        $page = Yii::$app->request->post('page');
-
-        list($html, $over) = $this->renderListPage($page);
+        list($html, $over) = $this->renderListPage(Yii::$app->request->post());
         $this->success(compact('html', 'over'));
     }
 
@@ -38,14 +36,16 @@ class ItemsController extends GeneralController
      *
      * @access private
      *
-     * @param integer $page
+     * @param array $params
      *
      * @return array
      */
-    private function renderListPage($page)
+    private function renderListPage($params)
     {
+        $page = isset($params['page']) ? $params['page'] : 1;
         $pageSize = Yii::$app->params['product_page_size'];
-        $list = $this->listProduct($page, $pageSize);
+
+        $list = $this->listProduct($page, $pageSize, DAY, $params);
         $content = $this->renderPartial('list', compact('list'));
 
         return [

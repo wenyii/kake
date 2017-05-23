@@ -17,8 +17,8 @@ use yii\helpers\Url;
                 </a>
                 <div class="recommend3-1-1">￥<span><?= $standard['price'] ?></span></div>
             </div>
-            <div class="recommend3-2"><?= $standard['name'] ?></div>
-            <div class="recommend3-3"><?= $standard['title'] ?></div>
+            <div class="recommend3-2"><?= $standard['title'] ?></div>
+            <div class="recommend3-3"><?= $standard['name'] ?></div>
         </div>
     <?php endforeach ?>
 <?php endif; ?>
