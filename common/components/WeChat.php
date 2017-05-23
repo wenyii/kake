@@ -31,7 +31,7 @@ class WeChat extends Object
     {
         $request = Yii::$app->request;
 
-        if ($valid = $request->get('echostr')) {
+        if (method_exists($request, 'get') && $valid = $request->get('echostr')) {
             $signatureArray = [
                 $config['token'],
                 $request->get('timestamp'),

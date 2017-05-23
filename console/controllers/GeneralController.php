@@ -17,7 +17,7 @@ class GeneralController extends Controller
      * Display color
      *
      * @param string $message
-     * @param mixed $colors
+     * @param mixed  $colors
      *
      * @return string
      */
@@ -46,6 +46,10 @@ class GeneralController extends Controller
      */
     public function console($message, $params = [], $style = null, $begin = null, $end = null)
     {
+        if (is_array($message) || is_object($message)) {
+            $message = print_r($message, true);
+        }
+
         $message = sprintf($message, ...$params);
         $message = ($begin ?: PHP_EOL) . $message . ($end ?: PHP_EOL . PHP_EOL);
         $this->stdout($message, $style);
