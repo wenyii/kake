@@ -94,6 +94,7 @@ class ActivityController extends GeneralController
             }
 
             $progress = $page * $this->limit;
+            $progress = $progress > $count ? $count : $progress;
             $progress = str_pad($progress, $length, 0, STR_PAD_LEFT) . ' / ' . $count;
 
             $this->console('Task completion ：%s', [

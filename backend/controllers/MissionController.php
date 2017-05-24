@@ -66,7 +66,9 @@ class MissionController extends GeneralController
     }
 
     /**
-     * 清理无效附件
+     * 清理无效附件 (谨慎)
+     *
+     * @auth-info-style <span class="text-danger">{info}</span>
      */
     public function actionAjaxClearAttachment()
     {
@@ -123,7 +125,9 @@ class MissionController extends GeneralController
     }
 
     /**
-     * 刷新后台日志到数据库
+     * 刷新后台日志到数据库 (谨慎)
+     *
+     * @auth-info-style <span class="text-danger">{info}</span>
      */
     public function actionAjaxFlushAllBackendLog()
     {
@@ -141,7 +145,9 @@ class MissionController extends GeneralController
     }
 
     /**
-     * 刷新前台日志到数据库
+     * 刷新前台日志到数据库 (谨慎)
+     *
+     * @auth-info-style <span class="text-danger">{info}</span>
      */
     public function actionAjaxFlushAllFrontendLog()
     {
@@ -159,7 +165,9 @@ class MissionController extends GeneralController
     }
 
     /**
-     * 刷新服务日志到数据库
+     * 刷新服务日志到数据库 (谨慎)
+     *
+     * @auth-info-style <span class="text-danger">{info}</span>
      */
     public function actionAjaxFlushAllServiceLog()
     {
