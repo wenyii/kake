@@ -49,8 +49,7 @@ $params = \Yii::$app->params;
     <div class="detail-hotel_1 card_first">
         <div class="detail-hotel">
             <div class="detail-hotel-1">
- <span> <img
-             src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
+                <span> <img src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 费用包含
             </div>
             <div class="detail-hotel-2">
@@ -59,8 +58,7 @@ $params = \Yii::$app->params;
         </div>
         <div class="detail-hotel">
             <div class="detail-hotel-1">
- <span> <img
-             src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
+                <span> <img src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 推荐理由
             </div>
             <div class="detail-hotel-2 detail-hotel_2">
@@ -71,8 +69,7 @@ $params = \Yii::$app->params;
     <div class="notice card_second">
         <div class="detail-hotel">
             <div class="detail-hotel-1">
- <span> <img
-             src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
+                <span> <img src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 使用说明
             </div>
             <div class="notice-money">
@@ -81,8 +78,7 @@ $params = \Yii::$app->params;
         </div>
         <div class="detail-hotel">
             <div class="detail-hotel-1">
- <span> <img
-             src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
+                <span> <img src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 退改规则
             </div>
             <div class="notice-money">
@@ -101,13 +97,11 @@ $params = \Yii::$app->params;
             ]) ?>">立即购买</a></div>
         <div class=" service">
             <a href="tel:<?= Yii::$app->params['company_tel'] ?>">
-                <img class="img-responsive"
-                     src="<?= $params['frontend_source'] ?>/img/customer-service.svg"/>
+                <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/customer-service.svg"/>
             </a>
         </div>
         <div class="back-top">
-            <img class="img-responsive"
-                 src="<?= $params['frontend_source'] ?>/img/back-top_13.png"/>
+            <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/back-top_13.png"/>
         </div>
 
     </footer>

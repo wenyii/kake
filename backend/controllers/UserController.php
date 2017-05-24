@@ -8,6 +8,7 @@ use Yii;
 /**
  * 用户管理
  *
+ * @auth-inherit-except add
  * @auth-inherit-except front
  */
 class UserController extends GeneralController
@@ -151,7 +152,7 @@ class UserController extends GeneralController
     }
 
     /**
-     * 编辑
+     * 编辑 (危险)
      *
      * @inheritDoc
      * @auth-info-style <span class="text-danger">{info}</span>
@@ -162,18 +163,7 @@ class UserController extends GeneralController
     }
 
     /**
-     * 新增
-     *
-     * @inheritDoc
-     * @auth-same user/edit
-     */
-    public function actionAdd()
-    {
-        return parent::actionAdd();
-    }
-
-    /**
-     * 权限编辑
+     * 权限编辑 (危险)
      *
      * @access          public
      * @auth-info-style <span class="text-danger">{info}</span>

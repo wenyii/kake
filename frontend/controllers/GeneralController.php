@@ -90,7 +90,7 @@ class GeneralController extends MainController
         if (TIME < strtotime($startTime = '2017-05-18 12:00:00')) {
             return "【活动未开始】{$br}抽奖活动还未开始，不要太心急哦~开始时间：{$startTime}~ 爱你么么哒";
         }
-        if (TIME > strtotime($endTime = '2018-05-23 23:59:59')) {
+        if (TIME > strtotime($endTime = '2017-05-23 23:59:59')) {
             return "【活动已结束】{$br}艾玛，你来晚了！本期抽奖活动已经落幕！{$br}还是拿着优惠券去商城逛逛酒店吧~";
         }
 
