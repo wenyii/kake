@@ -762,7 +762,7 @@ class GeneralController extends MainController
                         if (isset($default[$value['value_field']])) {
                             $value['value'] = $default[$value['value_field']];
                         }
-                    } else if (!empty($default[$key])) {
+                    } else if (isset($default[$key])) {
                         $value['value'] = $default[$key];
                     }
 

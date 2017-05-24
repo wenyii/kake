@@ -308,16 +308,15 @@ class ProductController extends GeneralController
                 ],
                 'info'
             ],
-            'stock',
-            'virtual_sales' => 'tip',
-            'real_sales' => 'tip',
-            'night_times' => 'tip',
+            'stock' => 'tip',
+            'night_times',
             'manifestation' => [
                 'code',
                 'info'
             ],
-            'purchase_times',
-            'share_times',
+            'virtual_sales',
+            'real_sales',
+            'share_times' => 'tip',
             'state' => [
                 'code',
                 'color' => 'auto',
@@ -340,8 +339,6 @@ class ProductController extends GeneralController
                 'code',
                 'info'
             ],
-            'purchase_times' => 'code',
-            'share_times' => 'code',
             'state' => [
                 'code',
                 'color' => 'auto',
@@ -464,7 +461,7 @@ class ProductController extends GeneralController
                 ]
             ],
             'night_times' => [
-                'value' => 1,
+                'tip' => '留空时在详情页将不显示该数据',
                 'placeholder' => '套餐晚间次数'
             ],
             'manifestation' => [

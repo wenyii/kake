@@ -90,7 +90,10 @@ $params = \Yii::$app -> params;
 
 
     <footer>
-        <div class="price"><p>￥<span><?= $detail['min_price'] ?></span> 起/<?= $detail['night_times'] ?>晚</p></div>
+        <?php
+        $night = empty($detail['night_times']) ? '' : "/{$detail['night_times']}晚";
+        ?>
+        <div class="price"><p>￥<span><?= $detail['min_price'] ?></span> 起<?= $night ?></p></div>
 
         <div class="buy"><a href="<?= Url::to([
                 'detail/choose-package',
