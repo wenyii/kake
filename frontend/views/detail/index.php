@@ -3,8 +3,10 @@
 
 use yii\helpers\Url;
 
-$params = \Yii::$app -> params;
-\Yii::$app -> params['ng_ctrl'] = 'detail';
+$params = \Yii::$app->params;
+\Yii::$app->params['ng_ctrl'] = 'detail';
+\Yii::$app->params['description'] = $detail['hotel_name'] . ' - ' . $detail['title'];
+\Yii::$app->params['cover'] = $detail['slave_preview_url'][0];
 ?>
 
 <div class="body" ng-init="service.goToTop('.back-top')">
@@ -32,9 +34,8 @@ $params = \Yii::$app -> params;
             <?= $detail['hotel_name'] ?>
         </div>
         <div class="hotel-detail-2">
-         <span class="hotel-detail-2-1">
-                      已售 <span><?= $detail['max_sales'] ?></span> 份
-                 </span>
+         <span class="hotel-detail-2-1"><?= $detail['title'] ?></span>
+         <span class="hotel-detail-2-1 hidden">已售 <span><?= $detail['max_sales'] ?></span> 份</span>
         </div>
     </div>
     <div class="classify">
