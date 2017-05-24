@@ -9,9 +9,8 @@ use yii\helpers\Url;
         <div class="recommend3">
             <div class="recommend3-1">
                 <a href="<?= Url::to(['detail/index', 'id' => $item['id']]) ?>">
-                    <img class="img-responsive"
-                         src="<?= current($item['cover_preview_url']) ?>"/></a>
-
+                    <img class="img-responsive" src="<?= current($item['cover_preview_url']) ?>"/>
+                </a>
                 <div class="recommend3-1-1">￥<span><?= $item['min_price'] ?></span></div>
             </div>
             <div class="recommend3-2">
