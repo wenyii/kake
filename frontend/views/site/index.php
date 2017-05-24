@@ -3,8 +3,8 @@
 
 use yii\helpers\Url;
 
-$params = \Yii::$app -> params;
-\Yii::$app -> params['ng_ctrl'] = 'generic';
+$params = \Yii::$app->params;
+\Yii::$app->params['ng_ctrl'] = 'generic';
 ?>
 
 <div class="body">
