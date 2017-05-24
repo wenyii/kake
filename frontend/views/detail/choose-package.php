@@ -10,16 +10,14 @@ $params = \Yii::$app->params;
 <header>
     选择套餐
     <div class="menu detail" kk-menu="#menu">
-        <img class="img-responsive"
-             src="<?= $params['frontend_source'] ?>/img/menu1.svg"/>
+        <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/menu1.svg"/>
     </div>
 </header>
 <div class="body" product-id="<?= $productId ?>">
     <div class="blank"></div>
     <div class="combo">
         <div class=" detail-hotel-1">
- <span> <img
-         src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
+            <span> <img src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
             选择套餐
         </div>
         <ul>
@@ -43,10 +41,14 @@ $params = \Yii::$app->params;
                                  ng-show="<?= $number ?>">
                                 <i></i>
 
-                                <div class="combo-3"><pre><?= $item['info'] ?></pre></div>
+                                <div class="combo-3">
+                                    <pre><?= $item['info'] ?></pre>
+                                </div>
                                 <div class="combo-4">
                                     <div class="combo-4-1">
-                                        购买数量 (<?= $item['min_purchase_limit'] < 0 ? '无限制' : '≤' . $item['min_purchase_limit'] . '份' ?>)
+                                        购买数量
+                                        (<?= $item['min_purchase_limit'] < 0 ? '无限制' : '≤' . $item['min_purchase_limit'] . '份' ?>
+                                        )
                                     </div>
                                     <div class="combo-4-2">
                                         <span class="reduction" kk-tap="goodsDel(<?= $id ?>)">-</span>
@@ -73,12 +75,12 @@ $params = \Yii::$app->params;
     </div>
     <div class="linkman">
         <div class=" detail-hotel-1">
- <span> <img
-         src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
+            <span> <img src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
             联系人信息
         </div>
         <input type="text" class="input-border" name="name" ng-model="buy.user_info.name" placeholder="姓名"/>
-        <input type="number" class="input-border" name="phone" ng-model="buy.user_info.phone" ng-model="message" placeholder="手机号码"/>
+        <input type="number" class="input-border" name="phone" ng-model="buy.user_info.phone" ng-model="message"
+               placeholder="手机号码"/>
 
         <div class="auth-code">
             <input name="captcha" class="input-border" ng-model="buy.user_info.captcha" placeholder="验证码"/>
@@ -91,21 +93,18 @@ $params = \Yii::$app->params;
     </div>
     <div class="payment">
         <div class=" detail-hotel-1">
- <span> <img
-         src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
+            <span> <img src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
             选择支付方式
         </div>
         <ul>
             <li cass="payment-wechat" kk-tap="buy.payment_method = 'wx'"
                 ng-class="{'current': buy.payment_method == 'wx'}">
-                <img class="img-responsive"
-                     src="<?= $params['frontend_source'] ?>/img/wechat.png"/>
+                <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/wechat.png"/>
                 <label class="pay">微信支付</label>
             </li>
             <li cass="payment-allpay" kk-tap="buy.payment_method = 'ali'"
                 ng-class="{'current': buy.payment_method == 'ali'}">
-                <img class="img-responsive"
-                     src="<?= $params['frontend_source'] ?>/img/allpay.png"/>
+                <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/allpay.png"/>
                 <label class="pay">支付宝支付</label>
             </li>
         </ul>

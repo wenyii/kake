@@ -8,7 +8,7 @@ $params = \Yii::$app -> params;
 ?>
 
 <div class="body">
-    <div class="banner">
+    <div class="banner" kk-fixed>
         <div class="menu" kk-menu="#menu">
             <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
         </div>
@@ -31,7 +31,7 @@ $params = \Yii::$app -> params;
                         'detail/index',
                         'id' => $focus['id']
                     ]);
-                    $target = $ad ? $focus['target'] : '_self';
+                    $target = $ad ? $focus['target_info'] : '_self';
                     $img = $ad ? current($focus['preview_url']) : current($focus['cover_preview_url']);
                     ?>
 
@@ -66,9 +66,8 @@ $params = \Yii::$app -> params;
                             'detail/index',
                             'id' => $flashSales['id']
                         ]) ?>">
-                            <img class="img-responsive"
-                                 src="<?= current($flashSales['cover_preview_url']) ?>"/></a>
-
+                            <img class="img-responsive" src="<?= current($flashSales['cover_preview_url']) ?>"/>
+                        </a>
                         <p><?= $flashSales['title'] ?></p>
                         	<div class="flashsales-icon">
                         		<i>￥</i><span><?= $flashSales['min_price'] ?></span>
@@ -84,9 +83,9 @@ $params = \Yii::$app -> params;
     <div class="carousel-scroll" id="carousel-scroller-activity" kk-scroll>
         <div class="carousel-scroller activity">
             <?php foreach ($banner as $item): ?>
-                <a href="<?= $item['url'] ?>" target="<?= $item['target'] ?>">
-                    <img class="img-responsive"
-                         src="<?= current($item['preview_url']) ?>"/></a>
+                <a href="<?= $item['url'] ?>" target="<?= $item['target_info'] ?>">
+                    <img class="img-responsive" src="<?= current($item['preview_url']) ?>"/>
+                </a>
             <?php endforeach; ?>
         </div>
     </div>

@@ -10,14 +10,12 @@ $params = \Yii::$app->params;
     <?php foreach ($list as $item): ?>
         <div class="order-status">
             <div class="order-status-no-appointment">
-                <img class="img-responsive"
-                     src="<?= $params['frontend_source'] ?>/img/order-status_completed.svg"/>
+                <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/order-status_completed.svg"/>
                 订单状态: <?= $item['state_info'] ?>
             </div>
             <div class="apply-refund">
                 <div class="apply-refund-lft">
-                    <img class="img-responsive"
-                         src="<?= current($item['cover_preview_url']) ?>"/>
+                    <img class="img-responsive" src="<?= current($item['cover_preview_url']) ?>"/>
                 </div>
                 <div class="apply-refund-right">
                     <div class="apply-refund-right-1"><?= $item['title'] ?></div>
