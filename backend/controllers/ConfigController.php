@@ -63,7 +63,9 @@ class ConfigController extends GeneralController
                 'code'
             ],
             'key' => 'code',
-            'value',
+            'value' => [
+                'max-width' => '300px'
+            ],
             'remark',
             'state' => [
                 'code',
@@ -93,6 +95,16 @@ class ConfigController extends GeneralController
                 'elem' => 'select',
                 'value' => 1
             ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function indexCondition()
+    {
+        return [
+            'order' => 'config.key ASC'
         ];
     }
 

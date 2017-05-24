@@ -17,6 +17,11 @@ $action = \Yii::$app->controller->action->id;
 
 $ngApp = empty($params['ng_app']) ? 'kkApp' : $params['ng_app'];
 $ngCtl = empty($params['ng_ctrl']) ? null : (' ng-controller="' . $params['ng_ctrl'] . '"');
+
+$title = empty($params['title']) ? $params['app_title'] : $params['title'];
+$keywords = empty($params['keywords']) ? $params['app_keywords'] : $params['keywords'];
+$description = empty($params['description']) ? $params['app_description'] : $params['description'];
+$cover = empty($params['cover']) ? $params['frontend_source'] . '/img/logo.png' : $params['cover'];
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -24,10 +29,10 @@ $ngCtl = empty($params['ng_ctrl']) ? null : (' ng-controller="' . $params['ng_ct
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <meta name="keywords" content="<?= $params['app_keywords'] ?>">
-    <meta name="description" content="<?= $params['app_description'] ?>">
+    <meta name="keywords" content="<?= $keywords ?>">
+    <meta name="description" content="<?= $description ?>">
     <?= Html::csrfMetaTags() ?>
-    <title><?= $params['app_title'] ?></title>
+    <title><?= $title ?></title>
     <?php $this->head() ?>
 </head>
 
@@ -36,7 +41,11 @@ $ngCtl = empty($params['ng_ctrl']) ? null : (' ng-controller="' . $params['ng_ct
     var requestUrl = '<?= $params["frontend_url"];?>/?r=';
 </script>
 
-<body<?= $ngCtl ?>>
+<body<?= $ngCtl ?> ng-init='wxSDK(<?= Yii::$app->wx->js->config([
+    'hideMenuItems',
+    'onMenuShareTimeline',
+    'onMenuShareAppMessage'
+]) ?>, "<?= $title ?>", "<?= $description ?>", "<?= $cover ?>")'>
 
 <kk-loading loading="factory.loading"></kk-loading>
 <kk-message message="factory.message"></kk-message>

@@ -38,6 +38,7 @@ class AppAsset extends AssetBundle
             "js{$minDirectory}/jquery.js?version=" . $suffix,
             "js{$minDirectory}/angular.js?version=" . $suffix,
             "js{$minDirectory}/alloy-bundle.js?version=" . $suffix,
+            "js{$minDirectory}/jssdk.js?version=" . $suffix,
             "js{$minDirectory}/main.js?version=" . $suffix,
         ];
     }
