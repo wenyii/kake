@@ -3,8 +3,8 @@
 
 use yii\helpers\Url;
 
-$params = \Yii::$app->params;
-\Yii::$app->params['ng_ctrl'] = 'detail';
+$params = \Yii::$app -> params;
+\Yii::$app -> params['ng_ctrl'] = 'detail';
 ?>
 
 <div class="body" ng-init="service.goToTop('.back-top')">
@@ -26,7 +26,7 @@ $params = \Yii::$app->params;
         <span class="focus-number"></span>
     </div>
     <div class="hotel-detail">
-        <div class="hotel-detail-price">￥<span><?= $detail['min_price'] ?></span></div>
+        <!--<div class="hotel-detail-price">￥<span><?= $detail['min_price'] ?></span></div>-->
         <div class="hotel-detail-1">
             <?= $detail['hotel_name'] ?>
         </div>
@@ -96,7 +96,7 @@ $params = \Yii::$app->params;
                 'id' => $detail['id']
             ]) ?>">立即购买</a></div>
         <div class=" service">
-            <a href="tel:<?= Yii::$app->params['company_tel'] ?>">
+            <a href="tel:<?= Yii::$app -> params['company_tel'] ?>">
                 <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/customer-service.svg"/>
             </a>
         </div>
