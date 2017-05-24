@@ -9,9 +9,11 @@ $params = \Yii::$app -> params;
 
 <div class="body">
     <div class="banner" kk-fixed>
-        <div class="menu" kk-menu="#menu">
-            <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
-        </div>
+        	<div class="menu-box"  kk-menu="#menu" menu-pos-x="-15" menu-pos-y="-15">
+	    		<div class="menu">
+	            <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
+	        </div>
+	    	</div>
         <?php if (!empty($focusList)): ?>
 	        <ul class="focus-point">
 	        		<?php foreach ($focusList as $focus): ?>

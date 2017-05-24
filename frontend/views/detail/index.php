@@ -9,10 +9,11 @@ $params = \Yii::$app -> params;
 
 <div class="body" ng-init="service.goToTop('.back-top')">
     <div class="banner">
-        <div class="menu" kk-menu="#menu">
-            <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
-        </div>
-
+	    	<div class="menu-box"  kk-menu="#menu" menu-pos-x="-15" menu-pos-y="-15">
+	    		<div class="menu">
+	            <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
+	        </div>
+	    	</div>
         <div class="carousel" id="focus-hot" kk-focus=".focus-number" focus-number-tpl="< {NOW} / {TOTAL} >"
              style="overflow: hidden">
             <div class="carousel-scroller product-focus">
@@ -36,7 +37,7 @@ $params = \Yii::$app -> params;
                  </span>
         </div>
     </div>
-    <div class="classify" kk-fixed>
+    <div class="classify">
         <div class="classify-1" kk-tab-card="cur-1" tab-element="div">
             <div class="classify-1-1 cur-1" tab-card=".card_first">
                 <span>详情介绍</span>
@@ -96,7 +97,7 @@ $params = \Yii::$app -> params;
                 'id' => $detail['id']
             ]) ?>">立即购买</a></div>
         <div class=" service">
-            <a href="tel:<?= Yii::$app -> params['company_tel'] ?>">
+            <a href="tel:<?= Yii::$app->params['company_tel'] ?>">
                 <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/customer-service.svg"/>
             </a>
         </div>
