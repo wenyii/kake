@@ -2,6 +2,8 @@
 
 namespace backend\controllers;
 
+use common\models\Main;
+
 /**
  * 酒店产品套餐管理
  *
@@ -19,6 +21,8 @@ class ProductPackageController extends GeneralController
      * @var array Hook
      */
     public static $hookPriceNumber = ['price'];
+
+    public static $_status;
 
     /**
      * @inheritDoc
@@ -122,6 +126,12 @@ EOF
                 'code',
                 'color' => 'auto',
                 'info'
+            ],
+            'status' => [
+                'title' => '所属产品',
+                'code',
+                'color' => 'auto',
+                'info'
             ]
         ];
     }
@@ -204,6 +214,9 @@ EOF
                 return $record;
             }
 
+            self::$_status = (new Main(self::$modelName))->_state;
+            $record = $this->getFieldInfo($record, 'status');
+
             if (!empty($record['sale_rate'])) {
 
                 $controller = $this->controller('product');
@@ -262,6 +275,7 @@ EOF
                 'product.sale_rate',
                 'product.sale_from',
                 'product.sale_to',
+                'product.state AS status',
                 'product_package.*'
             ],
         ];
