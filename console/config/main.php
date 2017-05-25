@@ -31,6 +31,7 @@ return [
         'kake' => [
             'class' => 'yii\db\Connection',
             'charset' => 'utf8',
+            'enableSchemaCache' => true,
             // Master
             'masterConfig' => [
                 'username' => 'maiqi_kake_write',
@@ -57,6 +58,7 @@ return [
         'service' => [
             'class' => 'yii\db\Connection',
             'charset' => 'utf8',
+            'enableSchemaCache' => true,
             // Master
             'masterConfig' => [
                 'username' => 'maiqi_service_w',

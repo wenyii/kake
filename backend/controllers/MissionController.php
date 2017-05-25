@@ -43,13 +43,24 @@ class MissionController extends GeneralController
      */
     public function actionAjaxClearFrontendCache()
     {
-        $url = Yii::$app->params['frontend_url'] . '?r=site/clear-frontend';
-        $params = ['token' => strrev(md5(Yii::$app->params['socks_token']))];
-
-        $result = Helper::cURL($url, 'GET', $params);
-        $result = Helper::handleCurlResult($result);
+        $result = $this->api('frontend', 'site.clear-cache');
         if ($result['state'] < 1) {
             $this->fail('缓存清除失败: ' . $result['info']);
+        }
+
+        $this->success(null, '缓存清除成功');
+    }
+
+    /**
+     * 清空服务缓存
+     *
+     * @auth-pass-all
+     */
+    public function actionAjaxClearServiceCache()
+    {
+        $result = $this->service('general.clear-cache');
+        if (is_string($result)) {
+            $this->fail('缓存清除失败: ' . $result);
         }
 
         $this->success(null, '缓存清除成功');
@@ -101,8 +112,8 @@ class MissionController extends GeneralController
      *
      * @access private
      *
-     * @param string $projectName
-     * @param string $db
+     * @param string  $projectName
+     * @param string  $db
      * @param integer $maxLogFiles
      *
      * @return void
