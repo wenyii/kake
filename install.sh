@@ -1,9 +1,6 @@
 #! /bin/bash
 
 # init
-sudo chmod a+x init
-./init
-
 # add write
 sudo chmod -R a+w backend/runtime/ frontend/runtime/ backend/web/assets/ frontend/web/assets/
 
