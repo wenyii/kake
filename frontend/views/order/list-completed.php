@@ -36,7 +36,7 @@ $params = \Yii::$app->params;
                     </div>
                 </div>
 
-                <div class="refund-schedule kk-animate" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
+                <div class="refund-schedule kk-animate ng-hide" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
                     <div class="refund-schedule-name refund-schedule-name-refund">退还款将按支付方式原路返回，不同的支付方式到账时间在及时~7个工作日不等，若逾期还未到账请咨询客服
                     </div>
                 </div>
@@ -54,7 +54,7 @@ $params = \Yii::$app->params;
                         </div>
                     </div>
 
-                    <div class="invoice-personal kk-animate" ng-class="{'kk-b2s': <?= $form ?>}" ng-show="<?= $form ?>">
+                    <div class="invoice-personal kk-animate ng-hide" ng-class="{'kk-b2s': <?= $form ?>}" ng-show="<?= $form ?>">
 
                         <?php $sub = 'bill[' . $item['id'] . ']'; ?>
                         <?php $company = $sub . '.company' ?>
@@ -89,7 +89,7 @@ $params = \Yii::$app->params;
                         </div>
                     </div>
 
-                    <div class="refund-schedule kk-animate" ng-class="{'kk-b2s': <?= $schedule ?>}"
+                    <div class="refund-schedule kk-animate ng-hide" ng-class="{'kk-b2s': <?= $schedule ?>}"
                          ng-show="<?= $schedule ?>">
                         <div class="refund-schedule-name">
                             发票开具进度:
