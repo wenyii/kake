@@ -16,7 +16,7 @@ $params = \Yii::$app->params;
 	            <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
 	        </div>
 	    	</div>
-        <div class="carousel" id="focus-hot" kk-focus=".focus-number" focus-number-tpl="< {NOW} / {TOTAL} >"
+        <div class="carousel" id="focus-hot" kk-focus=".focus-number" focus-number-tpl="< {NOW} / {TOTAL} > Sold: <?= $detail['max_sales'] ?>"
              style="overflow: hidden">
             <div class="carousel-scroller product-focus">
                 <?php if (!empty($detail['slave_preview_url'])): ?>
@@ -29,7 +29,6 @@ $params = \Yii::$app->params;
         <span class="focus-number"></span>
     </div>
     <div class="hotel-detail">
-        <!--<div class="hotel-detail-price">￥<span><?= $detail['min_price'] ?></span></div>-->
         <div class="hotel-detail-1">
             <?= $detail['hotel_name'] ?>
         </div>
