@@ -7,7 +7,8 @@ $domain = DOMAIN;
 
 return [
     'app_name' => 'KAKE',
-    'socks_token' => '#maiqi$kk',
+    'api_token_backend' => '#maiqi$kk',
+    'api_token_frontend' => '#maiqi$kk',
     'use_cache' => true,
 
     'app_title' => 'KAKE旅行',

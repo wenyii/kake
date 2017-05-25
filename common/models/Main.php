@@ -221,7 +221,7 @@ class Main extends ActiveRecord
             return self::$model[$this->tableName];
         }
 
-        self::$model[$this->tableName] = $this->cache('general.model-meta.' . $this->tableName, function () {
+        self::$model[$this->tableName] = $this->cache('general.' . $this->tableName . '.model.meta.', function () {
             Yii::trace('获取模型表原数据: ' . $this->tableName);
 
             return $this->service('general.model-meta', [

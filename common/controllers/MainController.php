@@ -50,7 +50,7 @@ class MainController extends Controller
             parent::init();
 
             Yii::trace('开始读取配置表中的配置');
-            $config = $this->cache('config.list.kvp', function () {
+            $config = $this->cache('list.config.kvp', function () {
                 return $this->service('general.config-kvp');
             }, DAY, null, Yii::$app->params['use_cache']);
 
@@ -984,6 +984,74 @@ class MainController extends Controller
         $params = (array) $params;
 
         return $class->$method(...$params);
+    }
+
+    /**
+     * 调用接口 (简单版)
+     *
+     * @param string $appName
+     * @param string $api
+     * @param array  $params
+     *
+     * @return array
+     */
+    public function api($appName, $api, $params = [])
+    {
+        if (!in_array($appName, [
+            'backend',
+            'frontend'
+        ])
+        ) {
+            return [
+                'state' => 0,
+                'info' => 'Unknown application name.'
+            ];
+        }
+
+        $api = str_replace('.', '/', $api);
+        $url = Yii::$app->params[$appName . '_url'] . '?r=' . $api;
+
+        $params = array_merge($params, [
+            'api_token' => strrev(md5(Yii::$app->params['api_token_' . $appName])),
+            'api_app' => $appName
+        ]);
+
+        $result = Helper::cURL($url, 'GET', $params);
+        $result = Helper::handleCurlResult($result);
+
+        return $result;
+    }
+
+    /**
+     * 分发接口 (简单版)
+     *
+     * @param callable $callback
+     *
+     * @return void
+     */
+    public function ipa($callback)
+    {
+        $params = Yii::$app->request->get();
+
+        $token = Helper::issetDefault($params, 'api_token');
+        $appName = Helper::issetDefault($params, 'api_app');
+        $_token = Helper::issetDefault(Yii::$app->params, 'api_token_' . $appName);
+        $_token = strrev(md5($_token));
+
+        if (!$token || $token != $_token) {
+            $this->fail([
+                'param illegal',
+                'param' => 'api token'
+            ]);
+        }
+        unset($params['api_token'], $params['api_app']);
+
+        $result = call_user_func($callback, $params);
+        if (isset($result['state']) && $result['state'] < 1) {
+            $this->fail($result['info']);
+        }
+
+        $this->success($result);
     }
 
     /**

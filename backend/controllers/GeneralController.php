@@ -222,7 +222,7 @@ class GeneralController extends MainController
     {
         return $this->cache([
             'controller.auth.list',
-            $keepModule
+            func_get_args()
         ], function () use ($keepModule) {
             $list = $this->reflectionAuthList();
 
@@ -256,7 +256,7 @@ class GeneralController extends MainController
     {
         return $this->cache([
             'controller.auth.record',
-            $userId
+            func_get_args()
         ], function () use ($userId) {
             $record = $this->service(static::$listApiName, [
                 'table' => 'admin_auth',
