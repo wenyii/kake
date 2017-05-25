@@ -47,7 +47,7 @@ $params = \Yii::$app->params;
                     </div>
                 </div>
 
-                <div class="invoice-personal kk-animate" ng-class="{'kk-b2s': <?= $refund ?>}" ng-show="<?= $refund ?>">
+                <div class="invoice-personal kk-animate ng-hide" ng-class="{'kk-b2s': <?= $refund ?>}" ng-show="<?= $refund ?>">
 
                     <?php $sub = 'refund[' . $item['id'] . ']'; ?>
 
@@ -61,7 +61,7 @@ $params = \Yii::$app->params;
                     </div>
                 </div>
 
-                <div class="invoice-personal kk-animate" ng-class="{'kk-b2s': <?= $order ?>}" ng-show="<?= $order ?>">
+                <div class="invoice-personal kk-animate ng-hide" ng-class="{'kk-b2s': <?= $order ?>}" ng-show="<?= $order ?>">
 
                     <?php $sub = 'order[' . $item['id'] . ']'; ?>
 
@@ -93,7 +93,7 @@ $params = \Yii::$app->params;
                     </div>
                 </div>
 
-                <div class="refund-schedule kk-animate" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
+                <div class="refund-schedule kk-animate ng-hide" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
                     <div class="refund-schedule-name">
                         <p>入住人姓名：<?= $item['check_in_name'] ?></p>
                         <p>入住人电话：<?= $item['check_in_phone'] ?></p>
@@ -112,7 +112,7 @@ $params = \Yii::$app->params;
                     </div>
                 </div>
 
-                <div class="refund-schedule kk-animate" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
+                <div class="refund-schedule kk-animate ng-hide" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
                     <div class="refund-schedule-name">
                         <p>入住人姓名：<?= $item['check_in_name'] ?></p>
                         <p>入住人电话：<?= $item['check_in_phone'] ?></p>
@@ -120,7 +120,7 @@ $params = \Yii::$app->params;
                     </div>
                 </div>
 
-                <div class="confirmation-number kk-animate" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
+                <div class="confirmation-number kk-animate ng-hide" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
                     <div class="confirmation-number-name">
                         确认号:
                     </div>
@@ -138,7 +138,7 @@ $params = \Yii::$app->params;
                     </div>
                 </div>
 
-                <div class="refund-schedule kk-animate" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
+                <div class="refund-schedule kk-animate ng-hide" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
                     <div class="refund-schedule-name refund-schedule-name-refund"><?= $item['remark'] ?></div>
                 </div>
 
