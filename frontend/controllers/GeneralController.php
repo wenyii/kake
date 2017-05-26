@@ -29,6 +29,10 @@ class GeneralController extends MainController
     {
         parent::init();
 
+        if (!empty(Yii::$app->params['upgrade'])) {
+            return $this->redirect(['/general/upgrade']);
+        }
+
         Yii::trace('设置语言包');
         if (Yii::$app->session->has(self::LANGUAGE)) {
             Yii::$app->language = Yii::$app->session->get(self::LANGUAGE);
@@ -40,6 +44,8 @@ class GeneralController extends MainController
         }
 
         $this->weChatLogin();
+
+        return true;
     }
 
     /**
@@ -508,5 +514,24 @@ class GeneralController extends MainController
 
             return $adList;
         }, HOUR, null, Yii::$app->params['use_cache']);
+    }
+
+    /**
+     * 系统维护页面
+     *
+     * @access public
+     * @return mixed
+     */
+    public function actionUpgrade()
+    {
+        $params = Yii::$app->params;
+        if (!$params['upgrade']) {
+            return $this->redirect(['site/index']);
+        }
+
+        $message = sprintf($params['upgrade_message'], $params['upgrade_minute']);
+        $this->message($message, $params['upgrade_title']);
+
+        return null;
     }
 }
