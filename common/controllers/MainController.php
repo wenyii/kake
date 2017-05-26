@@ -503,7 +503,7 @@ class MainController extends Controller
 
         $result = current($result);
 
-        $res = $this->service('main.add-for-backend', [
+        $res = $this->service('general.add-for-backend', [
             'table' => 'attachment',
             'deep_path' => $result['save_path'],
             'filename' => $result['save_name']
