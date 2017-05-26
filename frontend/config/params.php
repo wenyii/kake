@@ -16,4 +16,9 @@ return [
 
     'product_page_size' => 8,
     'order_page_size' => 8,
+
+    'upgrade' => false,
+    'upgrade_title' => 'System upgrade',
+    'upgrade_minute' => 15,
+    'upgrade_message' => '系统版本升级中，本次升级约需 %d 分钟，尽情期待',
 ];

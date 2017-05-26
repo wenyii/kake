@@ -1,6 +1,8 @@
 #! /bin/bash
 
-# init
+# composer
+composer install
+
 # add write
 sudo chmod -R a+w backend/runtime/ frontend/runtime/ backend/web/assets/ frontend/web/assets/
 
@@ -30,6 +32,3 @@ sudo chmod a+x yii
 
 sudo cp backend/web/index-${env}.php backend/web/index.php
 sudo cp frontend/web/index-${env}.php frontend/web/index.php
-
-# composer
-composer install
