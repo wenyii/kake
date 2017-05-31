@@ -7,7 +7,7 @@ return [
     'bootstrap' => null,
     'components' => [
         'request' => [
-            'cookieValidationKey' => 'TODO',
+            'cookieValidationKey' => '[SECRET:cookie]',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -76,10 +76,10 @@ return [
             'class' => 'common\components\WeChat',
             // 基本
             'debug' => false,
-            'app_id' => 'TODO',
-            'secret' => 'TODO',
-            'token' => 'TODO',
-            'aes_key' => 'TODO',
+            'app_id' => '[SECRET:wx_id]',
+            'secret' => '[SECRET:wx_secret]',
+            'token' => '[SECRET:wx_token]',
+            'aes_key' => '[SECRET:wx_aes]',
             // 授权
             'oauth' => [
                 'scopes' => ['snsapi_userinfo'],
@@ -87,8 +87,8 @@ return [
             ],
             // 支付
             'payment' => [
-                'merchant_id' => 'TODO',
-                'key' => 'TODO',
+                'merchant_id' => '[SECRET:wx_pay_id]',
+                'key' => '[SECRET:wx_pay_key]',
                 'cert_path' => '@wechat/cert/apiclient_cert.pem',
                 'key_path' => '@wechat/cert/apiclient_key.pem',
             ],
@@ -104,7 +104,7 @@ return [
                 'pay_public_key' => '@alipay/key/rsa_alipay.public',
             ],
             'params' => [
-                'app_id' => 'TODO',
+                'app_id' => '[SECRET:ali_id]',
             ],
         ],
     ],
