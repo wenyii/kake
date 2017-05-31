@@ -23,8 +23,8 @@ return [
             ],
         ],
         /**
-         * create user maiqi_kake_write identified by 'TODO';
-         * create user maiqi_kake_read identified by 'TODO';
+         * create user maiqi_kake_write identified by '[SECRET:kake_pwd]';
+         * create user maiqi_kake_read identified by '[SECRET:kake_pwd]';
          * grant all on maiqi_kake.* to maiqi_kake_write;
          * grant SELECT on maiqi_kake.* to maiqi_kake_read;
          */
@@ -35,23 +35,23 @@ return [
             // Master
             'masterConfig' => [
                 'username' => 'maiqi_kake_write',
-                'password' => 'TODO',
+                'password' => '[SECRET:kake_pwd]',
             ],
             'masters' => [
-                'a' => ['dsn' => 'mysql:host=TODO;dbname=maiqi_kake'],
+                'a' => ['dsn' => 'mysql:host=[SECRET:host];dbname=maiqi_kake'],
             ],
             // Slave
             'slaveConfig' => [
                 'username' => 'maiqi_kake_read',
-                'password' => 'TODO',
+                'password' => '[SECRET:kake_pwd]',
             ],
             'slaves' => [
-                'a' => ['dsn' => 'mysql:host=TODO;dbname=maiqi_kake'],
+                'a' => ['dsn' => 'mysql:host=[SECRET:host];dbname=maiqi_kake'],
             ],
         ],
         /**
-         * create user maiqi_service_write identified by 'TODO';
-         * create user maiqi_service_read identified by 'TODO';
+         * create user maiqi_service_write identified by '[SECRET:service_pwd]';
+         * create user maiqi_service_read identified by '[SECRET:service_pwd]';
          * grant all on maiqi_service.* to maiqi_service_write;
          * grant SELECT on maiqi_service.* to maiqi_service_read;
          */
@@ -62,18 +62,18 @@ return [
             // Master
             'masterConfig' => [
                 'username' => 'maiqi_service_w',
-                'password' => 'TODO',
+                'password' => '[SECRET:service_pwd]',
             ],
             'masters' => [
-                'a' => ['dsn' => 'mysql:host=TODO;dbname=maiqi_service'],
+                'a' => ['dsn' => 'mysql:host=[SECRET:host];dbname=maiqi_service'],
             ],
             // Slave
             'slaveConfig' => [
                 'username' => 'maiqi_service_r',
-                'password' => 'TODO',
+                'password' => '[SECRET:service_pwd]',
             ],
             'slaves' => [
-                'a' => ['dsn' => 'mysql:host=TODO;dbname=maiqi_service'],
+                'a' => ['dsn' => 'mysql:host=[SECRET:host];dbname=maiqi_service'],
             ],
         ],
     ],

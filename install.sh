@@ -4,7 +4,13 @@
 composer install
 
 # add write
-sudo chmod -R a+w backend/runtime/ frontend/runtime/ backend/web/assets/ frontend/web/assets/
+sudo chmod -R a+w common/config/
+sudo chmod -R a+w console/config/
+sudo chmod -R a+w mixed/
+sudo chmod -R a+w backend/runtime/
+sudo chmod -R a+w frontend/runtime/
+sudo chmod -R a+w backend/web/assets/
+sudo chmod -R a+w frontend/web/assets/
 
 # create config files
 sudo cp common/config/main-local.php.backup common/config/main-local.php
