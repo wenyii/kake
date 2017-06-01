@@ -73,7 +73,7 @@ $params = \Yii::$app->params;
                 <span> <img src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 使用说明
             </div>
-            <div class="notice-money">
+            <div class="notice-money bor">
                 <?= $detail['use'] ?>
             </div>
         </div>
