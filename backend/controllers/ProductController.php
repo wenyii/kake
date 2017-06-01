@@ -686,6 +686,7 @@ class ProductController extends GeneralController
             // 获取套餐数据
             $record = $this->listForeignData($record, 'package', function ($item) {
                 return Helper::pullSome($item, [
+                    'bidding',
                     'sale_type',
                     'sale_rate',
                     'sale_from',

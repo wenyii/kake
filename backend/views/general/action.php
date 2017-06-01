@@ -139,6 +139,25 @@ if ($modal) {
             echo Helper::createSelect($value['list'], $value['name'], $selected, 'key', $empty('readonly', false));
             ?>
         </div>
+    <?php elseif ($element == 'radio'): ?> <!-- radio -->
+        <div class="col-sm-<?= $empty('label', 2) ?>" <?= $as_tip ?>>
+            <?php
+            $value = $empty('value');
+            $selected = Helper::issetDefault($flash, $field, $value['selected']);
+            echo Helper::createRadio($value['list'], $value['name'], $selected, 'key', $empty('readonly', false));
+            ?>
+        </div>
+    <?php elseif ($element == 'checkbox'): ?> <!-- checkbox -->
+        <div class="col-sm-<?= $empty('label', 2) ?>" <?= $as_tip ?>>
+            <?php
+            $value = $empty('value');
+            $selected = Helper::issetDefault($flash, $field, $value['selected']);
+            if (is_string($selected)) {
+                $selected = explode(',', $selected);
+            }
+            echo Helper::createCheckbox($value['list'], $value['name'], $selected, 'key', $empty('readonly', false));
+            ?>
+        </div>
     <?php elseif ($element == 'textarea'): ?> <!-- textarea -->
         <div class="col-sm-<?= $empty('label', 6) ?>" <?= $as_tip ?>>
             <?php $as_row = 'rows="' . $empty('row', 3) . '"' ?>
@@ -243,7 +262,7 @@ if ($modal) {
             </button>
 
             <?php if (!empty($operation)): ?>
-            <?= ViewHelper::createButtonForRecord($operation, $result, $controller) ?>
+                <?= ViewHelper::createButtonForRecord($operation, $result, $controller) ?>
             <?php endif; ?>
         </div>
     </div>
