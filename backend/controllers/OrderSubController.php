@@ -248,7 +248,8 @@ class OrderSubController extends GeneralController
                     2 => 'primary',
                     3 => 'warning',
                     4 => 'default',
-                    5 => 'success'
+                    5 => 'success',
+                    6 => 'default'
                 ]
             ]
         ];

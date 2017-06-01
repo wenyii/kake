@@ -91,7 +91,7 @@ $params = \Yii::$app->params;
 
     <footer>
         <?php
-        $night = empty($detail['night_times']) ? '' : "/{$detail['night_times']}晚";
+        $night = empty($detail['night_times']) ? '' : " / {$detail['night_times']}晚";
         ?>
         <div class="price"><p>￥<span><?= $detail['min_price'] ?></span> 起<?= $night ?></p></div>
 

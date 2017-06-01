@@ -741,6 +741,8 @@ class GeneralController extends MainController
 
             switch ($value['elem']) {
                 case 'select' :
+                case 'radio' :
+                case 'checkbox' :
                     $valued = isset($value['value']) ? $value['value'] : null;
                     $list = empty($value['list']) ? null : $value['list'];
                     $value['value'] = [
