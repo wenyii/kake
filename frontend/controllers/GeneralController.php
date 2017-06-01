@@ -238,6 +238,12 @@ class GeneralController extends MainController
                 } else {
                     $detail['max_sales'] = $detail['virtual_sales'] + $detail['real_sales'];
                 }
+
+                foreach ($detail['package'] as $key => $item) {
+                    if (empty($item['bidding'])) {
+                        unset ($detail['package'][$key]);
+                    }
+                }
                 $detail['min_price'] = min(array_column($detail['package'], $field));
             }
 

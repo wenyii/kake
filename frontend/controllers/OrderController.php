@@ -74,6 +74,7 @@ class OrderController extends GeneralController
             'order.payment_state',
 
             'product_package.name AS package_name',
+            'product_package.bidding',
 
             'product.title',
             'product.destination',
@@ -511,7 +512,7 @@ class OrderController extends GeneralController
                 'body' => $body,
                 'out_trade_no' => $outTradeNo,
                 'total_fee' => $price,
-                'notify_url' => Yii::$app->params['frontend_url'] . '/order/wx-paid',
+                'notify_url' => Yii::$app->params['frontend_url'] . '/order/wx-paid/',
                 'openid' => $this->user->openid,
             ]);
         } catch (\Exception $e) {
@@ -541,6 +542,7 @@ class OrderController extends GeneralController
      */
     public function actionWxPaid()
     {
+        Yii::info('微信支付回调修改订单状态');
         $payment = Yii::$app->wx->payment;
         $response = $payment->handleNotify(function ($notify, $successful) {
 
@@ -639,7 +641,7 @@ class OrderController extends GeneralController
             Yii::$app->ali->alipayTradeClose($order['order_number']);
         }
 
-        $notifyUrl = Yii::$app->params['frontend_url'] . '/order/ali-paid';
+        $notifyUrl = Yii::$app->params['frontend_url'] . '/order/ali-paid/';
         Yii::$app->ali->alipayTradeWapPay([
             'subject' => $order['title'],
             'out_trade_no' => isset($orderNumber) ? $orderNumber : $order['order_number'],
@@ -672,6 +674,7 @@ class OrderController extends GeneralController
      */
     public function actionAliPaid()
     {
+        Yii::info('支付宝支付回调修改订单状态');
         $params = Yii::$app->request->post();
         Yii::info('支付宝异步回调数据：' . json_encode($params, JSON_UNESCAPED_UNICODE));
 

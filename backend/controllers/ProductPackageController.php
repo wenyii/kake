@@ -92,6 +92,9 @@ EOF
             ],
             'name' => 'input',
             'info' => 'input',
+            'bidding' => [
+                'value' => 'all'
+            ],
             'state' => [
                 'value' => 'all'
             ]
@@ -112,6 +115,14 @@ EOF
             'sale_price' => [
                 'title' => '折后价格',
                 'code'
+            ],
+            'bidding' => [
+                'code',
+                'color' => [
+                    0 => 'default',
+                    1 => 'success'
+                ],
+                'info'
             ],
             'purchase_limit' => [
                 'code',
@@ -158,6 +169,11 @@ EOF
             'price' => [
                 'placeholder' => '保留到小数点后两位'
             ],
+            'bidding' => [
+                'elem' => 'select',
+                'tip' => '是否参与价格显示',
+                'value' => 1
+            ],
             'purchase_limit' => [
                 'placeholder' => '留空或0表示不限制',
                 'tip' => '以用户为单位进行限购',
@@ -188,6 +204,11 @@ EOF
             'price' => [
                 'label' => 5,
                 'placeholder' => '保留到小数点后两位'
+            ],
+            'bidding' => [
+                'elem' => 'select',
+                'tip' => '是否参与价格显示',
+                'value' => 1
             ],
             'purchase_limit' => [
                 'placeholder' => '留空或0表示不限制',

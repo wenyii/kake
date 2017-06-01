@@ -10,7 +10,8 @@ $params = \Yii::$app->params;
     <?php foreach ($list as $item): ?>
         <div class="order-status">
             <div class="order-status-no-appointment">
-                <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/order-status_<?= $item['state'] ?>.svg"/>
+                <img class="img-responsive"
+                     src="<?= $params['frontend_source'] ?>/img/order-status_<?= $item['state'] ?>.svg"/>
                 订单状态: <?= empty($item['payment_state']) ? '未支付' : $item['state_info'] ?>
             </div>
             <div class="apply-refund">
@@ -31,7 +32,10 @@ $params = \Yii::$app->params;
                 <div class="order-status-button">
                     <div>
                         <button class="cancel-button" kk-tap="cancelOrder('<?= $item['order_number'] ?>')">取消订单</button>
-                        <button class="appointment-button" kk-tap="paymentAgain(<?= $item['payment_method'] ?>, '<?= $item['order_number'] ?>')">立即支付</button>
+                        <button class="appointment-button"
+                                kk-tap="paymentAgain(<?= $item['payment_method'] ?>, '<?= $item['order_number'] ?>')">
+                            立即支付
+                        </button>
                     </div>
                 </div>
 
@@ -42,12 +46,19 @@ $params = \Yii::$app->params;
 
                 <div class="order-status-button">
                     <div>
-                        <button class="cancel-button" kk-tap="<?= $refund ?> = !<?= $refund ?>; <?= $order ?> = 0">申请退款</button>
-                        <button class="appointment-button" kk-tap="<?= $order ?> = !<?= $order ?>; <?= $refund ?> = 0">立即预约</button>
+                        <button class="cancel-button" kk-tap="<?= $refund ?> = !<?= $refund ?>; <?= $order ?> = 0">
+                            申请退款
+                        </button>
+                        <?php if (!empty($item['bidding'])): ?>
+                            <button class="appointment-button"
+                                    kk-tap="<?= $order ?> = !<?= $order ?>; <?= $refund ?> = 0">立即预约
+                            </button>
+                        <?php endif; ?>
                     </div>
                 </div>
 
-                <div class="invoice-personal kk-animate ng-hide" ng-class="{'kk-b2s': <?= $refund ?>}" ng-show="<?= $refund ?>">
+                <div class="invoice-personal kk-animate ng-hide" ng-class="{'kk-b2s': <?= $refund ?>}"
+                     ng-show="<?= $refund ?>">
 
                     <?php $sub = 'refund[' . $item['id'] . ']'; ?>
 
@@ -61,7 +72,8 @@ $params = \Yii::$app->params;
                     </div>
                 </div>
 
-                <div class="invoice-personal kk-animate ng-hide" ng-class="{'kk-b2s': <?= $order ?>}" ng-show="<?= $order ?>">
+                <div class="invoice-personal kk-animate ng-hide" ng-class="{'kk-b2s': <?= $order ?>}"
+                     ng-show="<?= $order ?>">
 
                     <?php $sub = 'order[' . $item['id'] . ']'; ?>
 
@@ -93,7 +105,8 @@ $params = \Yii::$app->params;
                     </div>
                 </div>
 
-                <div class="refund-schedule kk-animate ng-hide" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
+                <div class="refund-schedule kk-animate ng-hide" ng-class="{'kk-b2s': <?= $info ?>}"
+                     ng-show="<?= $info ?>">
                     <div class="refund-schedule-name">
                         <p>入住人姓名：<?= $item['check_in_name'] ?></p>
                         <p>入住人电话：<?= $item['check_in_phone'] ?></p>
@@ -112,7 +125,8 @@ $params = \Yii::$app->params;
                     </div>
                 </div>
 
-                <div class="refund-schedule kk-animate ng-hide" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
+                <div class="refund-schedule kk-animate ng-hide" ng-class="{'kk-b2s': <?= $info ?>}"
+                     ng-show="<?= $info ?>">
                     <div class="refund-schedule-name">
                         <p>入住人姓名：<?= $item['check_in_name'] ?></p>
                         <p>入住人电话：<?= $item['check_in_phone'] ?></p>
@@ -120,7 +134,8 @@ $params = \Yii::$app->params;
                     </div>
                 </div>
 
-                <div class="confirmation-number kk-animate ng-hide" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
+                <div class="confirmation-number kk-animate ng-hide" ng-class="{'kk-b2s': <?= $info ?>}"
+                     ng-show="<?= $info ?>">
                     <div class="confirmation-number-name">
                         确认号:
                     </div>
@@ -138,7 +153,8 @@ $params = \Yii::$app->params;
                     </div>
                 </div>
 
-                <div class="refund-schedule kk-animate ng-hide" ng-class="{'kk-b2s': <?= $info ?>}" ng-show="<?= $info ?>">
+                <div class="refund-schedule kk-animate ng-hide" ng-class="{'kk-b2s': <?= $info ?>}"
+                     ng-show="<?= $info ?>">
                     <div class="refund-schedule-name refund-schedule-name-refund"><?= $item['remark'] ?></div>
                 </div>
 
