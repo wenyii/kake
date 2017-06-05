@@ -1,16 +1,24 @@
 <?php
 return [
     'use_cache' => true,
+    'service_app_id' => 'kk_096a64b5359a74d',
+    'service_app_secret' => '6819c5a31ab3f36be3cc18eedd5d60f7',
     'menu' => [
         'a' => [
-            'name' => '配置管理',
+            'name' => '生产环境',
             'sub' => [
-                'environment.index' => '生产环境',
+                'environment.index' => '生产环境'
+            ],
+            'min_role' => 99
+        ],
+        'b' => [
+            'name' => '配置',
+            'sub' => [
                 'config.index' => '常规配置',
                 'config.file' => '文件预配置'
             ]
         ],
-        'b' => [
+        'c' => [
             'name' => '计划任务',
             'sub' => [
                 'mission.cache' => '缓存任务',
@@ -18,14 +26,14 @@ return [
                 'mission.log' => '日志任务',
             ]
         ],
-        'c' => [
+        'd' => [
             'name' => '用户',
             'sub' => [
                 'user.index' => '用户管理',
                 'login-log.index' => '登录日志',
             ]
         ],
-        'd' => [
+        'e' => [
             'name' => '运行日志',
             'sub' => [
                 'app-log.index' => '项目日志',
@@ -33,7 +41,7 @@ return [
                 'phone-captcha.index' => '短信验证码日志'
             ]
         ],
-        'e' => [
+        'f' => [
             'name' => '酒店&产品',
             'sub' => [
                 'hotel.index' => '酒店管理',
@@ -41,7 +49,7 @@ return [
                 'product-package.index' => '产品套餐管理',
             ]
         ],
-        'f' => [
+        'g' => [
             'name' => '订单',
             'sub' => [
                 'order.index' => '主订单管理',
@@ -50,21 +58,25 @@ return [
                 'order-instructions-log.index' => '订单操作日志',
             ]
         ],
-        'g' => [
-            'name' => '活动管理',
+        'h' => [
+            'name' => '活动',
             'sub' => [
                 'activity-lottery-code.index' => '抽奖码领取记录'
             ]
         ],
-        'h' => [
+        'i' => [
             'name' => '通用',
             'sub' => [
                 'ad.index' => '广告管理',
                 'attachment.index' => '附件管理',
                 'wx-menu.index' => '服务号菜单',
             ]
+        ],
+        'j' => [
+            'name' => '分销',
+            'sub' => [
+                
+            ],
         ]
-    ],
-    'service_app_id' => 'kk_096a64b5359a74d',
-    'service_app_secret' => '6819c5a31ab3f36be3cc18eedd5d60f7',
+    ]
 ];
