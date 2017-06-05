@@ -19,6 +19,25 @@ class UserController extends GeneralController
     // 模型描述
     public static $modelInfo = '用户';
 
+    // 权限控制 - 手动排除
+    public static $keyInheritExcept = '@auth-inherit-except';
+
+    // 权限控制 - 允许所有人
+    public static $keyPassAll = '@auth-pass-all';
+
+    // 权限控制 - 允许指定角色 （含逗号时在该范围内，否则应比指定的权限小）
+    public static $keyPassRole = '@auth-pass-role';
+
+    // 权限控制 - 同指定的方法
+    public static $keySame = '@auth-same';
+
+    // 权限控制 - 标题样式控制
+    public static $keyInfoStyle = '@auth-info-style';
+
+    public static $varCtrl = '{ctrl}';
+
+    public static $varInfo = '{info}';
+
     /**
      * @inheritDoc
      */
@@ -129,7 +148,11 @@ class UserController extends GeneralController
             'role' => [
                 'elem' => 'select',
                 'value' => 0,
-                'tip' => '管理员可登录后台'
+                'tip' => [
+                    '普通用户' => '无法登录后台',
+                    '管理员' => '管理整个后台',
+                    '分销商' => '管理个人分销系统'
+                ]
             ],
             'openid' => [
                 'label' => 4,
@@ -174,7 +197,9 @@ class UserController extends GeneralController
         if (empty($userId)) {
             $this->error('用户ID参数未指定');
         }
-        $authList = $this->authList(true);
+
+        $userInfo = $this->service('user.detail', ['where' => [['id' => $userId]]]);
+        $authList = $this->authList(true, 1, $userInfo['role']);
         $authRecord = array_keys($this->authRecord($userId));
 
         return $this->display('auth', [
@@ -221,6 +246,7 @@ class UserController extends GeneralController
      * 同步用户信息
      *
      * @access public
+     *
      * @param string $openid
      */
     public function actionSyncUser($openid)

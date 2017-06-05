@@ -17,8 +17,6 @@ class MissionController extends GeneralController
 {
     /**
      * 缓存任务列表
-     *
-     * @auth-pass-all
      */
     public function actionCache()
     {
@@ -27,8 +25,6 @@ class MissionController extends GeneralController
 
     /**
      * 清空后台缓存
-     *
-     * @auth-pass-all
      */
     public function actionAjaxClearBackendCache()
     {
@@ -38,8 +34,6 @@ class MissionController extends GeneralController
 
     /**
      * 清空前台缓存
-     *
-     * @auth-pass-all
      */
     public function actionAjaxClearFrontendCache()
     {
@@ -53,8 +47,6 @@ class MissionController extends GeneralController
 
     /**
      * 清空服务缓存
-     *
-     * @auth-pass-all
      */
     public function actionAjaxClearServiceCache()
     {
@@ -68,8 +60,6 @@ class MissionController extends GeneralController
 
     /**
      * 附件任务列表
-     *
-     * @auth-pass-all
      */
     public function actionAttachment()
     {
@@ -99,8 +89,6 @@ class MissionController extends GeneralController
 
     /**
      * 日志任务列表
-     *
-     * @auth-pass-all
      */
     public function actionLog()
     {

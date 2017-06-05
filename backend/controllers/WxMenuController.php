@@ -15,7 +15,7 @@ class WxMenuController extends GeneralController
     /**
      * 服务号菜单预览
      *
-     * @auth-pass-all
+     * @auth-same wx-menu/edit
      */
     public function actionIndex()
     {
