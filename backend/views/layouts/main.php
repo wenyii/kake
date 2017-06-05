@@ -63,12 +63,14 @@ foreach ($item as $type): ?>
                 <li>
                     <a href="javascript:void(0);">欢迎 <?= !empty($this->params['user_info']->username) ? Html::encode($this->params['user_info']->username) : $this->params['user_info']->phone ?></a>
                 </li>
-                <li>
-                    <a class="btn btn-link mission-button" data-action-tag="clear-frontend-cache">清前台缓存</a>
-                </li>
-                <li>
-                    <a class="btn btn-link mission-button" data-action-tag="clear-backend-cache">清后台缓存</a>
-                </li>
+                <?php if ($this->params['user_info']->role == 1): ?>
+                    <li>
+                        <a class="btn btn-link mission-button" data-action-tag="clear-frontend-cache">清前台缓存</a>
+                    </li>
+                    <li>
+                        <a class="btn btn-link mission-button" data-action-tag="clear-backend-cache">清后台缓存</a>
+                    </li>
+                <?php endif; ?>
                 <li><a class="confirm-button" href="<?= Url::to(['login/logout']) ?>">退出登录</a></li>
             </ul>
         </div>
