@@ -140,7 +140,14 @@ class GeneralController extends MainController
 
             $rootUsers = explode(',', Yii::$app->params['private']['root_user_ids']);
             if (!in_array($this->user->id, $rootUsers)) {
-                $this->authVerify($router);
+                $auth = $this->authVerify($router);
+                if (is_string($auth)) {
+                    if (Yii::$app->request->isAjax) {
+                        $this->fail($auth);
+                    } else {
+                        $this->error($auth);
+                    }
+                }
             }
 
             // admin action log
@@ -164,13 +171,19 @@ class GeneralController extends MainController
      *
      * @param string $router
      *
-     * @return void
+     * @return mixed
      */
     protected function authVerify($router)
     {
+        $router = str_replace('.', '/', $router);
         $_router = $router;
         $authList = $this->authList();
         $authRecord = $this->authRecord($this->user->id);
+
+        // 鉴权
+        if (!empty($authRecord[$_router])) {
+            return true;
+        }
 
         // 根据注释完善辅助数据
         $perfectAuthData = function () use (&$authList, &$authRecord, &$router, $_router, &$perfectAuthData) {
@@ -182,31 +195,33 @@ class GeneralController extends MainController
             $classDoc = Yii::$app->reflection->getClassDocument($class);
             $methodDoc = Yii::$app->reflection->getMethodDocument($class, $method);
 
-            if (isset($methodDoc['@auth-same'])) {
+            if (isset($methodDoc[UserController::$keySame])) {
                 $authList[$router] = $classDoc['info'] . ' > ' . $methodDoc['info'];
-                $router = str_replace('{static}', $this->getControllerName(), current($methodDoc['@auth-same']));
+                $router = str_replace(UserController::$varCtrl, $this->getControllerName(), current($methodDoc[UserController::$keySame]));
                 if (!empty($authRecord[$router])) {
                     $authRecord[$_router] = $authRecord[$router];
                 }
                 $perfectAuthData();
+            } else if (isset($methodDoc[UserController::$keyPassRole])) {
+                $roles = explode(',', $methodDoc[UserController::$keyPassRole]);
+                $roles = count($roles) == 1 ? ($this->user->role <= current($roles)) : in_array($this->user->role, $roles);
+                if ($roles) {
+                    $authRecord[$_router] = 1;
+                }
             }
         };
 
         $perfectAuthData();
 
-        // 权限鉴定
+        // 二次鉴权
         if (empty($authList[$_router]) || !empty($authRecord[$_router])) {
-            return;
+            return true;
         }
 
         Yii::trace('操作权限鉴定失败: ' . $_router . ' (' . $authList[$_router] . ')');
-
         $info = Helper::deleteHtml('"' . $authList[$_router] . '" 操作权限不足');
-        if (Yii::$app->request->isAjax) {
-            $this->fail($info);
-        } else {
-            $this->error($info);
-        }
+
+        return $info;
     }
 
     /**
@@ -215,16 +230,18 @@ class GeneralController extends MainController
      * @access public
      *
      * @param boolean $keepModule
+     * @param mixed   $roleCtrl
+     * @param integer $userRole
      *
      * @return array
      */
-    public function authList($keepModule = false)
+    public function authList($keepModule = false, $roleCtrl = null, $userRole = null)
     {
         return $this->cache([
             'controller.auth.list',
             func_get_args()
-        ], function () use ($keepModule) {
-            $list = $this->reflectionAuthList();
+        ], function () use ($keepModule, $roleCtrl, $userRole) {
+            $list = $this->reflectionAuthList($roleCtrl, $userRole);
 
             $_list = [];
             foreach ($list as $module => $items) {
@@ -329,11 +346,13 @@ class GeneralController extends MainController
      *
      * @access public
      *
-     * @param array $exceptControllers
+     * @param mixed   $roleCtrl
+     * @param integer $userRole
+     * @param array   $exceptControllers
      *
      * @return array
      */
-    public function reflectionAuthList($exceptControllers = [
+    public function reflectionAuthList($roleCtrl = null, $userRole = null, $exceptControllers = [
         'GeneralController',
         'MainController'
     ])
@@ -367,42 +386,47 @@ class GeneralController extends MainController
             // 处理注释
             foreach ($comment as $key => $val) {
 
+                // 非 http 方法
                 if (0 !== strpos($key, 'action') || !preg_match('/^(action)[A-Z]/', $key)) {
                     continue;
                 }
 
+                // 手动排除方法
                 $action = Helper::camelToUnder(preg_replace('/action/', null, $key, 1), '-');
-                if (!empty($classDoc['@auth-inherit-except']) && in_array($action, $classDoc['@auth-inherit-except'])) {
+                if (!empty($classDoc[UserController::$keyInheritExcept]) && in_array($action, $classDoc[UserController::$keyInheritExcept])) {
                     continue;
                 }
 
                 // 无需通过后台配置即可决定权限的标示
-                if (isset($val['@auth-pass-all']) || isset($val['@auth-same'])) {
+                if (isset($val[UserController::$keyPassAll]) || isset($val[UserController::$keySame]) || isset($val[UserController::$keyPassRole])) {
                     continue;
                 }
 
-                $styleTag = '@auth-info-style';
-
                 // Ajax 操作标题修饰
                 if (strpos($action, 'ajax-') === 0) {
-                    $style = '{info} (<b>Ajax</b>)';
-                    if (empty($val[$styleTag])) {
-                        $val[$styleTag] = [$style];
+                    $style = UserController::$varInfo . ' (<b>Ajax</b>)';
+                    if (empty($val[UserController::$keyInfoStyle])) {
+                        $val[UserController::$keyInfoStyle] = [$style];
                     } else {
-                        $val[$styleTag] = [str_replace('{info}', current($val[$styleTag]), $style)];
+                        $val[UserController::$keyInfoStyle] = [str_replace(UserController::$varInfo, current($val[UserController::$keyInfoStyle]), $style)];
                     }
                 }
 
                 // 普通操作标题修饰
-                if (!empty($val[$styleTag])) {
-                    $val['info'] = str_replace('{info}', $val['info'], current($val[$styleTag]));
+                if (!empty($val[UserController::$keyInfoStyle])) {
+                    $val['info'] = str_replace(UserController::$varInfo, $val['info'], current($val[UserController::$keyInfoStyle]));
                 }
 
-                $self[] = [
-                    'info' => $val['info'],
-                    'controller' => Helper::camelToUnder(str_replace('Controller', null, $controller), '-'),
-                    'action' => $action
-                ];
+                $roles = explode(',', empty($val[UserController::$keyPassRole]) ? $roleCtrl : $val[UserController::$keyPassRole]);
+                $roles = count($roles) == 1 ? ($userRole <= current($roles)) : in_array($userRole, $roles);
+
+                if (!$roleCtrl || $roles) {
+                    $self[] = [
+                        'info' => $val['info'],
+                        'controller' => Helper::camelToUnder(str_replace('Controller', null, $controller), '-'),
+                        'action' => $action
+                    ];
+                }
             }
 
             if (!empty($self)) {
@@ -424,13 +448,21 @@ class GeneralController extends MainController
         Yii::$app->view->params['user_info'] = $this->user;
         $menu = Yii::$app->params['menu'];
 
-        foreach ($menu as &$item) {
+        foreach ($menu as $key => &$item) {
+            $roles = empty($item['min_role']) ? [1] : (array) $item['min_role'];
+            $roles = count($roles) == 1 ? ($this->user->role <= current($roles)) : in_array($this->user->role, $roles);
+            if (!$roles) {
+                unset($menu[$key]);
+                continue;
+            }
+
             $controllers = [];
             foreach ($item['sub'] as $router => &$page) {
                 list($controller, $action) = explode('.', $router);
                 if (!in_array($controller, $controllers)) {
                     $controllers[] = $controller;
                 }
+
                 $page = [
                     'title' => $page,
                     'controller' => $controller,
@@ -449,11 +481,11 @@ class GeneralController extends MainController
     /**
      * @inheritDoc
      */
-    public function error($message, $title = null, $code = null, $trace = null)
+    public function error($message, $code = null, $trace = null)
     {
         $this->sourceCss = false;
         $this->commonParams();
-        parent::error($message, $title, $code, $trace);
+        parent::error($message, $code, $trace);
     }
 
     /**
@@ -1644,7 +1676,7 @@ class GeneralController extends MainController
 
     /**
      * 新增动作
-     * @auth-same {static}/add
+     * @auth-same {ctrl}/add
      */
     public function actionAddForm()
     {
@@ -1727,7 +1759,7 @@ class GeneralController extends MainController
 
     /**
      * 编辑动作
-     * @auth-same {static}/edit
+     * @auth-same {ctrl}/edit
      */
     public function actionEditForm()
     {
