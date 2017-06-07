@@ -52,7 +52,7 @@ $params = \Yii::$app->params;
             <span>
                 <img src="<?= $params['frontend_source'] ?>/img/classify.svg"/>
             </span>
-            闪购专区2
+            闪购专区
             <a href="<?= Url::to(['items/index']) ?>">
                 <div class="experience-1-more">更多
                     <img class="img-responsive"
