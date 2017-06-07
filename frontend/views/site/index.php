@@ -52,7 +52,7 @@ $params = \Yii::$app->params;
             <span>
                 <img src="<?= $params['frontend_source'] ?>/img/classify.svg"/>
             </span>
-            闪购专区
+            闪购专区2
             <a href="<?= Url::to(['items/index']) ?>">
                 <div class="experience-1-more">更多
                     <img class="img-responsive"
@@ -71,9 +71,6 @@ $params = \Yii::$app->params;
                             <img class="img-responsive" src="<?= current($flashSales['cover_preview_url']) ?>"/>
                         </a>
                         <p><?= $flashSales['title'] ?></p>
-                        	<div class="flashsales-icon">
-                        		<i>￥</i><span><?= $flashSales['min_price'] ?></span>
-                        	</div>
                     </div>
                 <?php endforeach ?>
             </div>
@@ -93,7 +90,7 @@ $params = \Yii::$app->params;
     </div>
 <?php endif; ?>
 
-<div class="recommend" kk-ajax-load="site/ajax-list" data-over="<?= $over ?>">
+<div class="recommend">
     <?php if (!empty($standardHtml)): ?>
         <p><span class="recommend2">精品推荐</span></p>
         <?= $standardHtml ?>
