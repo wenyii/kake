@@ -7,11 +7,9 @@ use common\controllers\MainController;
 use common\models\Main;
 use yii;
 use yii\helpers\Url;
-use yii\helpers\ArrayHelper;
 
 /**
  * 通用控制器
- * @method mixed service($api, $params = [], $cache = 'yes', $lang = 'zh-CN')
  */
 class GeneralController extends MainController
 {
@@ -95,6 +93,17 @@ class GeneralController extends MainController
      */
     public static $hookLogic;
 
+    /**
+     * @var array 无需验证权限的控制器
+     */
+    public static $passAuthCtrl = [
+        'GeneralController',
+        'MainController',
+        'ProducerController',
+        'ProducerOrderController',
+        'ProducerProductController'
+    ];
+
     // ---
 
     /**
@@ -131,11 +140,13 @@ class GeneralController extends MainController
 
         if (in_array($router, [
             'login/index',
-            'login/ajax-login',
-            'general/ajax-sms'
+            'login/ajax-login'
         ])) {
             $this->mustUnLogin();
-        } else {
+        } else if (!in_array($router, [
+            'general/ajax-sms'
+        ])
+        ) {
             $this->mustLogin();
 
             $rootUsers = explode(',', Yii::$app->params['private']['root_user_ids']);
@@ -177,15 +188,22 @@ class GeneralController extends MainController
     {
         $router = str_replace('.', '/', $router);
         $_router = $router;
-        $authList = $this->authList();
-        $authRecord = $this->authRecord($this->user->id);
 
-        // 鉴权
+        // 首次鉴权
+        list($ctrl) = explode('/', $_router);
+        $ctrl = Helper::underToCamel($ctrl, false, '-') . 'Controller';
+        if (in_array($ctrl, self::$passAuthCtrl)) {
+            return true;
+        }
+
+        // 二次鉴权
+        $authRecord = $this->authRecord($this->user->id);
         if (!empty($authRecord[$_router])) {
             return true;
         }
 
         // 根据注释完善辅助数据
+        $authList = $this->authList();
         $perfectAuthData = function () use (&$authList, &$authRecord, &$router, $_router, &$perfectAuthData) {
 
             list($class, $method) = explode('/', $router);
@@ -203,7 +221,7 @@ class GeneralController extends MainController
                 }
                 $perfectAuthData();
             } else if (isset($methodDoc[UserController::$keyPassRole])) {
-                $roles = explode(',', $methodDoc[UserController::$keyPassRole]);
+                $roles = explode(',', current($methodDoc[UserController::$keyPassRole]));
                 $roles = count($roles) == 1 ? ($this->user->role <= current($roles)) : in_array($this->user->role, $roles);
                 if ($roles) {
                     $authRecord[$_router] = 1;
@@ -213,7 +231,7 @@ class GeneralController extends MainController
 
         $perfectAuthData();
 
-        // 二次鉴权
+        // 三次鉴权
         if (empty($authList[$_router]) || !empty($authRecord[$_router])) {
             return true;
         }
@@ -352,11 +370,9 @@ class GeneralController extends MainController
      *
      * @return array
      */
-    public function reflectionAuthList($roleCtrl = null, $userRole = null, $exceptControllers = [
-        'GeneralController',
-        'MainController'
-    ])
+    public function reflectionAuthList($roleCtrl = null, $userRole = null, $exceptControllers = [])
     {
+        $exceptControllers = array_merge($exceptControllers, self::$passAuthCtrl);
         $directory = Yii::getAlias('@backend') . DS . 'controllers';
         $controllers = Helper::readDirectory($directory, ['php'], 'IN');
 
@@ -398,7 +414,7 @@ class GeneralController extends MainController
                 }
 
                 // 无需通过后台配置即可决定权限的标示
-                if (isset($val[UserController::$keyPassAll]) || isset($val[UserController::$keySame]) || isset($val[UserController::$keyPassRole])) {
+                if (isset($val[UserController::$keyPassAll]) || isset($val[UserController::$keySame])) {
                     continue;
                 }
 
@@ -417,13 +433,17 @@ class GeneralController extends MainController
                     $val['info'] = str_replace(UserController::$varInfo, $val['info'], current($val[UserController::$keyInfoStyle]));
                 }
 
-                $roles = explode(',', empty($val[UserController::$keyPassRole]) ? $roleCtrl : $val[UserController::$keyPassRole]);
+                $roles = explode(',', empty($val[UserController::$keyPassRole]) ? $roleCtrl : current($val[UserController::$keyPassRole]));
                 $roles = count($roles) == 1 ? ($userRole <= current($roles)) : in_array($userRole, $roles);
 
                 if (!$roleCtrl || $roles) {
+                    $controller = Helper::camelToUnder(str_replace('Controller', null, $controller), '-');
+                    if (empty($val['info'])) {
+                        $this->error("${controller}/${action} 未规范注释，无法纳入权限控制");
+                    }
                     $self[] = [
                         'info' => $val['info'],
-                        'controller' => Helper::camelToUnder(str_replace('Controller', null, $controller), '-'),
+                        'controller' => $controller,
                         'action' => $action
                     ];
                 }
@@ -441,26 +461,50 @@ class GeneralController extends MainController
      * 设置公用参数
      *
      * @access public
+     *
+     * @param boolean $hideMenu
+     *
      * @return void
      */
-    public function commonParams()
+    public function commonParams($hideMenu = false)
     {
         Yii::$app->view->params['user_info'] = $this->user;
-        $menu = Yii::$app->params['menu'];
+        $menu = $hideMenu ? [] : Yii::$app->params['menu'];
 
         foreach ($menu as $key => &$item) {
-            $roles = empty($item['min_role']) ? [1] : (array) $item['min_role'];
-            $roles = count($roles) == 1 ? ($this->user->role <= current($roles)) : in_array($this->user->role, $roles);
-            if (!$roles) {
+
+            $roles = empty($item['pass_role']) ? [1] : (array) $item['pass_role'];
+            if (count($roles) == 1) {
+                $rolesShow = $this->user->role <= current($roles);
+            } else {
+                $rolesShow = in_array($this->user->role, $roles);
+            }
+            if (!$rolesShow) {
                 unset($menu[$key]);
                 continue;
             }
 
-            $controllers = [];
+            $routers = [];
             foreach ($item['sub'] as $router => &$page) {
+                if (is_array($page)) {
+                    $_roles = empty($page['pass_role']) ? $roles : (array) $page['pass_role'];
+                    $page = $page['name'];
+                } else {
+                    $_roles = $roles;
+                }
+                if (count($_roles) == 1) {
+                    $_rolesShow = $this->user->role <= current($_roles);
+                } else {
+                    $_rolesShow = in_array($this->user->role, $_roles);
+                }
+                if (!$_rolesShow) {
+                    unset($item['sub'][$router]);
+                    continue;
+                }
+
                 list($controller, $action) = explode('.', $router);
-                if (!in_array($controller, $controllers)) {
-                    $controllers[] = $controller;
+                if (!in_array($controller, $routers)) {
+                    $routers[] = $controller . '/' . $action;
                 }
 
                 $page = [
@@ -469,7 +513,7 @@ class GeneralController extends MainController
                     'action' => $action
                 ];
             }
-            $item['controllers'] = $controllers;
+            $item['router'] = $routers;
         }
 
         Yii::$app->view->params['menu'] = $menu;
@@ -484,7 +528,7 @@ class GeneralController extends MainController
     public function error($message, $code = null, $trace = null)
     {
         $this->sourceCss = false;
-        $this->commonParams();
+        $this->commonParams(true);
         parent::error($message, $code, $trace);
     }
 
@@ -832,7 +876,7 @@ class GeneralController extends MainController
 
         $get = $this->callMethod('sufHandleField', $get, [
             $get,
-            'filter'
+            $caller
         ]);
 
         foreach ($filter as $key => $value) {
@@ -916,16 +960,17 @@ class GeneralController extends MainController
      *
      * @access public
      *
-     * @param array $filter
-     * @param array $default
+     * @param array  $filter
+     * @param array  $default
+     * @param string $caller
      *
      * @return array
      */
-    public function getWhereByFilter($filter, $default)
+    public function getWhereByFilter($filter, $default, $caller)
     {
         $default = $this->callMethod('preHandleField', $default, [
             $default,
-            'filter'
+            $caller
         ]);
 
         $where = [];
@@ -1110,8 +1155,7 @@ class GeneralController extends MainController
         }
 
         // 附件秩序化
-        $caller = ucfirst($action) . 'Assist';
-        $assist = $this->callStatic($caller, []);
+        $assist = $this->callStatic($action . 'Assist', []);
 
         foreach ($assist as $item) {
 
@@ -1165,7 +1209,10 @@ class GeneralController extends MainController
                 } else {
                     foreach ($record[$newKey] as $query) {
                         parse_str($query, $tagData);
-                        $tagData = $this->callMethod('preHandleField', $tagData, [$tagData], $controller);
+                        $tagData = $this->callMethod('preHandleField', $tagData, [
+                            $tagData,
+                            $action
+                        ], $controller);
                         $tagRecord['add'][] = $tagData;
                     }
                 }
@@ -1541,26 +1588,10 @@ class GeneralController extends MainController
      */
     public function showList()
     {
+        $caller = $this->getCaller(2);
         $this->logReference($this->getControllerName());
 
-        $model = new Main(static::$modelName);
-        $get = Yii::$app->request->get();
-
-        $caller = $this->getCaller(2);
-        $filter = $this->getFilter($get, $caller);
-
-        $params = [
-            'table' => $model->tableName,
-            'db' => static::$modelDb
-        ];
-        $where = $this->getWhereByFilter($filter, $get);
-        $where = $this->preHookLogicForWhere($where);
-
         $condition = $this->callMethod($caller . 'Condition', []);
-        if (!Helper::arrayEmpty($where)) {
-            $condition['where'] = $where;
-        }
-
         if (empty($condition['size'])) {
             $condition['size'] = Yii::$app->params['pagenum'];
         }
@@ -1568,6 +1599,22 @@ class GeneralController extends MainController
         if (!empty(static::$listFunctionName)) {
             $result = $this->callMethod(static::$listFunctionName, 'function non-exists');
         } else {
+
+            $get = Yii::$app->request->get();
+            $filter = $this->getFilter($get, $caller);
+
+            $where = $this->getWhereByFilter($filter, $get, $caller);
+            $where = $this->preHookLogicForWhere($where);
+            if (!Helper::arrayEmpty($where)) {
+                $_where = empty($condition['where']) ? [] : $condition['where'];
+                $condition['where'] = array_merge($_where, $where);
+            }
+
+            $model = new Main(static::$modelName);
+            $params = [
+                'table' => $model->tableName,
+                'db' => static::$modelDb
+            ];
             $result = $this->service(static::$listApiName, array_merge($params, $condition, $get), 'no');
         }
         if (is_string($result)) {
@@ -1582,10 +1629,10 @@ class GeneralController extends MainController
 
         $assist = $this->handleAssistForList($this->callStatic($caller . 'Assist', []));
 
-        array_walk($list, function (&$value) {
+        array_walk($list, function (&$value) use ($caller) {
             $value = $this->callMethod('sufHandleField', $value, [
                 $value,
-                'list'
+                $caller
             ]);
         });
 
@@ -1647,21 +1694,18 @@ class GeneralController extends MainController
      * 展示空表单
      *
      * @access public
-     *
-     * @param string $tag
-     *
      * @return object
      */
-    public function showForm($tag)
+    public function showForm()
     {
-        $this->logReference($this->getControllerName($tag));
+        $caller = $this->getCaller(2);
+        $this->logReference($this->getControllerName($caller));
 
         $modelInfo = static::$modelInfo;
 
-        $caller = $this->getCaller(2);
         $assist = $this->callStatic($caller . 'Assist', []);
-        $list = $this->handleAssistForForm($assist, [], $tag);
-        $view = $this->pageDocuments($tag);
+        $list = $this->handleAssistForForm($assist, [], $caller);
+        $view = $this->pageDocuments($caller);
 
         return $this->display('//general/action', compact('list', 'modelInfo', 'view'));
     }
@@ -1671,27 +1715,30 @@ class GeneralController extends MainController
      */
     public function actionAdd()
     {
-        return $this->showForm('add');
+        return $this->showForm();
     }
 
     /**
      * 新增动作
      * @auth-same {ctrl}/add
+     *
+     * @param string $reference
+     * @param string $action
      */
-    public function actionAddForm()
+    public function actionAddForm($reference = null, $action = 'add')
     {
-        $model = new Main(static::$modelName);
         $modelInfo = static::$modelInfo;
-
-        $params = array_merge(['table' => $model->tableName], Yii::$app->request->post());
-        $params = $this->callMethod('preHandleField', [], [
-            $params,
-            'add'
-        ]);
 
         if (!empty(static::$addFunctionName)) {
             $result = $this->callMethod(static::$addFunctionName, 'function non-exists');
         } else {
+            $model = new Main(static::$modelName);
+
+            $params = array_merge(['table' => $model->tableName], Yii::$app->request->post());
+            $params = $this->callMethod('preHandleField', [], [
+                $params,
+                $action
+            ]);
             $result = $this->service(static::$addApiName, $params);
         }
 
@@ -1699,11 +1746,11 @@ class GeneralController extends MainController
         if (is_string($result)) {
             Yii::$app->session->setFlash('danger', Yii::t('common', $result));
             Yii::$app->session->setFlash('list', Yii::$app->request->post());
-            $this->goReference($key . '/add');
+            $this->goReference($reference ?: $key . '/add');
         }
 
         Yii::$app->session->setFlash('success', '新增' . $modelInfo . '成功');
-        $this->goReference($key);
+        $this->goReference($reference ?: $key);
     }
 
     /**
@@ -1711,28 +1758,30 @@ class GeneralController extends MainController
      *
      * @access public
      *
-     * @param string $tag
+     * @param array $where
      *
      * @return object
      */
-    public function showFormWithRecord($tag)
+    public function showFormWithRecord($where = [])
     {
-        $this->logReference($this->getControllerName($tag));
-
-        $id = Yii::$app->request->get('id');
-        $model = new Main(static::$modelName);
-        $params = [
-            'table' => $model->tableName,
-            'where' => [[$model->tableName . '.id' => $id]]
-        ];
-
         $caller = $this->getCaller(2);
-        $condition = $this->callMethod($caller . 'Condition', []);
+        $this->logReference($this->getControllerName($caller));
 
         if (!empty(static::$getFunctionName)) {
             $result = $this->callMethod(static::$getFunctionName, 'function non-exists');
         } else {
-            $result = $this->service(static::$getApiName, ArrayHelper::merge($params, $condition), 'no');
+            $id = Yii::$app->request->get('id');
+            $condition = $this->callMethod($caller . 'Condition', []);
+
+            $model = new Main(static::$modelName);
+            $condition['table'] = $model->tableName;
+            if (!$where) {
+                $where = [[$model->tableName . '.id' => $id]];
+            }
+            $_where = empty($condition['where']) ? [] : $condition['where'];
+            $condition['where'] = array_merge($_where, $where);
+
+            $result = $this->service(static::$getApiName, $condition, 'no');
         }
         if (is_string($result)) {
             $this->error(Yii::t('common', $result));
@@ -1740,8 +1789,8 @@ class GeneralController extends MainController
 
         $modelInfo = static::$modelInfo;
         $assist = $this->callStatic($caller . 'Assist', []);
-        $list = $this->handleAssistForForm($assist, $result, $tag);
-        $view = $this->pageDocuments($tag);
+        $list = $this->handleAssistForForm($assist, $result, $caller);
+        $view = $this->pageDocuments($caller);
 
         // 单记录操作
         $operation = $this->callStatic($caller . 'Operation');
@@ -1754,30 +1803,32 @@ class GeneralController extends MainController
      */
     public function actionEdit()
     {
-        return $this->showFormWithRecord('edit');
+        return $this->showFormWithRecord();
     }
 
     /**
      * 编辑动作
      * @auth-same {ctrl}/edit
+     *
+     * @param string $reference
+     * @param string $action
      */
-    public function actionEditForm()
+    public function actionEditForm($reference = null, $action = 'edit')
     {
-        $model = new Main(static::$modelName);
         $modelInfo = static::$modelInfo;
-
-        $params = array_merge([
-            'table' => $model->tableName,
-            'where' => [$model->tableName . '.id' => Yii::$app->request->post('id')]
-        ], Yii::$app->request->post());
-        $params = $this->callMethod('preHandleField', [], [
-            $params,
-            'edit'
-        ]);
 
         if (!empty(static::$editFunctionName)) {
             $result = $this->callMethod(static::$editFunctionName, 'function non-exists');
         } else {
+            $model = new Main(static::$modelName);
+            $params = array_merge([
+                'table' => $model->tableName,
+                'where' => [$model->tableName . '.id' => Yii::$app->request->post('id')]
+            ], Yii::$app->request->post());
+            $params = $this->callMethod('preHandleField', [], [
+                $params,
+                $action
+            ]);
             $result = $this->service(static::$editApiName, $params);
         }
 
@@ -1785,11 +1836,11 @@ class GeneralController extends MainController
         if (is_string($result)) {
             Yii::$app->session->setFlash('danger', Yii::t('common', $result));
             Yii::$app->session->setFlash('list', Yii::$app->request->post());
-            $this->goReference($key . '/edit');
+            $this->goReference($reference ?: $key . '/edit');
         }
 
         Yii::$app->session->setFlash('success', '更新' . $modelInfo . '成功');
-        $this->goReference($key);
+        $this->goReference($reference ?: $key);
     }
 
     /**
@@ -1797,11 +1848,10 @@ class GeneralController extends MainController
      */
     public function actionFront()
     {
-        $model = new Main(static::$modelName);
-
         if (!empty(static::$frontFunctionName)) {
             $result = $this->callMethod(static::$frontFunctionName, 'function non-exists');
         } else {
+            $model = new Main(static::$modelName);
             $result = $this->service(static::$frontApiName, [
                 'table' => $model->tableName,
                 'id' => Yii::$app->request->get('id')

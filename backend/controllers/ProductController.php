@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\components\ViewHelper;
 use common\components\Helper;
 use common\models\Main;
 use Yii;
@@ -35,6 +36,16 @@ class ProductController extends GeneralController
      * @var string 模态框的名称
      */
     public static $ajaxModalListTitle = '选择酒店产品';
+
+    /**
+     * @var string 模态框的名称
+     */
+    public static $ajaxModalListProducerTitle = '选择分销产品';
+
+    public static $type = [
+        0 => 'fixed',
+        1 => 'percent'
+    ];
 
     /**
      * @var array Hook
@@ -80,6 +91,9 @@ class ProductController extends GeneralController
      */
     public static function saleLogic($record)
     {
+        if (!isset($record['sale_from']) || !isset($record['sale_to'])) {
+            return false;
+        }
         $from = strtotime($record['sale_from']);
         $to = strtotime($record['sale_to']);
 
@@ -170,6 +184,16 @@ class ProductController extends GeneralController
     }
 
     /**
+     * 宏操作
+     *
+     * @inheritDoc
+     */
+    public static function ajaxModalListProducerOperations()
+    {
+        return self::ajaxModalListOperations();
+    }
+
+    /**
      * 微操作
      *
      * @inheritDoc
@@ -186,6 +210,15 @@ class ProductController extends GeneralController
             [
                 'text' => '套餐',
                 'value' => 'product-package/index',
+                'level' => 'info',
+                'icon' => 'link',
+                'params' => function ($record) {
+                    return ['product_id' => $record['id']];
+                }
+            ],
+            [
+                'text' => '分销',
+                'value' => 'product-producer/index',
                 'level' => 'info',
                 'icon' => 'link',
                 'params' => function ($record) {
@@ -262,6 +295,14 @@ class ProductController extends GeneralController
                 'value' => 'all'
             ]
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function ajaxModalListProducerFilter()
+    {
+        return self::ajaxModalListFilter();
     }
 
     /**
@@ -348,6 +389,37 @@ class ProductController extends GeneralController
     }
 
     /**
+     * 生成列表页的辅助数据
+     *
+     * @inheritDoc
+     */
+    public static function ajaxModalListProducerAssist()
+    {
+        return [
+            'title',
+            'producer' => [
+                'hidden',
+                'table' => 'product_producer',
+                'foreign_key' => 'product_id',
+                'service_api' => 'product.producer-list'
+            ],
+            'type_fixed' => [
+                'html',
+                'title' => '固定额分佣'
+            ],
+            'type_percent' => [
+                'html',
+                'title' => '百分比分佣'
+            ],
+            'state' => [
+                'code',
+                'color' => 'auto',
+                'info'
+            ]
+        ];
+    }
+
+    /**
      * 生成编辑表单的辅助数据
      *
      * @inheritDoc
@@ -373,7 +445,7 @@ class ProductController extends GeneralController
                 'title' => false,
                 'elem' => 'button',
                 'value' => '选择酒店',
-                'script' => '$.showPage("hotel.list")'
+                'script' => '$.showPage("hotel.list", {state: 1})'
             ],
             'classify' => [
                 'elem' => 'select',
@@ -585,10 +657,7 @@ class ProductController extends GeneralController
                     'as' => 'master',
                     'left_on_field' => 'attachment_cover'
                 ],
-                [
-                    'table' => 'hotel',
-                    'field' => 'name'
-                ]
+                ['table' => 'hotel']
             ],
             'select' => [
                 'master.deep_path AS master_deep_path',
@@ -598,6 +667,37 @@ class ProductController extends GeneralController
             ],
             'order' => 'product.top DESC, product.state DESC, product.update_time DESC'
         ];
+    }
+
+    /**
+     * 列表页面的查询构建器
+     *
+     * @inheritDoc
+     */
+    public function ajaxModalListProducerCondition()
+    {
+        $condition = $this->indexCondition();
+        $condition['join'][] = [
+            'table' => 'product_producer',
+            'sub' => [
+                'select' => [
+                    'id',
+                    'product_id'
+                ],
+                'group' => 'product_id'
+            ],
+            'as' => 'producer',
+            'left_on_field' => 'id',
+            'right_on_field' => 'product_id'
+        ];
+        $condition['where'] = [
+            [
+                'not',
+                ['producer.id' => null]
+            ]
+        ];
+
+        return $condition;
     }
 
     /**
@@ -641,6 +741,16 @@ class ProductController extends GeneralController
     }
 
     /**
+     * 选择酒店 - 弹出层
+     *
+     * @auth-pass-all
+     */
+    public function actionAjaxModalListProducer()
+    {
+        return $this->showList();
+    }
+
+    /**
      * 数据写入前的钩子
      *
      * @inheritDoc
@@ -650,14 +760,20 @@ class ProductController extends GeneralController
         if (!empty($record['sale_rate'])) {
             if ($record['sale_type'] == 2 && ($record['sale_rate'] < 1 || $record['sale_rate'] > 99)) {
                 Yii::$app->session->setFlash('warning', '百分比折扣时折扣率请填写 1 ~ 99 之间的数');
+                Yii::$app->session->setFlash('list', $record);
                 $this->goReference('product/' . $action);
             }
         } else {
             $record['sale_rate'] = 0;
         }
 
-        if (in_array($action, ['add', 'edit']) && empty($record['package_ids']) && empty($record['new_package_ids'])) {
+        if (in_array($action, [
+                'add',
+                'edit'
+            ]) && empty($record['package_ids']) && empty($record['new_package_ids'])
+        ) {
             Yii::$app->session->setFlash('warning', '酒店产品至少设定一个套餐');
+            Yii::$app->session->setFlash('list', $record);
             $this->goReference('product/' . $action);
         }
 
@@ -695,6 +811,31 @@ class ProductController extends GeneralController
             });
         }
 
+        // 生成产品分销数据
+        if (!empty($record['id']) && $action == 'ajaxModalListProducer') {
+            $record = $this->listForeignData($record, 'producer', null, $action);
+
+            foreach ($record['producer'] as $item) {
+                $key = self::$type[$item['type']];
+
+                $tpl = $item['type'] ? '%s%%' : '￥%s';
+                $to = (empty($item['to_sales']) ? '+∞ )' : ($item['to_sales'] . ' ]'));
+
+                $record['commission_' . $key][] = $item;
+                $record['type_' . $key][] = [
+                    "[ ${item['from_sales']}, {$to}",
+                    sprintf($tpl, $item['commission'])
+                ];
+            }
+
+            unset($record['producer']);
+            foreach (self::$type as $value) {
+                if (!empty($record['type_' . $value])) {
+                    $record['type_' . $value] = ViewHelper::createTable($record['type_' . $value]);
+                }
+            }
+        }
+
         // TODO
         // 防止附件数据混乱, 匹配 img 标签中的 attachment-id="\d+" 属性
 
@@ -721,6 +862,6 @@ class ProductController extends GeneralController
      */
     public function actionAjaxModalHotel()
     {
-        $this->showForm('ajax-modal-hotel');
+        $this->showForm();
     }
 }

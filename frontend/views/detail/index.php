@@ -99,11 +99,6 @@ $params = \Yii::$app->params;
                 'detail/choose-package',
                 'id' => $detail['id']
             ]) ?>">立即购买</a></div>
-        <!--<div class=" service">
-            <a href="tel:<?= Yii::$app->params['company_tel'] ?>">
-                <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/customer-service.svg"/>
-            </a>
-        </div>-->
         <div class="back-top">
             <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/back-top_13.png"/>
         </div>

@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\components\ViewHelper;
 use Yii;
 
 /**
@@ -240,14 +241,19 @@ class OrderController extends GeneralController
      */
     public function sufHandleField($record, $action = null, $callback = null)
     {
-        if (!empty($record['id']) && $action == 'list') {
+        if (!empty($record['id']) && $action == 'index') {
             $package = $this->service('general.list-package-by-order-id', ['order_id' => $record['id']]);
 
             $record['package_record'] = $package;
             $record['package_info'] = null;
             foreach ($package as $item) {
-                $record['package_info'] .= $item['name'] . ' × ' . $item['number'] . '<br>';
+                $record['package_info'][] = [
+                    $item['name'],
+                    $item['number']
+                ];
             }
+
+            $record['package_info'] = ViewHelper::createTable($record['package_info']);
         }
 
         return parent::sufHandleField($record, $action, $callback);

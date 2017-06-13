@@ -13,7 +13,7 @@ use yii\helpers\Html;
 
 /**
  * Main controller
- * @method mixed service($api, $params = [], $cache = 'yes', $lang = 'zh-CN')
+ * @method mixed service($api, $params = [], $cache = 'yes', $project = PROJECT, $lang = 'zh-CN')
  * @method mixed dump($var, $strict = false, $exit = true)
  * @method mixed cache($key, $fetchFn, $time = null, $dependent = null, $useCache = true)
  */
@@ -250,7 +250,6 @@ class MainController extends Controller
      * 公共错误控制器
      *
      * @access public
-     * @auth-pass-all
      * @return void
      */
     public function actionError()
@@ -388,7 +387,6 @@ class MainController extends Controller
      * 多语言切换
      *
      * @access public
-     * @auth-pass-all
      *
      * @param string $language
      *
@@ -523,7 +521,6 @@ class MainController extends Controller
     /**
      * 上传功能
      *
-     * @auth-pass-all
      * @return void
      */
     public function actionAjaxUpload()
@@ -558,7 +555,6 @@ class MainController extends Controller
     /**
      * CkEditor-上传功能
      *
-     * @auth-pass-all
      * @return void
      */
     public function actionAjaxCkEditorUpload()
@@ -768,7 +764,7 @@ class MainController extends Controller
             }
             $assist = $assists[$key];
 
-            $api = isset($assist['service_api']) ? $assist['service_api'] : ($assist['product_package'] . '.list');
+            $api = isset($assist['service_api']) ? $assist['service_api'] : null;
             $record[$key] = $this->service($api, [$assist['foreign_key'] => $record['id']]);
 
             if (isset($assist['handler_controller'])) {
@@ -788,7 +784,10 @@ class MainController extends Controller
                 $v = array_merge($v, $extraData);
                 $record[$key][$k] = $this->callMethod('sufHandleField', $v, [$v], $controller);
             }
-            $record[$assist['field_name']] = implode(',', array_column($record[$key], 'id'));
+
+            if (isset($assist['field_name'])) {
+                $record[$assist['field_name']] = implode(',', array_column($record[$key], 'id'));
+            }
         }
 
         return $record;
@@ -948,6 +947,8 @@ class MainController extends Controller
      */
     public function callStatic($method, $default = null, $params = null, $class = null)
     {
+        $method = ucfirst($method);
+
         $class = $class ?: get_called_class();
         if (!method_exists($class, $method)) { // include parent class
             return $default;
@@ -1057,7 +1058,6 @@ class MainController extends Controller
     /**
      * Ajax 发送手机验证码
      *
-     * @auth-pass-all
      * @access public
      * @return void
      */

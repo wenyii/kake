@@ -156,4 +156,47 @@ class ViewHelper extends Object
 
         return $buttons;
     }
+
+    /**
+     * 创建表格
+     *
+     * @access public
+     *
+     * @param array $table
+     * @param array $head
+     * @param array $tpl
+     *
+     * @return string
+     */
+    public static function createTable($table, $head = [], $tpl = [])
+    {
+        if (empty($table)) {
+            return null;
+        }
+
+        $headHtml = null;
+        if (!empty($head)) {
+            $headHtml = '<thead>';
+            foreach ($head as $title) {
+                $headHtml .= "<tr>{$title}</tr>";
+            }
+            $headHtml .= '</thead>';
+        }
+
+        $bodyHtml = '<tbody>';
+        foreach ($table as $row) {
+            $bodyHtml .= '<tr>';
+            $i = 0;
+            foreach ($row as $tr) {
+                $tr = isset($tpl[$i]) ? sprintf($tpl[$i], $tr) : $tr;
+                $bodyHtml .= "<td>{$tr}</td>";
+                $i++;
+            }
+            $bodyHtml .= '</tr>';
+        }
+        $bodyHtml .= '</tbody>';
+        $tableHtml = "<table class='table table-bordered table-striped'>{$headHtml}{$bodyHtml}</table>";
+
+        return $tableHtml;
+    }
 }

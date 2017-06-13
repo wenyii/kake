@@ -166,6 +166,6 @@ class OrderInstructionsLogController extends GeneralController
      */
     public function actionAjaxModalRefuse()
     {
-        $this->showForm('ajax-modal-refuse');
+        $this->showForm();
     }
 }

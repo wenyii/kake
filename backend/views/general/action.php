@@ -73,6 +73,8 @@ if ($modal) {
         $av_type = $empty('type', 'text');
         $av_value = !empty($flash[$av_name]) ? $flash[$av_name] : $empty('value', null, null, 'isset');
 
+        $av_class = $empty('class');
+
         // attribute string
         $as_readonly = empty($item['readonly']) ? null : 'readonly=readonly';
         $as_placeholder = 'placeholder="' . $empty('placeholder') . '"';
@@ -94,7 +96,7 @@ if ($modal) {
         <?= $html_begin_div ?>
         <?= $html_label ?>
         <?php if ($element == 'input'): ?> <!-- input -->
-        <div class="col-sm-<?= $empty('label', 3) ?>" <?= $as_tip ?>>
+        <div class="col-sm-<?= $empty('label', 3) ?> <?= $av_class ?>" <?= $as_tip ?>>
             <?php $as_name = (($av_type == 'file' ? 'id' : 'name') . '=' . $av_name) ?>
             <input class="form-control"
                 <?= $as_name ?>
@@ -104,7 +106,7 @@ if ($modal) {
                 <?= $as_value ?>>
         </div>
     <?php elseif ($element == 'img'): ?> <!-- img -->
-        <div class="col-sm-<?= $empty('label', 10) ?>" <?= $as_tip ?>>
+        <div class="col-sm-<?= $empty('label', 10) ?> <?= $av_class ?>" <?= $as_tip ?>>
             <div class="row" <?= $as_name ?>>
                 <?php
                 $attachment = (array) $empty($field, $empty('value'), $flash);
@@ -132,7 +134,7 @@ if ($modal) {
             </div>
         </div>
     <?php elseif ($element == 'select'): ?> <!-- select -->
-        <div class="col-sm-<?= $empty('label', 2) ?>" <?= $as_tip ?>>
+        <div class="col-sm-<?= $empty('label', 2) ?> <?= $av_class ?>" <?= $as_tip ?>>
             <?php
             $value = $empty('value');
             $selected = Helper::issetDefault($flash, $field, $value['selected']);
@@ -140,7 +142,7 @@ if ($modal) {
             ?>
         </div>
     <?php elseif ($element == 'radio'): ?> <!-- radio -->
-        <div class="col-sm-<?= $empty('label', 2) ?>" <?= $as_tip ?>>
+        <div class="col-sm-<?= $empty('label', 2) ?> <?= $av_class ?>" <?= $as_tip ?>>
             <?php
             $value = $empty('value');
             $selected = Helper::issetDefault($flash, $field, $value['selected']);
@@ -148,7 +150,7 @@ if ($modal) {
             ?>
         </div>
     <?php elseif ($element == 'checkbox'): ?> <!-- checkbox -->
-        <div class="col-sm-<?= $empty('label', 2) ?>" <?= $as_tip ?>>
+        <div class="col-sm-<?= $empty('label', 2) ?> <?= $av_class ?>" <?= $as_tip ?>>
             <?php
             $value = $empty('value');
             $selected = Helper::issetDefault($flash, $field, $value['selected']);
@@ -159,7 +161,7 @@ if ($modal) {
             ?>
         </div>
     <?php elseif ($element == 'textarea'): ?> <!-- textarea -->
-        <div class="col-sm-<?= $empty('label', 6) ?>" <?= $as_tip ?>>
+        <div class="col-sm-<?= $empty('label', 6) ?> <?= $av_class ?>" <?= $as_tip ?>>
             <?php $as_row = 'rows="' . $empty('row', 3) . '"' ?>
             <textarea class="form-control"
                 <?= $as_name ?>
@@ -167,7 +169,7 @@ if ($modal) {
                 <?= $as_placeholder ?>><?= $av_value ?></textarea>
         </div>
     <?php elseif ($item['elem'] == 'ckeditor'): ?> <!-- ckeditor -->
-        <div class="col-sm-<?= $empty('label', 10) ?>" <?= $as_tip ?>>
+        <div class="col-sm-<?= $empty('label', 10) ?> <?= $av_class ?>" <?= $as_tip ?>>
             <textarea
                 <?= $as_name ?>
                 <?= $as_placeholder ?>><?= $av_value ?></textarea>
@@ -181,7 +183,7 @@ if ($modal) {
             });
         </script>
     <?php elseif ($item['elem'] == 'tag'): ?>  <!-- tag -->
-        <div class="col-sm-<?= $empty('label', 6) ?>" <?= $as_tip ?> <?= $as_name ?>
+        <div class="col-sm-<?= $empty('label', 6) ?> <?= $av_class ?>" <?= $as_tip ?> <?= $as_name ?>
              format="<?= $empty('format') ?>"></div>
     <?php if (!empty($av_value)): ?>
         <script type="text/javascript">
@@ -202,7 +204,7 @@ if ($modal) {
         $script = ViewHelper::escapeScript($empty('script'));
         $script = empty($script) ? '' : 'onclick="' . $script . '"';
         ?>
-        <div class="col-sm-<?= $empty('label', 6) ?>" <?= $as_tip ?> <?= $as_name ?> format="<?= $empty('format') ?>">
+        <div class="col-sm-<?= $empty('label', 6) ?> <?= $av_class ?>" <?= $as_tip ?> <?= $as_name ?> format="<?= $empty('format') ?>">
             <button type="button"
                     class="btn btn-<?= $empty('level', 'primary') ?>" <?= $script ?>><?= $av_value ?></button>
         </div>

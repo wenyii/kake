@@ -110,7 +110,7 @@ $action = \Yii::$app->controller->action->id;
             </th>
             <?php foreach ($assist as $item): ?>
                 <?php
-                if (!empty($item['adorn']['tip'])) {
+                if (!empty($item['adorn']['tip']) || !empty($item['adorn']['hidden'])) {
                     continue;
                 }
                 ?>
@@ -134,6 +134,14 @@ $action = \Yii::$app->controller->action->id;
 
                 return Helper::$fn($data, $key, $default);
             };
+
+            $handleVal = function ($val) use ($item) {
+                if (is_callable($val)) {
+                    $val = call_user_func($val, $item);
+                }
+
+                return $val;
+            }
             ?>
             <?php
             $tip = null;
@@ -162,7 +170,7 @@ $action = \Yii::$app->controller->action->id;
                 <?php endif; ?>
                 <td>
                     <?php
-                    $number =  ($page->getPage() * $page->getPageSize()) + $key + 1;
+                    $number = ($page->getPage() * $page->getPageSize()) + $key + 1;
                     $number = str_pad($number, 3, '0', STR_PAD_LEFT);
                     ?>
                     <p class="text-muted list-p"><?= $number ?></p>
@@ -170,7 +178,7 @@ $action = \Yii::$app->controller->action->id;
 
                 <?php foreach ($assist as $field => $value): ?>
                     <?php
-                    if (!empty($value['adorn']['tip'])) {
+                    if (!empty($value['adorn']['tip']) || !empty($value['adorn']['hidden'])) {
                         continue;
                     }
                     ?>
@@ -227,7 +235,7 @@ $action = \Yii::$app->controller->action->id;
                                 <?php
                                 $content = $empty($field, null, null, $notSetFn);
                                 $content = is_null($content) ? $notSetStr : Html::encode($content);
-                                $content = (empty($adorn['tpl']) || $content === $notSetStr) ? $content : sprintf($adorn['tpl'], $content);
+                                $content = (empty($adorn['tpl']) || $content === $notSetStr) ? $content : sprintf($handleVal($adorn['tpl']), $content);
                                 echo $content;
                                 ?>
                             <?php endif; ?>
