@@ -118,7 +118,11 @@ class MainController extends Controller
             $code = $exception->getCode();
         }
 
+<<<<<<< HEAD
         $errorAction = new yii\web\ErrorAction($this->id, $this->module);
+=======
+        $errorAction = new yii\web\ErrorAction();
+>>>>>>> d1a9cb27d84b5446d51c2c2f6c7c8c1b680025b5
 
         if ($exception instanceof yii\base\Exception) {
             $name = $exception->getName();

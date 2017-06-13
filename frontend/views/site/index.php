@@ -52,7 +52,11 @@ $params = \Yii::$app->params;
             <span>
                 <img src="<?= $params['frontend_source'] ?>/img/classify.svg"/>
             </span>
+<<<<<<< HEAD
             闪购专区
+=======
+            喀客专线
+>>>>>>> d1a9cb27d84b5446d51c2c2f6c7c8c1b680025b5
             <a href="<?= Url::to(['items/index']) ?>">
                 <div class="experience-1-more">更多
                     <img class="img-responsive"
@@ -71,9 +75,12 @@ $params = \Yii::$app->params;
                             <img class="img-responsive" src="<?= current($flashSales['cover_preview_url']) ?>"/>
                         </a>
                         <p><?= $flashSales['title'] ?></p>
+<<<<<<< HEAD
                         	<div class="flashsales-icon">
                         		<i>￥</i><span><?= $flashSales['min_price'] ?></span>
                         	</div>
+=======
+>>>>>>> d1a9cb27d84b5446d51c2c2f6c7c8c1b680025b5
                     </div>
                 <?php endforeach ?>
             </div>
@@ -93,7 +100,11 @@ $params = \Yii::$app->params;
     </div>
 <?php endif; ?>
 
+<<<<<<< HEAD
 <div class="recommend" kk-ajax-load="site/ajax-list" data-over="<?= $over ?>">
+=======
+<div class="recommend">
+>>>>>>> d1a9cb27d84b5446d51c2c2f6c7c8c1b680025b5
     <?php if (!empty($standardHtml)): ?>
         <p><span class="recommend2">精品推荐</span></p>
         <?= $standardHtml ?>
