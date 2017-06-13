@@ -201,16 +201,10 @@ class AdController extends GeneralController
      */
     public function editCondition()
     {
-        return [
-            'join' => [
-                ['table' => 'attachment']
-            ],
-            'select' => [
-                'attachment.deep_path',
-                'attachment.filename',
-                'ad.*'
-            ],
-        ];
+        $condition = $this->indexCondition();
+        unset($condition['order']);
+
+        return $condition;
     }
 
     /**

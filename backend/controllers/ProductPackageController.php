@@ -161,7 +161,7 @@ EOF
                 'title' => false,
                 'elem' => 'button',
                 'value' => '选择酒店产品',
-                'script' => '$.showPage("product.list")'
+                'script' => '$.showPage("product.list", {state: 1})'
             ],
             'name' => [
                 'placeholder' => '32个字以内'
@@ -279,7 +279,7 @@ EOF
      */
     public function actionAjaxModalPackage()
     {
-        $this->showForm('ajax-modal-package');
+        $this->showForm();
     }
 
     /**

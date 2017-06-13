@@ -244,14 +244,11 @@ class GeneralController extends MainController
                         unset ($detail['package'][$key]);
                     }
                 }
-<<<<<<< HEAD
-=======
 
                 if (empty($detail['package'])) {
                     $this->error(Yii::t('common', 'product package illegal'));
                 }
 
->>>>>>> d1a9cb27d84b5446d51c2c2f6c7c8c1b680025b5
                 $detail['min_price'] = min(array_column($detail['package'], $field));
             }
 

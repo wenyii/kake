@@ -9,10 +9,10 @@ return [
             'sub' => [
                 'environment.index' => '生产环境'
             ],
-            'min_role' => 99
+            'pass_role' => 10
         ],
         'b' => [
-            'name' => '配置',
+            'name' => '项目配置',
             'sub' => [
                 'config.index' => '常规配置',
                 'config.file' => '文件预配置'
@@ -30,6 +30,7 @@ return [
             'name' => '用户',
             'sub' => [
                 'user.index' => '用户管理',
+                'producer-setting.index' => '分销商管理',
                 'login-log.index' => '登录日志',
             ]
         ],
@@ -42,10 +43,11 @@ return [
             ]
         ],
         'f' => [
-            'name' => '酒店&产品',
+            'name' => '酒店和产品',
             'sub' => [
                 'hotel.index' => '酒店管理',
                 'product.index' => '产品管理',
+                'product-producer.index' => '产品分销管理',
                 'product-package.index' => '产品套餐管理',
             ]
         ],
@@ -59,13 +61,13 @@ return [
             ]
         ],
         'h' => [
-            'name' => '活动',
+            'name' => '活动日志',
             'sub' => [
                 'activity-lottery-code.index' => '抽奖码领取记录'
             ]
         ],
         'i' => [
-            'name' => '通用',
+            'name' => '其他',
             'sub' => [
                 'ad.index' => '广告管理',
                 'attachment.index' => '附件管理',
@@ -73,10 +75,14 @@ return [
             ]
         ],
         'j' => [
-            'name' => '分销',
+            'name' => '分销系统',
             'sub' => [
-                
+                'producer-setting.center' => '个人设置',
+                'producer.index' => '推广链接',
+                'producer-product.index' => '分销产品管理',
+                'producer-order.index' => '分销订单',
             ],
+            'pass_role' => 10
         ]
     ]
 ];

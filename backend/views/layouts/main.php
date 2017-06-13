@@ -58,31 +58,41 @@ foreach ($item as $type): ?>
             <a class="navbar-brand" target="_blank"
                href="<?= $params['frontend_url'] . Url::toRoute(['site/index']) ?>"><?= $params['app_name'] ?></a>
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="javascript:void(0);">欢迎 <?= !empty($this->params['user_info']->username) ? Html::encode($this->params['user_info']->username) : $this->params['user_info']->phone ?></a>
-                </li>
-                <?php if ($this->params['user_info']->role == 1): ?>
+        <?php if (!empty($this->params['menu'])): ?>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a class="btn btn-link mission-button" data-action-tag="clear-frontend-cache">清前台缓存</a>
+                        <a href="javascript:void(0);">欢迎 <?= !empty($this->params['user_info']->username) ? Html::encode($this->params['user_info']->username) : $this->params['user_info']->phone ?></a>
                     </li>
-                    <li>
-                        <a class="btn btn-link mission-button" data-action-tag="clear-backend-cache">清后台缓存</a>
-                    </li>
-                <?php endif; ?>
-                <li><a class="confirm-button" href="<?= Url::to(['login/logout']) ?>">退出登录</a></li>
-            </ul>
-        </div>
+                    <?php if ($this->params['user_info']->role == 1): ?>
+                        <li>
+                            <a class="btn btn-link mission-button" data-action-tag="clear-frontend-cache">清前台缓存</a>
+                        </li>
+                        <li>
+                            <a class="btn btn-link mission-button" data-action-tag="clear-backend-cache">清后台缓存</a>
+                        </li>
+                    <?php endif; ?>
+                    <li><a class="confirm-button" href="<?= Url::to(['login/logout']) ?>">退出登录</a></li>
+                </ul>
+            </div>
+        <?php endif; ?>
     </div>
 </nav>
 <div class="container-fluid">
+    <?php
+    if (empty($this->params['menu'])) {
+        $this->params['hidden_menu'] = true;
+    }
+    ?>
     <div class="row">
         <div id="menu-div" class="col-sm-3 col-md-2 sidebar <?= $this->params['hidden_menu'] ? 'hidden' : null ?>">
             <ul class="nav nav-sidebar">
                 <?php foreach ($this->params['menu'] as $master): ?>
-                    <?php $class = (in_array($controller, $master['controllers']) ? 'class="active"' : null) ?>
-                    <?php $style = !$class ? 'style="display: none;"' : null; ?>
+                    <?php
+                    $router = $controller . '/' . ((in_array($action, ['add', 'edit']) ? 'index' : $action));
+                    $class = (in_array($router, $master['router']) ? 'class="active"' : null);
+                    $style = !$class ? 'style="display: none;"' : null;
+                    ?>
                     <li <?= $class ?>>
                         <a href="javascript:void(0);"><?= $master['name'] ?></a>
                         <ul class="nav nav-sub-sidebar" <?= $style ?>>

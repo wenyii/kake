@@ -139,7 +139,7 @@ class OrderSubController extends GeneralController
             [
                 'text' => '选定',
                 'script' => true,
-                'value' => '$.modalRadioValueToInput("radio", "order_id")',
+                'value' => '$.modalRadioValueToInput("radio", "order_sub_id")',
                 'icon' => 'flag'
             ]
         ];
@@ -303,12 +303,7 @@ class OrderSubController extends GeneralController
      */
     public function ajaxModalListCondition()
     {
-        $condition = self::indexCondition();
-        $condition['where'] = [
-            ['order_sub.state' => 5]
-        ];
-
-        return $condition;
+        return self::indexCondition();
     }
 
     /**

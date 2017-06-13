@@ -166,7 +166,7 @@ class BillController extends GeneralController
                 'title' => false,
                 'elem' => 'button',
                 'value' => '选择订单',
-                'script' => '$.showPage("order-sub.list")'
+                'script' => '$.showPage("order-sub.list", {state: "5,6"})'
             ],
             'courier_number',
             'courier_company',

@@ -19,6 +19,11 @@ class UserController extends GeneralController
     // 模型描述
     public static $modelInfo = '用户';
 
+    /**
+     * @var string 模态框的名称
+     */
+    public static $ajaxModalListTitle = '选择用户';
+
     // 权限控制 - 手动排除
     public static $keyInheritExcept = '@auth-inherit-except';
 
@@ -65,10 +70,25 @@ class UserController extends GeneralController
                 'level' => 'info',
                 'icon' => 'cog',
                 'show_condition' => function ($record) {
-                    return !!$record['role'];
+                    return $record['role'] == 1;
                 }
             ]
         ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function ajaxModalListOperations()
+    {
+        return [
+            [
+                'text' => '选定',
+                'script' => true,
+                'value' => '$.modalRadioValueToInput("radio", "producer_id")',
+                'icon' => 'flag'
+            ]
+        ];
     }
 
     /**
@@ -92,6 +112,26 @@ class UserController extends GeneralController
                 'elem' => 'input',
                 'type' => 'date',
                 'between' => true
+            ],
+            'state' => [
+                'value' => 'all'
+            ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function ajaxModalListFilter()
+    {
+        return [
+            'username' => 'input',
+            'phone' => 'input',
+            'role' => [
+                'value' => 'all'
+            ],
+            'sex' => [
+                'value' => 'all'
             ],
             'state' => [
                 'value' => 'all'
@@ -138,6 +178,32 @@ class UserController extends GeneralController
     /**
      * @inheritDoc
      */
+    public static function ajaxModalListAssist()
+    {
+        return [
+            'username',
+            'phone' => 'empty',
+            'role' => 'info',
+            'sex' => [
+                'code',
+                'color' => [
+                    0 => 'default',
+                    1 => 'primary',
+                    2 => 'danger'
+                ],
+                'info'
+            ],
+            'state' => [
+                'code',
+                'color' => 'auto',
+                'info'
+            ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function editAssist($action = null)
     {
         return [
@@ -172,6 +238,14 @@ class UserController extends GeneralController
                 'value' => 1
             ]
         ];
+    }
+
+    /**
+     * @auth-pass-all
+     */
+    public function actionAjaxModalList()
+    {
+        return $this->showList();
     }
 
     /**
