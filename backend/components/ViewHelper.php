@@ -176,21 +176,19 @@ class ViewHelper extends Object
 
         $headHtml = null;
         if (!empty($head)) {
-            $headHtml = '<thead>';
+            $headHtml = '<thead><tr>';
             foreach ($head as $title) {
-                $headHtml .= "<tr>{$title}</tr>";
+                $headHtml .= "<th>{$title}</th>";
             }
-            $headHtml .= '</thead>';
+            $headHtml .= '</tr></thead>';
         }
 
         $bodyHtml = '<tbody>';
         foreach ($table as $row) {
             $bodyHtml .= '<tr>';
-            $i = 0;
-            foreach ($row as $tr) {
+            foreach ($row as $i => $tr) {
                 $tr = isset($tpl[$i]) ? sprintf($tpl[$i], $tr) : $tr;
                 $bodyHtml .= "<td>{$tr}</td>";
-                $i++;
             }
             $bodyHtml .= '</tr>';
         }

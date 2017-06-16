@@ -124,6 +124,36 @@ class GeneralController extends MainController
     }
 
     /**
+     * 获取参数
+     *
+     * @access public
+     *
+     * @param mixed $keys
+     *
+     * @return mixed
+     */
+    public function params($keys)
+    {
+        $get = Yii::$app->request->get();
+        $post = Yii::$app->request->post();
+
+        $params = [];
+        foreach ((array) $keys as $item) {
+            if (isset($get[$item])) {
+                $params[$item] = $get[$item];
+            } else if (isset($post[$item])) {
+                $params[$item] = $post[$item];
+            }
+        }
+
+        if (empty($params)) {
+            return false;
+        }
+
+        return is_array($keys) ? $params : current($params);
+    }
+
+    /**
      * 创建安全链接
      *
      * @access protected
@@ -136,7 +166,10 @@ class GeneralController extends MainController
      */
     protected function createSafeLink($params, $router, $checkUser = true)
     {
-        $item = ['item' => $params];
+        $item = [
+            'item' => $params,
+            'time' => TIME
+        ];
 
         if ($checkUser) {
             $item['user_id'] = $this->user->id;
@@ -147,7 +180,10 @@ class GeneralController extends MainController
 
         $url = Helper::joinString('/', Yii::$app->params['frontend_url'], $router) . '/';
 
-        return $url . '?safe=' . $item;
+        $channel = $this->params('channel');
+        $channel = $channel ? "&channel={$channel}" : null;
+
+        return "{$url}?safe={$item}{$channel}";
     }
 
     /**
@@ -165,17 +201,21 @@ class GeneralController extends MainController
         $item = json_decode(Yii::$app->rsa->decryptByPrivateKey($item), true);
 
         $error = false;
-
         if (!$error && !$item) {
-            $error = '非法链接';
+            $error = '非法的支付链接';
         }
 
         if (!$error && !Helper::validateSign($item, 'sign')) {
-            $error = '签名错误';
+            $error = '支付链接签名错误';
+        }
+
+        $timeout = Yii::$app->params['order_pay_timeout'] * 60;
+        if (!$error && (empty($item['time']) || TIME - $item['time'] > $timeout)) {
+            $error = '支付链接已经超时';
         }
 
         if (!$error && $checkUser && $this->user->id != $item['user_id']) {
-            $error = '非法代付';
+            $error = '非法他人代付';
         }
 
         if ($error) {

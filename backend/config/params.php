@@ -78,9 +78,9 @@ return [
             'name' => '分销系统',
             'sub' => [
                 'producer-setting.center' => '个人设置',
-                'producer.index' => '推广链接',
+                'producer-setting.spread' => '获取推广资料',
                 'producer-product.index' => '分销产品管理',
-                'producer-order.index' => '分销订单',
+                'producer-log.index' => '分销记录',
             ],
             'pass_role' => 10
         ]

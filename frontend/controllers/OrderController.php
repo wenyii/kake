@@ -425,7 +425,8 @@ class OrderController extends GeneralController
             'payment_method' => $payCode,
             'price' => $price,
             'order_contacts_id' => $params['order_contacts_id'],
-            'package' => $_package
+            'package' => $_package,
+            'channel_id' => Helper::integerDecode(Yii::$app->request->get('channel'))
         ]);
 
         if (is_string($result)) {
@@ -569,7 +570,7 @@ class OrderController extends GeneralController
      * 支付宝下单
      *
      * @access  public
-     * @link    http://leon.m.kakehotels.com/order/ali?xxx
+     * @link    http://www.kakehotels.com/order/ali?xxx
      * @license link create by $this->createSafeLink()
      * @return string
      */
@@ -588,7 +589,7 @@ class OrderController extends GeneralController
     /**
      * 支付宝支付订单（可重复调用）
      *
-     * @link http://leon.m.kakehotels.com/order/ali-pay?xxx
+     * @link http://www.kakehotels.com/order/ali-pay?xxx
      * @return mixed
      */
     public function actionAliPay()
@@ -660,11 +661,15 @@ class OrderController extends GeneralController
         $result = $this->service('order.poll-order', $params);
 
         if ($result) {
-            $this->success(Url::to([
+            $router = [
                 'order/pay-result',
                 'order_number' => $params['order_number'],
                 'payment_method' => 'ali'
-            ]));
+            ];
+            if ($channel = $this->params('channel')) {
+                $router['channel'] = $channel;
+            }
+            $this->success(Url::to($router));
         }
         $this->fail('order non-exists');
     }

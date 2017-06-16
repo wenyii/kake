@@ -41,14 +41,10 @@ $cover = empty($params['cover']) ? $params['frontend_source'] . '/img/logo.png' 
     var requestUrl = '<?= $params["frontend_url"];?>/?r=';
 </script>
 
-<body<?= $ngCtl ?> ng-init='wxSDK(<?= Yii::$app->wx->js->config([
-    'hideMenuItems',
-    'onMenuShareTimeline',
-    'onMenuShareAppMessage'
-]) ?>, "<?= $title ?>", "<?= $description ?>", "<?= $cover ?>")'>
+<body<?= $ngCtl ?>>
 
-<kk-loading loading="factory.loading"></kk-loading>
 <kk-message message="factory.message"></kk-message>
+<kk-loading loading="factory.loading"></kk-loading>
 
 <div id="menu">
     <div class="triangle"></div>
@@ -98,6 +94,14 @@ foreach ($items as $item) {
 }
 ?>
 
+<div class="hidden">
+    <span ng-init="common()"></span>
+    <span ng-init='wxSDK(<?= Yii::$app->wx->js->config([
+        'hideMenuItems',
+        'onMenuShareTimeline',
+        'onMenuShareAppMessage'
+    ]) ?>, "<?= $title ?>", "<?= $description ?>", "<?= $cover ?>")'></span>
+</div>
 </body>
 <script>
     var _hmt = _hmt || [];

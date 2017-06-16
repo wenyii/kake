@@ -61,4 +61,6 @@ return [
     'cancel order success' => '取消订单操作成功',
     'order request submitted' => '预约申请已提交',
     'check in success' => '入住操作成功',
+
+    'has been involved in lottery' => '已经参与过抽奖',
 ];

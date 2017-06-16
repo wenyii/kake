@@ -225,6 +225,14 @@ class ProductController extends GeneralController
                     return ['product_id' => $record['id']];
                 }
             ],
+            [
+                'text' => '二维码',
+                'type' => 'script',
+                'value' => '$.showQrCode',
+                'params' => ['link_url'],
+                'level' => 'success',
+                'icon' => 'qrcode'
+            ]
         ]);
     }
 
@@ -793,6 +801,15 @@ class ProductController extends GeneralController
         // 生成封面图附件地址
         $record = $this->createAttachmentUrl($record, ['attachment_cover' => 'cover']);
 
+        if ($action == 'index') {
+            $record = $this->createLinkUrl($record, 'id', function ($id) {
+                return [
+                    'detail/index',
+                    'id' => $id
+                ];
+            });
+        }
+
         if (in_array($action, [
             'edit',
             'detail'
@@ -812,7 +829,7 @@ class ProductController extends GeneralController
         }
 
         // 生成产品分销数据
-        if (!empty($record['id']) && $action == 'ajaxModalListProducer') {
+        if ($action == 'ajaxModalListProducer') {
             $record = $this->listForeignData($record, 'producer', null, $action);
 
             foreach ($record['producer'] as $item) {

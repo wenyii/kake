@@ -43,7 +43,7 @@ $params = \Yii::$app->params;
                 <?php endforeach ?>
             </div>
         </div>
-        
+
     <?php endif; ?>
 </div>
 <?php if (!empty($flashSalesList)): ?>

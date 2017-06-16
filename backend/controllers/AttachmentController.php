@@ -31,10 +31,7 @@ class AttachmentController extends GeneralController
                 'value' => 'download',
                 'icon' => 'download-alt',
                 'params' => function ($item) {
-                    $path = Yii::$app->params['upload_path'];
-                    $file = Helper::joinString('/', $path, $item['deep_path'], $item['filename']);
-
-                    return ['file' => base64_encode($file)];
+                    return ['file' => base64_encode(current($item['preview_url']))];
                 },
                 'show_condition' => function ($item) {
                     return $item['state'] != 2;
@@ -124,6 +121,6 @@ class AttachmentController extends GeneralController
     public function actionDownload($file)
     {
         $file = base64_decode($file);
-        Yii::$app->download->download($file);
+        Yii::$app->download->remoteDownload($file);
     }
 }

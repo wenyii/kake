@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\components\Helper;
 use Yii;
 
 /**
@@ -257,6 +258,36 @@ class ProducerSettingController extends GeneralController
         $record = $this->createAttachmentUrl($record, ['logo_attachment_id' => 'logo']);
 
         return parent::sufHandleField($record, $action);
+    }
+
+    /**
+     * 生成推广链接
+     *
+     * @auth-pass-all
+     */
+    public function actionSpread()
+    {
+        $producer = $this->getProducer($this->user->id);
+        if (empty($producer)) {
+            Yii::$app->session->setFlash('warning', '请先完善个人设置');
+
+            return $this->redirect(['producer-setting/center']);
+        }
+
+        $channel = Helper::integerEncode($this->user->id);
+        $link = Yii::$app->params['frontend_url'] . '/?channel=' . $channel;
+
+        $logo = current($producer['logo_preview_url']);
+        $logoPath = Yii::$app->params['tmp_path'] . '/' . basename($logo);
+        if (!Helper::saveRemoteFile($logo, $logoPath)) {
+            $this->error('LOGO图片保存出错，请到个人设置中检查');
+        }
+        $qr = $this->createQrCode($link, 200, $logoPath);
+
+        return $this->display('spread', [
+            'link' => $link,
+            'img' => $qr->writeDataUri()
+        ]);
     }
 
     /**

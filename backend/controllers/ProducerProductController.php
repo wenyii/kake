@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\components\Helper;
 use Yii;
 
 /**
@@ -42,6 +43,14 @@ class ProducerProductController extends GeneralController
                 'value' => 'front',
                 'level' => 'info',
                 'icon' => 'sort'
+            ],
+            [
+                'text' => '二维码',
+                'type' => 'script',
+                'value' => '$.showQrCode',
+                'params' => ['link_url'],
+                'level' => 'success',
+                'icon' => 'qrcode'
             ]
         ]);
     }
@@ -154,7 +163,10 @@ class ProducerProductController extends GeneralController
      */
     public function preHandleField($record, $action = null)
     {
-        if (!empty($record['id'])) {
+        if (in_array($action, [
+            'add',
+            'edit'
+        ])) {
             $controller = $this->controller('product');
             $data = $this->callMethod('sufHandleField', [], [
                 ['id' => $record['product_id']],
@@ -176,7 +188,13 @@ class ProducerProductController extends GeneralController
      */
     public function sufHandleField($record, $action = null, $callback = null)
     {
-        if (!empty($record['id']) && $action == 'index') {
+        if ($action == 'index') {
+            $record = $this->createLinkUrl($record, 'product_id', function ($id) {
+                return [
+                    'detail/index',
+                    'id' => $id
+                ];
+            });
             $controller = $this->controller('product');
             $data = $this->callMethod('sufHandleField', [], [
                 ['id' => $record['product_id']],

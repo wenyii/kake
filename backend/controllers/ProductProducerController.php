@@ -91,7 +91,9 @@ class ProductProducerController extends GeneralController
     public static function indexAssist()
     {
         return [
-            'title',
+            'title' => [
+                'title' => '产品'
+            ],
             'from_sales' => [
                 'tpl' => '≥ %s 个'
             ],
