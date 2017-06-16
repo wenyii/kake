@@ -10,6 +10,8 @@ use common\components\Upload;
 use yii\base\DynamicModel;
 use yii\helpers\Url;
 use yii\helpers\Html;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\ErrorCorrectionLevel;
 
 /**
  * Main controller
@@ -250,6 +252,7 @@ class MainController extends Controller
      * 公共错误控制器
      *
      * @access public
+     * @auth-pass-all
      * @return void
      */
     public function actionError()
@@ -387,6 +390,7 @@ class MainController extends Controller
      * 多语言切换
      *
      * @access public
+     * @auth-pass-all
      *
      * @param string $language
      *
@@ -521,6 +525,8 @@ class MainController extends Controller
     /**
      * 上传功能
      *
+     * @access public
+     * @auth-pass-all
      * @return void
      */
     public function actionAjaxUpload()
@@ -555,6 +561,8 @@ class MainController extends Controller
     /**
      * CkEditor-上传功能
      *
+     * @access public
+     * @auth-pass-all
      * @return void
      */
     public function actionAjaxCkEditorUpload()
@@ -884,7 +892,7 @@ class MainController extends Controller
     public function goReference($key, $params = [])
     {
         if (Yii::$app->request->isAjax) {
-            return null;
+            return;
         }
 
         $reference = Yii::$app->session->get(static::REFERENCE);
@@ -1059,6 +1067,7 @@ class MainController extends Controller
      * Ajax 发送手机验证码
      *
      * @access public
+     * @auth-pass-all
      * @return void
      */
     public function actionAjaxSms()
@@ -1078,6 +1087,98 @@ class MainController extends Controller
         }
 
         $this->success(null, 'phone captcha send success');
+    }
+
+    /**
+     * Ajax 获取二维码图片 HTML
+     *
+     * @access public
+     * @auth-pass-all
+     *
+     * @param string  $url
+     * @param integer $width
+     * @param integer $height
+     *
+     * @return void
+     */
+    public function actionAjaxGetQrCode($url, $width = 200, $height = 200)
+    {
+        $url = urldecode($url);
+        $qr = $this->createQrCode($url);
+        $html = Html::img($qr->writeDataUri(), compact('width', 'height'));
+
+        $this->success($html);
+    }
+
+    /**
+     * 获取分销商用户信息
+     *
+     * @access public
+     *
+     * @param integer $userId
+     *
+     * @return array
+     */
+    public function getProducer($userId)
+    {
+        $controller = $this->controller('producer-setting');
+        $condition = $this->callMethod('indexCondition', [], null, $controller);
+        $condition = array_merge($condition, [
+            'table' => 'producer_setting',
+            'where' => [
+                ['producer_setting.producer_id' => $userId],
+                ['producer_setting.state' => 1]
+            ]
+        ]);
+
+        $producer = $this->service('general.get-for-backend', $condition, 'no');
+        if (empty($producer)) {
+            return [];
+        }
+
+        $producer = $this->callMethod('sufHandleField', $producer, [$producer], $controller);
+
+        return $producer;
+    }
+
+    /**
+     * 生成二维码图片
+     *
+     * @param string  $content
+     * @param integer $qrWidth
+     * @param string  $logo
+     * @param integer $logoWidth
+     *
+     * @return QrCode
+     */
+    public function createQrCode($content, $qrWidth = 300, $logo = null, $logoWidth = null)
+    {
+        $qrCode = new QrCode($content);
+        $qrCode->setSize($qrWidth);
+
+        $qrCode->setWriterByName('png');
+        $qrCode->setMargin($qrWidth / 25);
+        $qrCode->setEncoding('utf-8');
+        $qrCode->setErrorCorrectionLevel(ErrorCorrectionLevel::HIGH);
+        $qrCode->setForegroundColor([
+            'r' => 0,
+            'g' => 0,
+            'b' => 0
+        ]);
+        $qrCode->setBackgroundColor([
+            'r' => 255,
+            'g' => 255,
+            'b' => 255
+        ]);
+
+        if ($logo) {
+            $qrCode->setLogoPath($logo);
+            $logoWidth = $logoWidth ?: $qrWidth / 4;
+            $qrCode->setLogoWidth($logoWidth);
+        }
+        $qrCode->setValidateResult(false);
+
+        return $qrCode;
     }
 
     /**

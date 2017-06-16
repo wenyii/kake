@@ -99,8 +99,8 @@ class GeneralController extends MainController
     public static $passAuthCtrl = [
         'GeneralController',
         'MainController',
+        'ProducerSettingController',
         'ProducerController',
-        'ProducerOrderController',
         'ProducerProductController'
     ];
 
@@ -377,17 +377,14 @@ class GeneralController extends MainController
         $controllers = Helper::readDirectory($directory, ['php'], 'IN');
 
         $list = [];
+
         foreach ($controllers as &$controller) {
 
             // 处理文件路径
-            $controller = str_replace([
-                $directory . DS,
-                '.php'
-            ], [
-                null,
-                null
-            ], $controller);
-
+            $controller = Helper::cutString($controller, [
+                '/^0^desc',
+                '.^0'
+            ]);
             if (in_array($controller, $exceptControllers)) {
                 continue;
             }
@@ -865,7 +862,8 @@ class GeneralController extends MainController
      */
     public function getFilter($get, $caller)
     {
-        $filter = $this->callStatic($caller . 'Filter');
+        $caller .= 'Filter';
+        $filter = $this->callStatic($caller);
         if (!$filter) {
             return [];
         }
@@ -1201,7 +1199,7 @@ class GeneralController extends MainController
                     $controller = $item['handler_controller'];
                 } else {
                     $controller = str_replace('_', '-', $item['table']);
-                    $controller = $this->controller($controller, 'backend', false);
+                    $controller = $this->controller($controller, Yii::$app->id, false);
                 }
 
                 if (empty($record[$newKey])) {
@@ -1448,7 +1446,7 @@ class GeneralController extends MainController
      */
     public function sufHookDateSectionDouble($record, $action)
     {
-        if (!in_array($action, ['edit'])) {
+        if ($action != 'edit') {
             return $record;
         }
 
@@ -1552,7 +1550,7 @@ class GeneralController extends MainController
      */
     public function sufHookLogic($record, $action)
     {
-        if (in_array($action, ['filter'])) {
+        if ($action == 'filter') {
             return $record;
         }
 
@@ -1629,6 +1627,7 @@ class GeneralController extends MainController
 
         $assist = $this->handleAssistForList($this->callStatic($caller . 'Assist', []));
 
+        $list = $this->callMethod('sufHandleFields', $list, [$list]);
         array_walk($list, function (&$value) use ($caller) {
             $value = $this->callMethod('sufHandleField', $value, [
                 $value,

@@ -114,6 +114,10 @@ class OrderController extends GeneralController
                 'title' => '下单用户',
                 'tip'
             ],
+            'producer_username' => [
+                'title' => '分销商户',
+                'tip'
+            ],
             'real_name' => [
                 'title' => '订单联系人'
             ],
@@ -222,6 +226,13 @@ class OrderController extends GeneralController
                 [
                     'left_table' => 'order',
                     'table' => 'order_contacts'
+                ],
+                ['table' => 'producer_log'],
+                [
+                    'left_table' => 'producer_log',
+                    'table' => 'user',
+                    'as' => 'producer_user',
+                    'left_on_field' => 'producer_id'
                 ]
             ],
             'select' => [
@@ -230,6 +241,7 @@ class OrderController extends GeneralController
                 'hotel.name AS hotel_name',
                 'order_contacts.real_name',
                 'order_contacts.phone',
+                'producer_user.username AS producer_username',
                 'order.*'
             ],
             'order' => 'order.id DESC'
@@ -241,7 +253,7 @@ class OrderController extends GeneralController
      */
     public function sufHandleField($record, $action = null, $callback = null)
     {
-        if (!empty($record['id']) && $action == 'index') {
+        if ($action == 'index') {
             $package = $this->service('general.list-package-by-order-id', ['order_id' => $record['id']]);
 
             $record['package_record'] = $package;

@@ -24,6 +24,8 @@ return [
     'upload_path' => '/upload/kake',
     'upload_url' => "http://{$secondPic}.{$domain}/upload/kake",
 
+    'tmp_path' => '/tmp',
+
     'wechat_callback' => "http://{$secondSite}.${domain}/",
     'alipay_callback' => "http://{$secondSite}.${domain}/",
 

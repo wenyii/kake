@@ -45,6 +45,14 @@ class AdController extends GeneralController
                 'value' => 'front',
                 'level' => 'info',
                 'icon' => 'sort'
+            ],
+            [
+                'text' => '二维码',
+                'type' => 'script',
+                'value' => '$.showQrCode',
+                'params' => ['link_url'],
+                'level' => 'success',
+                'icon' => 'qrcode'
             ]
         ]);
     }
@@ -81,7 +89,6 @@ class AdController extends GeneralController
                 'code',
                 'info'
             ],
-            'link_url' => 'link',
             'remark',
             'from',
             'to',

@@ -28,6 +28,11 @@ class OrderSubController extends GeneralController
      */
     public static $hookPriceNumber = ['price'];
 
+    public static $stateOk = [
+        5,
+        6
+    ];
+
     /**
      * @inheritDoc
      */
@@ -216,8 +221,7 @@ class OrderSubController extends GeneralController
             ],
             'name' => [
                 'title' => '套餐',
-                'max-width' => '200px',
-                'tip'
+                'max-width' => '150px'
             ],
             'conformation_number' => [
                 'empty',

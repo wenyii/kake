@@ -12,4 +12,14 @@
             <input class="form-control" type="text" value="<?= $link ?>">
         </div>
     </div>
+    <div class="form-group">
+        <div class="col-sm-3 col-sm-offset-1">
+            <a href="#" class="thumbnail">
+                <img src="<?= $img ?>">
+            </a>
+        </div>
+        <div class="col-sm-8">
+            <p class="navbar-text">下载二维码：右键 > 图片另存为...</p>
+        </div>
+    </div>
 </form>
