@@ -97,11 +97,8 @@ class GeneralController extends MainController
      * @var array 无需验证权限的控制器
      */
     public static $passAuthCtrl = [
-        'GeneralController',
         'MainController',
-        'ProducerSettingController',
-        'ProducerController',
-        'ProducerProductController'
+        'GeneralController'
     ];
 
     // ---

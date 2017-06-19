@@ -34,6 +34,14 @@ class ActivityLotteryCodeController extends GeneralController
             'company' => [
                 'value' => 'all'
             ],
+            'subscribe' => [
+                'value' => 'all'
+            ],
+            'add_time' => [
+                'elem' => 'input',
+                'type' => 'date',
+                'between' => true
+            ]
         ];
     }
 
@@ -51,6 +59,11 @@ class ActivityLotteryCodeController extends GeneralController
                 'empty',
                 'code'
             ],
+            'subscribe' => [
+                'code',
+                'color' => 'auto',
+                'info'
+            ],
             'add_time',
             'state' => [
                 'code',
@@ -67,8 +80,7 @@ class ActivityLotteryCodeController extends GeneralController
     {
         return [
             'where' => [
-                ['state' => 1],
-                ['subscribe' => 1]
+                ['state' => 1]
             ]
         ];
     }

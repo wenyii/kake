@@ -61,14 +61,17 @@ class WeChatReplyController extends GeneralController
             return "【公司不在抽奖范围内】{$br}啊哦，你关注的品牌还不是喀客旅行的小伙伴~{$br}不如快介绍他们给喀客认识，下次说不定就有你的份！";
         }
 
-        $date = $model->_activity_date[$code];
-
         // 时间判断
-        if (TIME < strtotime($date['begin'])) {
-            return "【活动未开始】{$br}抽奖活动还未开始，不要太心急哦~开始时间：${date['begin']}~ 爱你么么哒";
-        }
-        if (TIME > strtotime($date['end'])) {
-            return "【活动已结束】{$br}艾玛，你来晚了！本期抽奖活动已经落幕！{$br}还是拿着优惠券去商城逛逛酒店吧~";
+        if (isset($model->_activity_date[$code])) {
+
+            $date = $model->_activity_date[$code];
+
+            if (isset($date['begin']) && TIME < strtotime($date['begin'])) {
+                return "【活动未开始】{$br}抽奖活动还未开始，不要太心急哦~开始时间：${date['begin']}~ 爱你么么哒";
+            }
+            if (isset($date['end']) && TIME > strtotime($date['end'])) {
+                return "【活动已结束】{$br}艾玛，你来晚了！本期抽奖活动已经落幕！{$br}还是拿着优惠券去商城逛逛酒店吧~";
+            }
         }
 
         $user = $wx->user->get($message->FromUserName);
