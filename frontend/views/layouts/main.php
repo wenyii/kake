@@ -41,10 +41,11 @@ $cover = empty($params['cover']) ? $params['frontend_source'] . '/img/logo.png' 
     var requestUrl = '<?= $params["frontend_url"];?>/?r=';
 </script>
 
-<body<?= $ngCtl ?>>
+<body<?= $ngCtl ?> kk-tap="hit()">
 
 <kk-message message="factory.message"></kk-message>
 <kk-loading loading="factory.loading"></kk-loading>
+<kk-hit hit="factory.hit"></kk-hit>
 
 <div id="menu">
     <div class="triangle"></div>

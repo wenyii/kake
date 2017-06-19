@@ -30,7 +30,6 @@ return [
             'name' => '用户',
             'sub' => [
                 'user.index' => '用户管理',
-                'producer-setting.index' => '分销商管理',
                 'login-log.index' => '登录日志',
             ]
         ],
@@ -47,7 +46,6 @@ return [
             'sub' => [
                 'hotel.index' => '酒店管理',
                 'product.index' => '产品管理',
-                'product-producer.index' => '产品分销管理',
                 'product-package.index' => '产品套餐管理',
             ]
         ],
@@ -67,6 +65,15 @@ return [
             ]
         ],
         'i' => [
+            'name' => '分销管理',
+            'sub' => [
+                'producer-setting.index' => '分销商',
+                'product-producer.index' => '分佣档次',
+                'producer-log.index' => '分销记录',
+                'producer-drawing.index' => '提款记录'
+            ]
+        ],
+        'j' => [
             'name' => '其他',
             'sub' => [
                 'ad.index' => '广告管理',
@@ -74,13 +81,14 @@ return [
                 'wx-menu.index' => '服务号菜单',
             ]
         ],
-        'j' => [
+        'k' => [
             'name' => '分销系统',
             'sub' => [
                 'producer-setting.center' => '个人设置',
                 'producer-setting.spread' => '获取推广资料',
                 'producer-product.index' => '分销产品管理',
-                'producer-log.index' => '分销记录',
+                'producer-log.my' => '分销记录',
+                'producer-drawing.my' => '我要提现'
             ],
             'pass_role' => 10
         ]

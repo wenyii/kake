@@ -187,6 +187,7 @@ $action = \Yii::$app->controller->action->id;
                             <?php
                             $adorn = $value['adorn'];
                             $color = $adorn['color'];
+                            $color = $handleVal($color);
                             if (is_array($color)) {
                                 $colorKey = $empty($field);
                                 $color = isset($color[$colorKey]) ? $color[$colorKey] : $color[$colorKey ? 1 : 0];

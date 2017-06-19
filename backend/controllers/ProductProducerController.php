@@ -111,6 +111,9 @@ class ProductProducerController extends GeneralController
             ],
             'commission' => [
                 'code',
+                'color' => function ($item) {
+                    return !$item['type'] ? 'default' : 'primary';
+                },
                 'tpl' => function ($item) {
                     return !$item['type'] ? '￥%s' : '%s%%';
                 }
