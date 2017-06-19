@@ -1,2 +1,2 @@
 <?php
-define('VERSION', '1.0.14');
+define('VERSION', '1.0.15');
