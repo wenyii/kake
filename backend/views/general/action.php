@@ -105,6 +105,11 @@ if ($modal) {
                 <?= $as_type ?>
                 <?= $as_value ?>>
         </div>
+    <?php elseif ($element == 'text'): ?> <!-- text -->
+        <div class="col-sm-<?= $empty('label', 3) ?> <?= $av_class ?>" <?= $as_tip ?>>
+            <?php $as_name = (($av_type == 'file' ? 'id' : 'name') . '=' . $av_name) ?>
+            <p class="bg-info" <?= $as_name ?>><?= $av_value ?></p>
+        </div>
     <?php elseif ($element == 'img'): ?> <!-- img -->
         <div class="col-sm-<?= $empty('label', 10) ?> <?= $av_class ?>" <?= $as_tip ?>>
             <div class="row" <?= $as_name ?>>
@@ -123,9 +128,10 @@ if ($modal) {
                             $.createThumb({
                                 data: <?= json_encode(compact('id', 'url'), JSON_UNESCAPED_UNICODE) ?>,
                                 attachmentName: '<?= Helper::emptyDefault($uploader, 'field_name') ?>',
-                                previewName: '<?= Helper::emptyDefault($uploader, 'preview_name') ?>',
+                                previewName: '<?= Helper::emptyDefault($uploader, 'preview_name', $field) ?>',
                                 previewLabel: '<?= $empty('img_label', 4) ?>',
-                                multiple: '<?= Helper::emptyDefault($uploader, 'multiple', 0) ?>'
+                                multiple: '<?= Helper::emptyDefault($uploader, 'multiple', 0) ?>',
+                                action: <?= ($empty('readonly') ? 0 : 1) ?>
                             });
                             <?php endforeach; ?>
                         });
@@ -204,7 +210,8 @@ if ($modal) {
         $script = ViewHelper::escapeScript($empty('script'));
         $script = empty($script) ? '' : 'onclick="' . $script . '"';
         ?>
-        <div class="col-sm-<?= $empty('label', 6) ?> <?= $av_class ?>" <?= $as_tip ?> <?= $as_name ?> format="<?= $empty('format') ?>">
+        <div class="col-sm-<?= $empty('label', 6) ?> <?= $av_class ?>" <?= $as_tip ?> <?= $as_name ?>
+             format="<?= $empty('format') ?>">
             <button type="button"
                     class="btn btn-<?= $empty('level', 'primary') ?>" <?= $script ?>><?= $av_value ?></button>
         </div>

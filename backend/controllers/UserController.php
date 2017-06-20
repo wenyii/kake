@@ -39,8 +39,8 @@ class UserController extends GeneralController
     // 权限控制 - 标题样式控制
     public static $keyInfoStyle = '@auth-info-style';
 
+    // 权限描述相关标识
     public static $varCtrl = '{ctrl}';
-
     public static $varInfo = '{info}';
 
     /**

@@ -35,6 +35,17 @@ class ProducerProductController extends GeneralController
     /**
      * @inheritDoc
      */
+    public static function myOperations()
+    {
+        $operations = self::indexOperations();
+        $operations[0]['value'] = 'producer-product/add-my';
+
+        return $operations;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function indexOperation()
     {
         return array_merge(parent::indexOperation(), [
@@ -58,7 +69,18 @@ class ProducerProductController extends GeneralController
     /**
      * @inheritDoc
      */
-    public static function indexFilter()
+    public static function myOperation()
+    {
+        $operation = self::indexOperation();
+        $operation[0]['value'] = 'edit-my';
+
+        return $operation;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function myFilter()
     {
         return [
             'product_id' => [
@@ -77,7 +99,22 @@ class ProducerProductController extends GeneralController
     /**
      * @inheritDoc
      */
-    public static function indexAssist()
+    public static function indexFilter()
+    {
+        $filter = self::myFilter();
+        $filter['username'] = [
+            'elem' => 'input',
+            'title' => '分销商',
+            'table' => 'user'
+        ];
+
+        return $filter;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function myAssist()
     {
         return [
             'title' => [
@@ -111,7 +148,20 @@ class ProducerProductController extends GeneralController
     /**
      * @inheritDoc
      */
-    public static function editAssist($action = null)
+    public static function indexAssist()
+    {
+        $assist = self::myAssist();
+        $assist['username'] = [
+            'title' => '分销商'
+        ];
+
+        return $assist;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function editMyAssist($action = null)
     {
         return [
             'producer_id' => [
@@ -143,19 +193,80 @@ class ProducerProductController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public static function editAssist($action = null)
+    {
+        $assist = self::editMyAssist($action);
+
+        unset($assist['producer_id']);
+        $assist['producer_id'] = [
+            'readonly' => true,
+            'same_row' => true,
+            'label' => 2
+        ];
+        $assist['select_producer'] = [
+            'title' => false,
+            'elem' => 'button',
+            'value' => '选择分销商',
+            'script' => '$.showPage("producer-setting.list", {state: 1})'
+        ];
+
+        return $assist;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function myCondition()
     {
         return [
             'join' => [
-                ['table' => 'product']
+                ['table' => 'product'],
+                [
+                    'table' => 'user',
+                    'left_on_field' => 'producer_id'
+                ]
             ],
             'select' => [
                 'product.title',
-                'producer_product.*'
+                'producer_product.*',
+                'user.username'
             ],
             'where' => [['producer_id' => self::$uid]],
             'order' => 'producer_product.state DESC, producer_product.update_time DESC'
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function indexCondition()
+    {
+        $condition = $this->myCondition();
+        unset($condition['where']);
+
+        return $condition;
+    }
+
+    /**
+     * 新增分销产品
+     *
+     * @auth-pass-all
+     * @return object
+     */
+    public function actionAddMy()
+    {
+        return parent::actionAdd();
+    }
+
+    /**
+     * 编辑分销产品
+     *
+     * @auth-pass-all
+     * @return object
+     */
+    public function actionEditMy()
+    {
+        return parent::actionEdit();
     }
 
     /**

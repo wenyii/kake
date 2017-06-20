@@ -2,6 +2,7 @@
 
 namespace console\controllers;
 
+use common\models\Main;
 use yii\console\Controller;
 use yii\helpers\Console;
 

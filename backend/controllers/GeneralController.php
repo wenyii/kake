@@ -1650,6 +1650,9 @@ class GeneralController extends MainController
         $recordFilterName = $caller . 'RecordFilterName';
         $recordFilterName = isset(static::${$recordFilterName}) ? static::${$recordFilterName} : $recordFilter;
 
+        $recordFilterValueName = $caller . 'RecordFilterValueName';
+        $recordFilterValueName = isset(static::${$recordFilterValueName}) ? static::${$recordFilterValueName} : 'id';
+
         // 是否 ajax 分页、ajax 筛选
         $ajaxPage = $ajaxFilter = $modal;
 
@@ -1670,6 +1673,7 @@ class GeneralController extends MainController
             'operations',
             'recordFilter',
             'recordFilterName',
+            'recordFilterValueName',
             'ajaxPage',
             'ajaxFilter',
             'operationsPosition'
