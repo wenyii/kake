@@ -18,6 +18,13 @@ class ProducerSettingController extends GeneralController
     // 模型描述
     public static $modelInfo = '分销商';
 
+    /**
+     * @var string 模态框的名称
+     */
+    public static $ajaxModalListTitle = '选择分销商';
+
+    public static $ajaxModalListRecordFilterValueName = 'producer_id';
+
     public static $uid;
 
     /**
@@ -52,12 +59,43 @@ class ProducerSettingController extends GeneralController
     /**
      * @inheritDoc
      */
+    public static function ajaxModalListOperations()
+    {
+        return [
+            [
+                'text' => '选定',
+                'script' => true,
+                'value' => '$.modalRadioValueToInput("radio", "producer_id")',
+                'icon' => 'flag'
+            ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function indexOperation()
+    {
+        return array_merge(parent::indexOperation(), [
+            [
+                'text' => '分销产品',
+                'value' => 'producer-product/index',
+                'level' => 'info',
+                'icon' => 'link',
+                'params' => ['username']
+            ]
+        ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function indexFilter()
     {
         return [
-            'producer_id' => [
+            'username' => [
                 'elem' => 'input',
-                'equal' => true
+                'table' => 'user'
             ],
             'name' => [
                 'elem' => 'input'
@@ -74,10 +112,32 @@ class ProducerSettingController extends GeneralController
     /**
      * @inheritDoc
      */
+    public static function ajaxModalListFilter()
+    {
+        return [
+            'username' => [
+                'elem' => 'input',
+                'table' => 'user'
+            ],
+            'name' => [
+                'elem' => 'input'
+            ],
+            'state' => [
+                'value' => 'all'
+            ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function indexAssist()
     {
         return [
-            'producer_id' => 'code',
+            'username' => [
+                'code',
+                'table' => 'user'
+            ],
             'name',
             'theme' => [
                 'info',
@@ -90,6 +150,29 @@ class ProducerSettingController extends GeneralController
             ],
             'add_time',
             'update_time',
+            'state' => [
+                'code',
+                'info',
+                'color' => [
+                    0 => 'danger',
+                    1 => 'info',
+                    2 => 'default'
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function ajaxModalListAssist()
+    {
+        return [
+            'username' => [
+                'code',
+                'table' => 'user'
+            ],
+            'name',
             'state' => [
                 'code',
                 'info',
@@ -152,9 +235,21 @@ class ProducerSettingController extends GeneralController
                 'field_name' => 'logo_attachment_id'
             ],
 
+            'spread_url' => [
+                'title' => '推广链接',
+                'label' => 6,
+                'readonly' => true,
+                'elem' => 'text'
+            ],
+            'spread_img' => [
+                'title' => '推广二维码',
+                'img_label' => 4,
+                'elem' => 'img',
+                'readonly' => true
+            ],
             'state' => [
                 'elem' => 'select',
-                'value' => 1
+                'value' => 1,
             ]
         ];
     }
@@ -175,6 +270,14 @@ class ProducerSettingController extends GeneralController
         unset($assist['select_producer']);
 
         return $assist;
+    }
+
+    /**
+     * 分销商列表 - 弹出
+     */
+    public function actionAjaxModalList()
+    {
+        return $this->showList();
     }
 
     /**
@@ -219,15 +322,28 @@ class ProducerSettingController extends GeneralController
                     'table' => 'attachment',
                     'as' => 'logo',
                     'left_on_field' => 'logo_attachment_id'
+                ],
+                [
+                    'table' => 'user',
+                    'left_on_field' => 'producer_id'
                 ]
             ],
             'select' => [
                 'logo.deep_path AS logo_deep_path',
                 'logo.filename AS logo_filename',
-                'producer_setting.*'
+                'producer_setting.*',
+                'user.username'
             ],
             'order' => 'producer_setting.state DESC, producer_setting.update_time DESC'
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function ajaxModalListCondition()
+    {
+        return $this->indexCondition();
     }
 
     /**
@@ -250,6 +366,36 @@ class ProducerSettingController extends GeneralController
     }
 
     /**
+     * 获取推广信息
+     *
+     * @access public
+     * @param integer $userId
+     * @return array
+     */
+    private function spreadInfo($userId)
+    {
+        $producer = $this->getProducer($userId);
+        if (empty($producer)) {
+            return [];
+        }
+
+        $channel = Helper::integerEncode($userId);
+        $link = Yii::$app->params['frontend_url'] . '/?channel=' . $channel;
+
+        $logo = current($producer['logo_preview_url']);
+        $logoPath = Yii::$app->params['tmp_path'] . '/' . basename($logo);
+        if (!Helper::saveRemoteFile($logo, $logoPath)) {
+            $this->error('推广二维码生成出错，请先到个人设置中上传LOGO');
+        }
+        $qr = $this->createQrCode($link, 200, $logoPath);
+
+        return [
+            $link,
+            $qr->writeDataUri()
+        ];
+    }
+
+    /**
      * @inheritDoc
      */
     public function sufHandleField($record, $action = null, $callback = null)
@@ -257,6 +403,13 @@ class ProducerSettingController extends GeneralController
         // 生成封面图附件地址
         $record = $this->createAttachmentUrl($record, ['logo_attachment_id' => 'logo']);
 
+        if ($action == 'edit') {
+            $spread = $this->spreadInfo($record['producer_id']);
+            if (!empty($spread)) {
+                list($record['spread_url'], $record['spread_img']) = $spread;
+                $record['spread_img'] = ['qr' => $record['spread_img']];
+            }
+        }
         return parent::sufHandleField($record, $action);
     }
 
@@ -267,27 +420,16 @@ class ProducerSettingController extends GeneralController
      */
     public function actionSpread()
     {
-        $producer = $this->getProducer($this->user->id);
-        if (empty($producer)) {
+        $spread = $this->spreadInfo($this->user->id);
+        if (empty($spread)) {
             Yii::$app->session->setFlash('warning', '请先完善个人设置');
 
             return $this->redirect(['producer-setting/center']);
         }
 
-        $channel = Helper::integerEncode($this->user->id);
-        $link = Yii::$app->params['frontend_url'] . '/?channel=' . $channel;
+        list($link, $img) = $spread;
 
-        $logo = current($producer['logo_preview_url']);
-        $logoPath = Yii::$app->params['tmp_path'] . '/' . basename($logo);
-        if (!Helper::saveRemoteFile($logo, $logoPath)) {
-            $this->error('LOGO图片保存出错，请到个人设置中检查');
-        }
-        $qr = $this->createQrCode($link, 200, $logoPath);
-
-        return $this->display('spread', [
-            'link' => $link,
-            'img' => $qr->writeDataUri()
-        ]);
+        return $this->display('spread', compact('link', 'img'));
     }
 
     /**

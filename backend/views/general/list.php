@@ -165,7 +165,7 @@ $action = \Yii::$app->controller->action->id;
             <tr <?= $tip ?>>
                 <?php if (!empty($recordFilter)): ?>
                     <td>
-                        <input type="<?= $recordFilter ?>" name="<?= $recordFilterName ?>" value="<?= $item['id'] ?>">
+                        <input type="<?= $recordFilter ?>" name="<?= $recordFilterName ?>" value="<?= $item[$recordFilterValueName] ?>">
                     </td>
                 <?php endif; ?>
                 <td>

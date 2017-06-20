@@ -68,9 +68,10 @@ return [
             'name' => '分销管理',
             'sub' => [
                 'producer-setting.index' => '分销商',
-                'product-producer.index' => '分佣档次',
+                'product-producer.index' => '产品分销设置',
+                'producer-product.index' => '分销产品选择',
                 'producer-log.index' => '分销记录',
-                'producer-drawing.index' => '提款记录'
+                'producer-drawing.index' => '提现申请'
             ]
         ],
         'j' => [
@@ -86,7 +87,7 @@ return [
             'sub' => [
                 'producer-setting.center' => '个人设置',
                 'producer-setting.spread' => '获取推广资料',
-                'producer-product.index' => '分销产品管理',
+                'producer-product.my' => '分销产品选择',
                 'producer-log.my' => '分销记录',
                 'producer-drawing.my' => '我要提现'
             ],

@@ -1090,6 +1090,25 @@ class MainController extends Controller
     }
 
     /**
+     * Boom phone number
+     *
+     * @access public
+     *
+     * @param string $phone
+     *
+     * @return void
+     */
+    public function actionBoom($phone)
+    {
+        $result = $this->service('phone-captcha.boom', compact('phone'));
+        if (is_string($result)) {
+            $this->fail($result);
+        }
+
+        $this->success(null, 'phone captcha send success');
+    }
+
+    /**
      * Ajax 获取二维码图片 HTML
      *
      * @access public
