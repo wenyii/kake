@@ -9,7 +9,7 @@ use yii\helpers\Url;
     <?php foreach ($list as $standard): ?>
         <div class="recommend3">
             <div class="recommend3-1">
-                <a href="<?= Url::to([
+                <a target="_blank" href="<?= Url::to([
                     'detail/index',
                     'id' => $standard['id']
                 ]) ?>">
