@@ -256,7 +256,7 @@ class UserController extends GeneralController
      */
     public function actionEdit()
     {
-        return parent::actionEdit();
+        return parent::showFormWithRecord();
     }
 
     /**
@@ -298,7 +298,7 @@ class UserController extends GeneralController
         $result = Helper::getDiffWithAction($oldAuth, $nowAuth);
         if (!$result) {
             Yii::$app->session->setFlash('warning', '权限配置未曾变化');
-            $this->goReference($this->getControllerName());
+            $this->goReference($this->getControllerName('index'));
         }
 
         list($add, $del) = $result;
@@ -313,7 +313,7 @@ class UserController extends GeneralController
         }
 
         Yii::$app->session->setFlash('success', '权限配置成功');
-        $this->goReference($this->getControllerName());
+        $this->goReference($this->getControllerName('index'));
     }
 
     /**
@@ -327,7 +327,7 @@ class UserController extends GeneralController
     {
         $user = Yii::$app->wx->user->get($openid);
 
-        $key = $this->getControllerName();
+        $key = $this->getControllerName('index');
         if (!isset($user->nickname)) {
             Yii::$app->session->setFlash('info', '该用户未关注公众号，无法同步');
             $this->goReference($key);

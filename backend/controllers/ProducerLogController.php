@@ -17,7 +17,42 @@ class ProducerLogController extends GeneralController
     // 模型描述
     public static $modelInfo = '分销记录';
 
+    /**
+     * @var array Hook
+     */
+    public static $hookPriceNumber = [
+        'log_amount_in',
+        'log_amount_out'
+    ];
+
+    // 用户id
     public static $uid;
+
+    // 标记
+    public static $success = '<span class="text-success">✔</span>';
+    public static $fail = '<span class="text-danger">✘</span>';
+
+    /**
+     * @inheritDoc
+     */
+    public static function myOperations()
+    {
+        return [
+            [
+                'text' => '马上结算',
+                'value' => 'settlement',
+                'level' => 'primary confirm-button',
+                'icon' => 'usd'
+            ],
+            [
+                'text' => '结算说明',
+                'script' => true,
+                'level' => 'warning',
+                'value' => '$.showPage("producer-log.help")',
+                'icon' => 'info-sign'
+            ]
+        ];
+    }
 
     /**
      * @inheritDoc
@@ -30,9 +65,34 @@ class ProducerLogController extends GeneralController
     /**
      * @inheritDoc
      */
+    public static function myOperation()
+    {
+        return self::indexOperation();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function indexFilter()
     {
         return [
+            'producer_name' => [
+                'title' => '分销商',
+                'elem' => 'input',
+                'table' => 'producer_user',
+                'field' => 'username'
+            ],
+            'buyer_name' => [
+                'title' => '购买粉丝',
+                'elem' => 'input',
+                'table' => 'buyer_user',
+                'field' => 'username'
+            ],
+            'product_id' => [
+                'elem' => 'input',
+                'equal' => true,
+                'table' => 'producer_log'
+            ],
             'state' => [
                 'value' => 'all'
             ]
@@ -49,32 +109,75 @@ class ProducerLogController extends GeneralController
                 'title' => '产品',
                 'tip'
             ],
-            'username' => [
+            'producer_name' => [
+                'title' => '分销商',
+                'code'
+            ],
+            'buyer_name' => [
                 'code',
                 'title' => '购买粉丝'
             ],
-            'survey' => [
+            'type' => [
+                'title' => '分佣类型',
+                'code',
+                'info',
+                'color' => [
+                    0 => 'default',
+                    1 => 'primary'
+                ]
+            ],
+            'survey_table' => [
                 'html',
                 'title' => '分佣额明细（取决于套餐状态）'
             ],
-            'commission_success' => [
-                'title' => '成功分佣额',
+            'amount_in' => [
+                'title' => '入围订单额',
                 'tpl' => '￥%s',
                 'code'
             ],
-            'commission_fail' => [
-                'title' => '失败分佣额',
+            'amount_out' => [
+                'title' => '淘汰订单额',
                 'tpl' => '￥%s',
                 'code'
             ],
-            'commission' => [
+            'commission_table' => [
                 'html',
+                'title' => '分佣档次',
                 'table' => 'product_producer'
             ],
-            'join_count' => [
-                'title' => '统计参与'
+            'counter_info' => [
+                'title' => '统计&分佣',
+                'html'
+            ],
+            'state' => [
+                'code',
+                'info',
+                'color' => [
+                    0 => 'default',
+                    1 => 'info',
+                ]
             ]
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function myAssist()
+    {
+        $assist = self::indexAssist();
+        unset($assist['producer_name'], $assist['type'], $assist['state']);
+        $assist['counter'] = [
+            'title' => '产品销量',
+            'code'
+        ];
+        $assist['commission_volume'] = [
+            'title' => '分佣金额',
+            'code',
+            'tpl' => '￥%s'
+        ];
+
+        return $assist;
     }
 
     /**
@@ -91,48 +194,130 @@ class ProducerLogController extends GeneralController
                 ],
                 [
                     'table' => 'producer_product',
-                    'left_on_field' => 'product_id',
-                    'right_on_field' => 'product_id'
-                ],
-                [
-                    'left_table' => 'order',
-                    'table' => 'user'
+                    'left_on_field' => [
+                        'product_id',
+                        'producer_id'
+                    ],
+                    'right_on_field' => [
+                        'product_id',
+                        'producer_id'
+                    ]
                 ],
                 [
                     'left_table' => 'order',
                     'table' => 'product'
+                ],
+                [
+                    'table' => 'user',
+                    'as' => 'buyer_user'
+                ],
+                [
+                    'table' => 'user',
+                    'left_on_field' => 'producer_id',
+                    'as' => 'producer_user'
                 ]
             ],
             'select' => [
                 'order.id AS order_id',
                 'order.price',
                 'producer_product.type',
-                'user.username',
+                'buyer_user.username AS buyer_name',
+                'producer_user.username AS producer_name',
                 'product.title',
+                'producer_log.id',
                 'producer_log.product_id',
                 'producer_log.state'
             ],
             'where' => [
-                ['producer_log.producer_id' => self::$uid],
                 ['producer_log.state' => 1],
-                ['producer_product.producer_id' => self::$uid],
                 ['order.payment_state' => 1],
-                ['order.state' => 1],
+                [
+                    '<',
+                    'order.state',
+                    2
+                ],
             ]
         ];
     }
 
     /**
-     * 处理列表
+     * @inheritDoc
+     */
+    public function myCondition()
+    {
+        $condition = $this->indexCondition();
+        $condition['where'][2] = ['order.state' => 1];
+        $condition['where'][] = ['producer_log.producer_id' => self::$uid];
+        $condition['where'][] = ['producer_product.producer_id' => self::$uid];
+
+        return $condition;
+    }
+
+    /**
+     * 我的分销记录
      *
-     * @param array $list
+     * @auth-pass-all
+     */
+    public function actionMy()
+    {
+        return parent::showList();
+    }
+
+    /**
+     * 结算帮助中心
+     *
+     * @auth-pass-all
+     */
+    public function actionAjaxModalHelp()
+    {
+        $this->modal('producer-log/help', [], '结算说明');
+    }
+
+    /**
+     * 分销订单结算
+     *
+     * @auth-pass-all
+     */
+    public function actionSettlement()
+    {
+        $list = $this->showList('my', true);
+
+        $volume = 0;
+        $_list = [];
+        foreach ($list as $item) {
+            $log = Helper::pullSome($item, [
+                'amount_in' => 'log_amount_in',
+                'amount_out' => 'log_amount_out',
+                'sub_counter' => 'log_sub_counter',
+                'commission_volume' => 'log_commission'
+            ]);
+
+            $log = $this->preHandleField($log);
+            $_list[$item['id']] = $log;
+            $volume += $item['commission_volume'];
+        }
+
+        $result = $this->service('producer.settlement', [
+            'log' => $_list,
+            'volume' => $volume,
+            'user_id' => self::$uid
+        ]);
+
+        $this->dump($result);
+    }
+
+    /**
+     * 使用订单 ID 串列表子订单
+     *
+     * @access private
+     *
+     * @param array $orderIds
      *
      * @return array
      */
-    public function sufHandleFields($list)
+    private function listOrderSubByOrderIds($orderIds)
     {
-        $orderIds = array_column($list, 'order_id');
-        $subList = $this->service('general.list', [
+        $list = $this->service('general.list', [
             'table' => 'order_sub',
             'select' => [
                 'order_id',
@@ -149,47 +334,125 @@ class ProducerLogController extends GeneralController
             ],
         ]);
 
+        $_list = [];
         $orderSub = $this->controller('order-sub');
-        array_walk($subList, function (&$value) use ($orderSub) {
-            $value = $this->callMethod('sufHandleField', $value, [$value], $orderSub);
-        });
+        foreach ($list as $item) {
 
-        $list = array_combine($orderIds, $list);
-        $stateOk = OrderSubController::$stateOk;
+            $item = $this->callMethod('sufHandleField', $item, [$item], $orderSub);
+            $state = $item['state'];
 
-        foreach ($subList as $k => &$v) {
-
-            $id = $v['order_id'];
-            $state = $v['state'];
-
-            if (!isset($list[$id]['join_count'])) {
-                $list[$id] = array_merge($list[$id], [
-                    'join_count' => 0,
-                    'commission_success' => 0,
-                    'commission_fail' => 0,
-                    'survey' => []
-                ]);
+            if (empty($_list[$item['order_id']])) {
+                $_list[$item['order_id']] = [
+                    'sub_counter' => 0,
+                    'amount_in' => 0,
+                    'amount_out' => 0
+                ];
             }
 
-            $survey = &$list[$id]['survey'];
-            if (!isset($survey[$state])) {
-                $survey[$state] = [
-                    'info' => $v['state_info'],
-                    'num' => 1,
-                    'result' => in_array($state, $stateOk) ? '✔️' : '✘',
-                    'price' => $v['price']
+            $_item = &$_list[$item['order_id']];
+            if (in_array($state, OrderSubController::$stateOk)) {
+                $_item['sub_counter'] += 1;
+                $_item['amount_in'] += $item['price'];
+            } else {
+                $_item['amount_out'] += $item['price'];
+            }
+
+            if (empty($_item[$state])) {
+                $_item[$state] = [
+                    'info' => $item['state_info'],
+                    'number' => 1,
+                    'amount' => $item['price'],
+                    'pass' => in_array($state, OrderSubController::$stateOk) ? self::$success : self::$fail
                 ];
             } else {
-                $survey[$state]['num'] += 1;
-                $survey[$state]['price'] += $v['price'];
+                $_item[$state]['number'] += 1;
+                $_item[$state]['amount'] += $item['price'];
+            }
+        }
+
+        return $_list;
+    }
+
+    /**
+     * 产品分佣达标统计
+     *
+     * @access private
+     *
+     * @param integer $userId
+     * @param array   $productIds
+     *
+     * @return array
+     */
+    private function productCounter($userId, $productIds = null)
+    {
+        $condition = [
+            'table' => 'producer_log',
+            'join' => [
+                [
+                    'table' => 'order',
+                    'left_on_field' => 'id',
+                    'right_on_field' => 'producer_log_id'
+                ]
+            ],
+            'select' => [
+                'producer_log.*',
+                'order.id AS order_id'
+            ],
+            'where' => [
+                ['producer_log.producer_id' => $userId],
+                ['producer_log.state' => 1]
+            ]
+        ];
+
+        if ($productIds) {
+            $condition['where'][] = [
+                'in',
+                'producer_log.product_id',
+                $productIds
+            ];
+        }
+
+        $list = $this->service('general.list', $condition, 'no');
+
+        list($list, $orderIds) = Helper::valueToKey($list, 'order_id');
+        $subList = $this->listOrderSubByOrderIds($orderIds);
+
+        $counter = [];
+        foreach ($list as $id => $item) {
+
+            $product = $item['product_id'];
+            if (!isset($counter[$product])) {
+                $counter[$product] = 0;
             }
 
-            if (in_array($state, $stateOk)) {
-                $list[$id]['join_count'] += 1;
-                $list[$id]['commission_success'] += $v['price'];
-            } else {
-                $list[$id]['commission_fail'] += $v['price'];
+            if (!empty($subList[$id]['sub_counter'])) {
+                $counter[$product] += 1;
             }
+        }
+
+        return $counter;
+    }
+
+    /**
+     * 在前置字段处理前处理列表
+     *
+     * @param array $list
+     *
+     * @return array
+     */
+    public function sufHandleListBeforeField($list)
+    {
+        list($list, $orderIds) = Helper::valueToKey($list, 'order_id');
+        $subList = $this->listOrderSubByOrderIds($orderIds);
+
+        foreach ($list as &$item) {
+            $item['survey'] = $subList[$item['order_id']];
+            $survey = Helper::popSome($item['survey'], [
+                'sub_counter',
+                'amount_in',
+                'amount_out'
+            ]);
+            $item = array_merge($item, $survey);
         }
 
         return $list;
@@ -200,28 +463,82 @@ class ProducerLogController extends GeneralController
      */
     public function sufHandleField($record, $action = null, $callback = null)
     {
-        if ($action == 'index') {
-
+        if (in_array($action, [
+            'index',
+            'my'
+        ])) {
             $productCtrl = $this->controller('product');
             $data = $this->callMethod('sufHandleField', [], [
                 ['id' => $record['product_id']],
                 'ajaxModalListProducer'
             ], $productCtrl);
-            $record['commission'] = ($record['type'] ? $data['type_percent'] : $data['type_fixed']);
+
+            $key = ProductController::$type[$record['type']];
+            $record['commission_data'] = $data['commission_data_' . $key];
+            $record['commission_table'] = $data['commission_table_' . $key];
 
             $orderCtrl = $this->controller('order');
             $record = $this->callMethod('sufHandleField', [], [$record], $orderCtrl);
 
-            $record['join_count'] = $record['join_count'] ? '✔️' : '✘';
-            $record['survey'] = ViewHelper::createTable($record['survey'], [
+            $record['counter_info'] = $record['sub_counter'] ? self::$success : self::$fail;
+            $record['survey_table'] = ViewHelper::createTable($record['survey'], [
                 '状态',
                 '个数',
+                '总金额',
                 '分佣',
-                '总金额'
-            ], ['price' => '￥%s']);
+            ], [
+                'number' => '× %s',
+                'amount' => '￥%s'
+            ]);
+            unset($record['survey']);
         }
 
         return parent::sufHandleField($record, $action, $callback);
+    }
+
+    /**
+     * 在前置字段处理后处理列表
+     *
+     * @param array  $list
+     * @param string $action
+     *
+     * @return array
+     */
+    public function sufHandleListAfterField($list, $action = null)
+    {
+        if ($action != 'my') {
+            return $list;
+        }
+
+        $productIds = array_column($list, 'product_id');
+        $counter = $this->productCounter(self::$uid, $productIds);
+
+        foreach ($list as &$value) {
+
+            $product = $value['product_id'];
+            $value['counter'] = 0;
+            $value['commission_volume'] = 0;
+
+            if (empty($counter[$product]) || empty($value['commission_data'])) {
+                continue;
+            }
+
+            $count = $value['counter'] = $counter[$product];
+            foreach ($value['commission_data'] as $item) {
+                if ($count >= $item['from_sales'] && (empty($item['to_sales']) || $count <= $item['to_sales'])) {
+
+                    if ($value['type']) {
+                        $value['commission_volume'] = $value['amount_in'] * $item['commission'] / 100;
+                    } else {
+                        $commission = $value['amount_in'] / $value['price'];
+                        $value['commission_volume'] = $commission * $item['commission'];
+                    }
+                    break;
+                }
+            }
+        }
+
+        return $list;
     }
 
     /**
@@ -229,8 +546,9 @@ class ProducerLogController extends GeneralController
      */
     public function beforeAction($action)
     {
+        parent::beforeAction($action);
         self::$uid = $this->user->id;
 
-        return parent::beforeAction($action);
+        return true;
     }
 }

@@ -32,7 +32,7 @@ if ($modal) {
         <input name="<?= Yii::$app->request->csrfParam ?>" type="hidden" value="<?= Yii::$app->request->csrfToken ?>">
     <?php endif; ?>
 
-    <?php if (!empty($view['action']) && $view['action'] == 'edit-form'): ?>
+    <?php if (!empty($view['action']) && strpos($view['action'], 'edit') !== false): ?>
         <input name="id" type="hidden" value="<?= $id ?>">
     <?php endif; ?>
 

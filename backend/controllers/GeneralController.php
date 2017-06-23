@@ -527,7 +527,14 @@ class GeneralController extends MainController
     }
 
     /**
-     * @inheritDoc
+     * 渲染页面
+     *
+     * @access public
+     *
+     * @param string $view
+     * @param array  $params
+     *
+     * @return bool|string
      */
     public function display($view, $params = [])
     {
@@ -548,14 +555,34 @@ class GeneralController extends MainController
             } else {
                 $title = empty($params['view']['title_info']) ? null : $params['view']['title_info'];
             }
-            $content = $this->renderFile(Yii::$app->getViewPath() . DS . ltrim($view, '/') . '.php', $params);
-            $this->success([
-                'title' => $title,
-                'message' => $content
-            ]);
+
+            return $this->modal($view, $params, $title);
         }
 
         return $this->render($view, $params);
+    }
+
+    /**
+     * 渲染模态框
+     *
+     * @access public
+     *
+     * @param string $view
+     * @param array  $params
+     * @param string $title
+     *
+     * @return bool
+     */
+    public function modal($view, $params = [], $title = null)
+    {
+        $tpl = Yii::$app->getViewPath() . DS . ltrim($view, '/') . '.php';
+        $content = $this->renderFile($tpl, $params);
+        $this->success([
+            'title' => $title,
+            'message' => $content
+        ]);
+
+        return true;
     }
 
     // ---
@@ -889,7 +916,7 @@ class GeneralController extends MainController
 
             empty($value['elem']) && $value['elem'] = 'select';
 
-            $_key = isset($value['field']) ? $value['field'] : $key;
+            $field = isset($value['field']) ? $value['field'] : $key;
             if (empty($value['title'])) {
                 $_labels = $labels;
                 if (isset($value['table'])) {
@@ -897,13 +924,11 @@ class GeneralController extends MainController
                         return new Main($value['table']);
                     })->attributeLabels();
                 }
-                $value['title'] = isset($_labels[$_key]) ? $_labels[$_key] : Yii::t('common', $key);
+                $value['title'] = isset($_labels[$field]) ? $_labels[$field] : Yii::t('common', $key);
             }
 
-            empty($value['name']) && $value['name'] = $key;
-
             $table = isset($value['table']) ? $value['table'] : $model->tableName;
-            $value['field'] = $table . '.' . $_key;
+            $value['name'] = $table . '.' . $field;
 
             switch ($value['elem']) {
                 case 'select' :
@@ -971,7 +996,7 @@ class GeneralController extends MainController
         $where = [];
         foreach ($filter as $name => $item) {
 
-            $field = $item['field'];
+            $field = $item['name'];
             switch ($item['elem']) {
 
                 case 'select' :
@@ -1579,12 +1604,16 @@ class GeneralController extends MainController
      * 展示列表页
      *
      * @access public
-     * @return object
+     *
+     * @param string  $caller
+     * @param boolean $returnList
+     *
+     * @return mixed
      */
-    public function showList()
+    public function showList($caller = null, $returnList = false)
     {
-        $caller = $this->getCaller(2);
-        $this->logReference($this->getControllerName());
+        $caller = $caller ?: $this->getCaller(2);
+        $this->logReference($this->getControllerName($caller));
 
         $condition = $this->callMethod($caller . 'Condition', []);
         if (empty($condition['size'])) {
@@ -1610,7 +1639,8 @@ class GeneralController extends MainController
                 'table' => $model->tableName,
                 'db' => static::$modelDb
             ];
-            $result = $this->service(static::$listApiName, array_merge($params, $condition, $get), 'no');
+            $params = array_merge($params, $condition, $get);
+            $result = $this->service(static::$listApiName, $params, 'no');
         }
         if (is_string($result)) {
             $this->error(Yii::t('common', $result));
@@ -1624,13 +1654,24 @@ class GeneralController extends MainController
 
         $assist = $this->handleAssistForList($this->callStatic($caller . 'Assist', []));
 
-        $list = $this->callMethod('sufHandleFields', $list, [$list]);
+        $list = $this->callMethod('sufHandleListBeforeField', $list, [
+            $list,
+            $caller
+        ]);
         array_walk($list, function (&$value) use ($caller) {
             $value = $this->callMethod('sufHandleField', $value, [
                 $value,
                 $caller
             ]);
         });
+        $list = $this->callMethod('sufHandleListAfterField', $list, [
+            $list,
+            $caller
+        ]);
+
+        if ($returnList) {
+            return $list;
+        }
 
         // 是否为模态框
         $modal = strpos($caller, 'ajaxModal') !== false;
@@ -1694,11 +1735,14 @@ class GeneralController extends MainController
      * 展示空表单
      *
      * @access public
-     * @return object
+     *
+     * @param string $caller
+     *
+     * @return mixed
      */
-    public function showForm()
+    public function showForm($caller = null)
     {
-        $caller = $this->getCaller(2);
+        $caller = $caller ?: $this->getCaller(2);
         $this->logReference($this->getControllerName($caller));
 
         $modelInfo = static::$modelInfo;
@@ -1722,19 +1766,34 @@ class GeneralController extends MainController
      * 新增动作
      * @auth-same {ctrl}/add
      *
-     * @param string $reference
+     * @param array  $reference
      * @param string $action
+     * @param array  $post
+     * @param string $caller
      */
-    public function actionAddForm($reference = null, $action = 'add')
+    public function actionAddForm($reference = null, $action = 'add', $post = null, $caller = null)
     {
+        if (is_string($reference)) {
+            $reference = [
+                'fail' => $reference,
+                'success' => $reference
+            ];
+        }
         $modelInfo = static::$modelInfo;
+
+        if (!$action) {
+            $action = str_replace('Form', '', $caller ?: $this->getCaller(2));
+            $action = Helper::camelToUnder($action, '-');
+        }
+
+        $post = $post ?: Yii::$app->request->post();
 
         if (!empty(static::$addFunctionName)) {
             $result = $this->callMethod(static::$addFunctionName, 'function non-exists');
         } else {
             $model = new Main(static::$modelName);
 
-            $params = array_merge(['table' => $model->tableName], Yii::$app->request->post());
+            $params = array_merge(['table' => $model->tableName], $post);
             $params = $this->callMethod('preHandleField', [], [
                 $params,
                 $action
@@ -1745,12 +1804,12 @@ class GeneralController extends MainController
         $key = $this->getControllerName();
         if (is_string($result)) {
             Yii::$app->session->setFlash('danger', Yii::t('common', $result));
-            Yii::$app->session->setFlash('list', Yii::$app->request->post());
-            $this->goReference($reference ?: $key . '/add');
+            Yii::$app->session->setFlash('list', $post);
+            $this->goReference($reference ? $reference['fail'] : "${key}/${action}");
         }
 
         Yii::$app->session->setFlash('success', '新增' . $modelInfo . '成功');
-        $this->goReference($reference ?: $key);
+        $this->goReference($reference ? $reference['success'] : "${key}/index");
     }
 
     /**
@@ -1758,13 +1817,14 @@ class GeneralController extends MainController
      *
      * @access public
      *
-     * @param array $where
+     * @param array  $where
+     * @param string $caller
      *
-     * @return object
+     * @return mixed
      */
-    public function showFormWithRecord($where = [])
+    public function showFormWithRecord($where = [], $caller = null)
     {
-        $caller = $this->getCaller(2);
+        $caller = $caller ?: $this->getCaller(2);
         $this->logReference($this->getControllerName($caller));
 
         if (!empty(static::$getFunctionName)) {
@@ -1810,12 +1870,27 @@ class GeneralController extends MainController
      * 编辑动作
      * @auth-same {ctrl}/edit
      *
-     * @param string $reference
+     * @param array  $reference
      * @param string $action
+     * @param array  $post
+     * @param string $caller
      */
-    public function actionEditForm($reference = null, $action = 'edit')
+    public function actionEditForm($reference = null, $action = 'edit', $post = null, $caller = null)
     {
+        if (is_string($reference)) {
+            $reference = [
+                'fail' => $reference,
+                'success' => $reference
+            ];
+        }
         $modelInfo = static::$modelInfo;
+
+        if (!$action) {
+            $action = str_replace('Form', '', $caller ?: $this->getCaller(2));
+            $action = Helper::camelToUnder($action, '-');
+        }
+
+        $post = $post ?: Yii::$app->request->post();
 
         if (!empty(static::$editFunctionName)) {
             $result = $this->callMethod(static::$editFunctionName, 'function non-exists');
@@ -1823,8 +1898,8 @@ class GeneralController extends MainController
             $model = new Main(static::$modelName);
             $params = array_merge([
                 'table' => $model->tableName,
-                'where' => [$model->tableName . '.id' => Yii::$app->request->post('id')]
-            ], Yii::$app->request->post());
+                'where' => [$model->tableName . '.id' => $post['id']]
+            ], $post);
             $params = $this->callMethod('preHandleField', [], [
                 $params,
                 $action
@@ -1835,18 +1910,20 @@ class GeneralController extends MainController
         $key = $this->getControllerName();
         if (is_string($result)) {
             Yii::$app->session->setFlash('danger', Yii::t('common', $result));
-            Yii::$app->session->setFlash('list', Yii::$app->request->post());
-            $this->goReference($reference ?: $key . '/edit');
+            Yii::$app->session->setFlash('list', $post);
+            $this->goReference($reference ? $reference['fail'] : "${key}/${action}");
         }
 
         Yii::$app->session->setFlash('success', '更新' . $modelInfo . '成功');
-        $this->goReference($reference ?: $key);
+        $this->goReference($reference ? $reference['success'] : "${key}/index");
     }
 
     /**
      * 记录前置
+     *
+     * @param string $reference
      */
-    public function actionFront()
+    public function actionFront($reference = null)
     {
         if (!empty(static::$frontFunctionName)) {
             $result = $this->callMethod(static::$frontFunctionName, 'function non-exists');
@@ -1864,7 +1941,7 @@ class GeneralController extends MainController
             Yii::$app->session->setFlash('success', '记录前置成功');
         }
 
-        $this->goReference($this->getControllerName());
+        $this->goReference($reference ?: $this->getControllerName('index'));
     }
 
     /**

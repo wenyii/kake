@@ -255,6 +255,17 @@ class ProducerSettingController extends GeneralController
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function addAssist()
+    {
+        $assist = self::editAssist();
+        unset($assist['spread_url'], $assist['spread_img']);
+
+        return $assist;
+    }
+
+    /**
      * 分销商设置辅助编辑
      */
     public static function centerAssist()
@@ -267,7 +278,7 @@ class ProducerSettingController extends GeneralController
         $assist['id'] = [
             'hidden' => true
         ];
-        unset($assist['select_producer']);
+        unset($assist['select_producer'], $assist['spread_url'], $assist['spread_img']);
 
         return $assist;
     }
@@ -305,9 +316,9 @@ class ProducerSettingController extends GeneralController
         $reference = $this->getControllerName('center');
 
         if (Yii::$app->request->post('id')) {
-            $this->actionEditForm($reference);
+            $this->actionEditForm($reference, 'edit');
         } else {
-            $this->actionAddForm($reference);
+            $this->actionAddForm($reference, 'add');
         }
     }
 
@@ -368,7 +379,7 @@ class ProducerSettingController extends GeneralController
     /**
      * 获取推广信息
      *
-     * @access public
+     * @access private
      * @param integer $userId
      * @return array
      */
@@ -385,14 +396,11 @@ class ProducerSettingController extends GeneralController
         $logo = current($producer['logo_preview_url']);
         $logoPath = Yii::$app->params['tmp_path'] . '/' . basename($logo);
         if (!Helper::saveRemoteFile($logo, $logoPath)) {
-            $this->error('推广二维码生成出错，请先到个人设置中上传LOGO');
+            return [$link, null];
         }
         $qr = $this->createQrCode($link, 200, $logoPath);
 
-        return [
-            $link,
-            $qr->writeDataUri()
-        ];
+        return [$link, $qr->writeDataUri()];
     }
 
     /**
@@ -421,7 +429,7 @@ class ProducerSettingController extends GeneralController
     public function actionSpread()
     {
         $spread = $this->spreadInfo($this->user->id);
-        if (empty($spread)) {
+        if (empty($spread[1])) {
             Yii::$app->session->setFlash('warning', '请先完善个人设置');
 
             return $this->redirect(['producer-setting/center']);

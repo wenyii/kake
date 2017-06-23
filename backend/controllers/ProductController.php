@@ -42,6 +42,7 @@ class ProductController extends GeneralController
      */
     public static $ajaxModalListProducerTitle = '选择分销产品';
 
+    // 分销策略
     public static $type = [
         0 => 'fixed',
         1 => 'percent'
@@ -838,8 +839,8 @@ class ProductController extends GeneralController
                 $tpl = $item['type'] ? '%s%%' : '￥%s';
                 $to = (empty($item['to_sales']) ? '+∞ )' : ($item['to_sales'] . ' ]'));
 
-                $record['commission_' . $key][] = $item;
-                $record['type_' . $key][] = [
+                $record['commission_data_' . $key][] = $item;
+                $record['commission_table_' . $key][] = [
                     "[ ${item['from_sales']}, {$to}",
                     sprintf($tpl, $item['commission'])
                 ];
@@ -847,8 +848,9 @@ class ProductController extends GeneralController
 
             unset($record['producer']);
             foreach (self::$type as $value) {
-                if (!empty($record['type_' . $value])) {
-                    $record['type_' . $value] = ViewHelper::createTable($record['type_' . $value]);
+                if (!empty($record['commission_table_' . $value])) {
+                    $table = ViewHelper::createTable($record['commission_table_' . $value]);
+                    $record['commission_table_' . $value] = $table;
                 }
             }
         }

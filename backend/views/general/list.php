@@ -37,25 +37,25 @@ $action = \Yii::$app->controller->action->id;
                         <?php $to = '_to'; ?>
                         <input class="form-control"
                                type="<?= $empty('type', 'text') ?>"
-                               name="<?= $empty('name', $field) . $from ?>"
+                               name="<?= $field . $from ?>"
                                placeholder="<?= $empty('placeholder' . $from) ?>"
                                value="<?= $empty('value' . $from) ?>" <?= empty($item['readonly' . $from]) ? null : 'readonly=readonly' ?>>
                         To
                         <input class="form-control"
                                type="<?= $empty('type', 'text') ?>"
-                               name="<?= $empty('name', $field) . $to ?>"
+                               name="<?= $field . $to ?>"
                                placeholder="<?= $empty('placeholder' . $to) ?>"
                                value="<?= $empty('value' . $to) ?>" <?= empty($item['readonly' . $to]) ? null : 'readonly=readonly' ?>>
                     <?php elseif ($item['elem'] == 'input'): ?> <!-- input -->
                         <input class="form-control"
                                type="<?= $empty('type', 'text') ?>"
-                               name="<?= $empty('name', $field) ?>"
+                               name="<?= $field ?>"
                                placeholder="<?= $empty('placeholder') ?>"
                                value="<?= Html::encode($empty('value')) ?>" <?= empty($item['readonly']) ? null : 'readonly=readonly' ?>>
                     <?php elseif ($item['elem'] == 'select'): ?> <!-- select -->
                         <?php
                         $value = $empty('value');
-                        echo Helper::createSelect($value['list'], $value['name'], $value['selected']);
+                        echo Helper::createSelect($value['list'], $field, $value['selected']);
                         ?>
                     <?php endif; ?>
                 </div>

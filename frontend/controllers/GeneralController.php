@@ -472,7 +472,9 @@ class GeneralController extends MainController
             }
         });
 
-        return array_combine(array_column($list, 'id'), $list);
+        list($list) = Helper::valueToKey($list, 'id');
+
+        return $list;
     }
 
     /**
