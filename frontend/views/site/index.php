@@ -37,7 +37,7 @@ $params = \Yii::$app->params;
                     $img = $ad ? current($focus['preview_url']) : current($focus['cover_preview_url']);
                     ?>
 
-                    <a href="<?= $url ?>">
+                    <a href="<?= $url ?>" target="<?= $target ?>">
                         <img src="<?= $img ?>"/>
                     </a>
                 <?php endforeach ?>
