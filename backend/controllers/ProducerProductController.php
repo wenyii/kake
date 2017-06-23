@@ -21,6 +21,27 @@ class ProducerProductController extends GeneralController
     /**
      * @inheritDoc
      */
+    public function pageDocument()
+    {
+        return [
+            'add-my' => [
+                'title_icon' => 'plus',
+                'title_info' => '新增',
+                'button_info' => '新增',
+                'action' => 'add-my-form'
+            ],
+            'edit-my' => [
+                'title_icon' => 'pencil',
+                'title_info' => '编辑',
+                'button_info' => '编辑',
+                'action' => 'edit-my-form'
+            ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function indexOperations()
     {
         return [
@@ -73,6 +94,7 @@ class ProducerProductController extends GeneralController
     {
         $operation = self::indexOperation();
         $operation[0]['value'] = 'edit-my';
+        $operation[1]['value'] = 'front-my';
 
         return $operation;
     }
@@ -161,13 +183,9 @@ class ProducerProductController extends GeneralController
     /**
      * @inheritDoc
      */
-    public static function editMyAssist($action = null)
+    public static function editMyAssist()
     {
         return [
-            'producer_id' => [
-                'hidden' => true,
-                'value' => self::$uid
-            ],
             'product_id' => [
                 'readonly' => true,
                 'same_row' => true,
@@ -193,11 +211,17 @@ class ProducerProductController extends GeneralController
     /**
      * @inheritDoc
      */
+    public static function addMyAssist()
+    {
+        return self::editMyAssist();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function editAssist($action = null)
     {
-        $assist = self::editMyAssist($action);
-
-        unset($assist['producer_id']);
+        $assist = self::editMyAssist();
         $assist['producer_id'] = [
             'readonly' => true,
             'same_row' => true,
@@ -248,6 +272,17 @@ class ProducerProductController extends GeneralController
     }
 
     /**
+     * 我的分销产品
+     *
+     * @auth-pass-all
+     * @return object
+     */
+    public function actionMy()
+    {
+        return $this->showList();
+    }
+
+    /**
      * 新增分销产品
      *
      * @auth-pass-all
@@ -255,7 +290,21 @@ class ProducerProductController extends GeneralController
      */
     public function actionAddMy()
     {
-        return parent::actionAdd();
+        return $this->showForm();
+    }
+
+    /**
+     * @auth-pass-all
+     */
+    public function actionAddMyForm()
+    {
+        $post = Yii::$app->request->post();
+        $post['producer_id'] = self::$uid;
+
+        $this->actionAddForm([
+            'fail' => $this->getControllerName('add-my'),
+            'success' => $this->getControllerName('my')
+        ], null, $post);
     }
 
     /**
@@ -266,7 +315,31 @@ class ProducerProductController extends GeneralController
      */
     public function actionEditMy()
     {
-        return parent::actionEdit();
+        return $this->showFormWithRecord();
+    }
+
+    /**
+     * @auth-pass-all
+     */
+    public function actionEditMyForm()
+    {
+        $post = Yii::$app->request->post();
+        $post['producer_id'] = self::$uid;
+
+        $this->actionEditForm([
+            'fail' => $this->getControllerName('edit-my'),
+            'success' => $this->getControllerName('my')
+        ], null, $post);
+    }
+
+    /**
+     * 记录前置
+     *
+     * @auth-pass-all
+     */
+    public function actionFrontMy()
+    {
+        return parent::actionFront($this->getControllerName('my'));
     }
 
     /**
@@ -276,7 +349,9 @@ class ProducerProductController extends GeneralController
     {
         if (in_array($action, [
             'add',
-            'edit'
+            'add-my',
+            'edit',
+            'edit-my'
         ])) {
             $controller = $this->controller('product');
             $data = $this->callMethod('sufHandleField', [], [
@@ -299,7 +374,10 @@ class ProducerProductController extends GeneralController
      */
     public function sufHandleField($record, $action = null, $callback = null)
     {
-        if ($action == 'index') {
+        if (in_array($action, [
+            'index',
+            'my'
+        ])) {
             $record = $this->createLinkUrl($record, 'product_id', function ($id) {
                 return [
                     'detail/index',
@@ -311,7 +389,9 @@ class ProducerProductController extends GeneralController
                 ['id' => $record['product_id']],
                 'ajaxModalListProducer'
             ], $controller);
-            $record['commission'] = ($record['type'] ? $data['type_percent'] : $data['type_fixed']);
+
+            $key = $record['type'] ? 'type_percent' : 'type_fixed';
+            $record['commission'] = isset($data[$key]) ? $data[$key] : null;
         }
 
         return parent::sufHandleField($record, $action, $callback);
@@ -322,8 +402,9 @@ class ProducerProductController extends GeneralController
      */
     public function beforeAction($action)
     {
+        parent::beforeAction($action);
         self::$uid = $this->user->id;
 
-        return parent::beforeAction($action);
+        return true;
     }
 }

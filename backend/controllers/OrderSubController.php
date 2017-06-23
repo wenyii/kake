@@ -391,7 +391,7 @@ class OrderSubController extends GeneralController
             Yii::$app->session->setFlash('success', '同意预约操作完成');
         }
 
-        $this->goReference($this->getControllerName());
+        $this->goReference($this->getControllerName('index'));
     }
 
     /**
@@ -414,7 +414,7 @@ class OrderSubController extends GeneralController
             Yii::$app->session->setFlash('success', '拒绝预约操作完成');
         }
 
-        $this->goReference($this->getControllerName());
+        $this->goReference($this->getControllerName('index'));
     }
 
     /**
@@ -474,7 +474,7 @@ class OrderSubController extends GeneralController
             }
         }
 
-        $this->goReference($this->getControllerName());
+        $this->goReference($this->getControllerName('index'));
     }
 
     /**
@@ -497,6 +497,6 @@ class OrderSubController extends GeneralController
             Yii::$app->session->setFlash('success', '拒绝退款操作完成');
         }
 
-        $this->goReference($this->getControllerName());
+        $this->goReference($this->getControllerName('index'));
     }
 }

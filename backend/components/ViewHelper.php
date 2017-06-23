@@ -90,7 +90,9 @@ class ViewHelper extends Object
 
             $icon = empty($value['icon']) ? null : '<span class="glyphicon glyphicon-' . $value['icon'] . '"></span>';
             $_size = $size ? "btn-{$size}" : null;
-            $buttons .= "<a href='{$url}' class='btn btn-{$level} {$_size}'>{$icon} {$value['text']}</a>" . PHP_EOL;
+            $alt = Helper::emptyDefault($value, 'alt');
+
+            $buttons .= "<a href='{$url}' class='btn btn-{$level} {$_size}' title='{$alt}'>{$icon} {$value['text']}</a>" . PHP_EOL;
         }
 
         return $buttons;

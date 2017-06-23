@@ -154,7 +154,6 @@ class ProductProducerController extends GeneralController
             ],
 
             'from_sales' => [
-                'readonly' => true,
                 'placeholder' => '请输入整数',
                 'tip' => '前一个档次的结束销量 + 1'
             ],

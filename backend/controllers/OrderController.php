@@ -316,6 +316,6 @@ class OrderController extends GeneralController
         $prefix = $payment_method ? '[支付宝反馈] ' : '[微信反馈] ';
 
         Yii::$app->session->setFlash('info', $prefix . $info);
-        $this->goReference($this->getControllerName());
+        $this->goReference($this->getControllerName('index'));
     }
 }
