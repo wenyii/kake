@@ -41,7 +41,7 @@ $cover = empty($params['cover']) ? $params['frontend_source'] . '/img/logo.png' 
     var requestUrl = '<?= $params["frontend_url"];?>/?r=';
 </script>
 
-<body<?= $ngCtl ?>>
+<body<?= $ngCtl ?> d-click>
 
 <kk-message message="factory.message"></kk-message>
 <kk-loading loading="factory.loading"></kk-loading>

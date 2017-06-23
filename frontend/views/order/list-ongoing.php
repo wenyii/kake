@@ -86,8 +86,8 @@ $params = \Yii::$app->params;
                         <input type="text" ng-model="<?= $sub ?>.phone" placeholder="请填写入住人联系方式"/>
                     </div>
                     <div class="invoice-address">
-                        <p>入住预约日:</p>
-                        <input type="date" ng-model="<?= $sub ?>.date" placeholder="请选择入住日期"/>
+                    	<p>入住时间:</p>
+                        <input type="date"  ng-model="<?= $sub ?>.date" placeholder="点我选择入住日期" onchange="this.className=(this.value!=''?'has-value':'')" style="background: url(../../../vendor/bower-asset/bootstrap/docs/examples/screenshots/carousel.jpg);"/>
                     </div>
                     <div class="invoice-confirm">
                         <p></p>
