@@ -37,7 +37,7 @@ $params = \Yii::$app->params;
                     $img = $ad ? current($focus['preview_url']) : current($focus['cover_preview_url']);
                     ?>
 
-                    <a href="<?= $url ?>" target="<?= $target ?>">
+                    <a href="<?= $url ?>">
                         <img src="<?= $img ?>"/>
                     </a>
                 <?php endforeach ?>
@@ -53,7 +53,7 @@ $params = \Yii::$app->params;
                 <img src="<?= $params['frontend_source'] ?>/img/classify.svg"/>
             </span>
             喀客专线
-            <a target="_blank" href="<?= Url::to(['items/index']) ?>">
+            <a href="<?= Url::to(['items/index']) ?>">
                 <div class="experience-1-more">更多
                     <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/more.svg"/>
                 </div>
@@ -63,7 +63,7 @@ $params = \Yii::$app->params;
             <div class="carousel-scroller scroll">
                 <?php foreach ($flashSalesList as $flashSales): ?>
                     <div>
-                        <a target="_blank"  href="<?= Url::to([
+                        <a href="<?= Url::to([
                             'detail/index',
                             'id' => $flashSales['id']
                         ]) ?>" >
