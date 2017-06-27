@@ -111,6 +111,7 @@ class ProductProducerController extends GeneralController
             ],
             'commission' => [
                 'code',
+                'price',
                 'color' => function ($item) {
                     return !$item['type'] ? 'default' : 'primary';
                 },
@@ -245,7 +246,7 @@ class ProductProducerController extends GeneralController
                 ],
                 current($where)
             ],
-        ], 'no');
+        ]);
 
         if (empty($record['id'])) {
             $this->success(1);

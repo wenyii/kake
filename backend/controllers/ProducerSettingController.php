@@ -103,6 +103,9 @@ class ProducerSettingController extends GeneralController
             'theme' => [
                 'value' => 'all'
             ],
+            'account_type' => [
+                'value' => 'all'
+            ],
             'state' => [
                 'value' => 'all'
             ]
@@ -148,8 +151,16 @@ class ProducerSettingController extends GeneralController
                 'img',
                 'width' => '128px'
             ],
-            'add_time',
-            'update_time',
+            'account_type' => [
+                'info',
+                'code'
+            ],
+            'account_number' => [
+                'code',
+                'empty'
+            ],
+            'add_time' => 'tip',
+            'update_time' => 'tip',
             'state' => [
                 'code',
                 'info',
@@ -235,6 +246,13 @@ class ProducerSettingController extends GeneralController
                 'field_name' => 'logo_attachment_id'
             ],
 
+            'account_type' => [
+                'elem' => 'select',
+                'value' => 1
+            ],
+            'account_number' => [
+                'placeholder' => '佣金提现收款账号'
+            ],
             'spread_url' => [
                 'title' => '推广链接',
                 'label' => 6,

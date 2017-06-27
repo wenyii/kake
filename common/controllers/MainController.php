@@ -15,7 +15,7 @@ use Endroid\QrCode\ErrorCorrectionLevel;
 
 /**
  * Main controller
- * @method mixed service($api, $params = [], $cache = 'yes', $project = PROJECT, $lang = 'zh-CN')
+ * @method mixed service($api, $params = [], $cache = 'no', $project = PROJECT, $lang = 'zh-CN')
  * @method mixed dump($var, $strict = false, $exit = true)
  * @method mixed cache($key, $fetchFn, $time = null, $dependent = null, $useCache = true)
  */
@@ -1150,7 +1150,7 @@ class MainController extends Controller
             ]
         ]);
 
-        $producer = $this->service('general.get-for-backend', $condition, 'no');
+        $producer = $this->service('general.get-for-backend', $condition);
         if (empty($producer)) {
             return [];
         }

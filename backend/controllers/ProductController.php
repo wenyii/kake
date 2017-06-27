@@ -209,13 +209,14 @@ class ProductController extends GeneralController
                 'icon' => 'sort'
             ],
             [
+                'br' => true,
                 'text' => '套餐',
                 'value' => 'product-package/index',
                 'level' => 'info',
                 'icon' => 'link',
                 'params' => function ($record) {
                     return ['product_id' => $record['id']];
-                }
+                },
             ],
             [
                 'text' => '分销',
@@ -351,12 +352,11 @@ class ProductController extends GeneralController
             ],
             'top' => [
                 'code',
-                'empty',
+                'info',
                 'color' => [
                     0 => 'default',
                     1 => 'primary'
-                ],
-                'info'
+                ]
             ],
             'stock' => 'tip',
             'night_times',

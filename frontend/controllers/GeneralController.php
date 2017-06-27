@@ -258,7 +258,7 @@ class GeneralController extends MainController
                 ]
             ]);
 
-            $detail = $this->service('product.detail', $condition, 'no');
+            $detail = $this->service('product.detail', $condition);
             if (empty($detail)) {
                 return false;
             }
@@ -334,7 +334,7 @@ class GeneralController extends MainController
                 ],
                 'limit' => $limit,
             ];
-            $list = $this->service('product.list', $condition, 'no');
+            $list = $this->service('product.list', $condition);
             array_walk($list, function (&$item) use ($controller) {
                 $item = $this->createAttachmentUrl($item, ['attachment_cover' => 'cover']);
             });
@@ -404,7 +404,7 @@ class GeneralController extends MainController
             func_get_args()
         ], function () use ($condition, $time) {
             $controller = $this->controller('product-package');
-            $list = $this->service('product.list', $condition, 'no');
+            $list = $this->service('product.list', $condition);
             foreach ($list as $key => &$item) {
                 if (empty($item['price'])) {
                     unset($list[$key]);
@@ -439,14 +439,14 @@ class GeneralController extends MainController
             $this->error(Yii::t('common', 'product package id required'));
         }
 
-        $list = $this->service('product.package-list', ['product_id' => $product_id], 'no');
+        $list = $this->service('product.package-list', ['product_id' => $product_id]);
 
         $purchaseTimes = [];
         if ($this->user) {
             $purchaseTimes = $this->service('order.purchase-times', [
                 'user_id' => $this->user->id,
                 'package_ids' => array_column($list, 'id')
-            ]);
+            ], 'yes');
         }
 
         $controller = $this->controller('product-package');
@@ -512,7 +512,7 @@ class GeneralController extends MainController
         $condition['where'] = $where;
 
         list($condition['offset'], $condition['limit']) = Helper::page($page, $page_size ?: Yii::$app->params['order_page_size']);
-        $list = $this->service('order.list', $condition, 'no');
+        $list = $this->service('order.list', $condition);
 
         $controller = $this->controller('order');
         array_walk($list, function (&$item) use ($controller) {
@@ -560,7 +560,7 @@ class GeneralController extends MainController
                 'limit' => $limit
             ]);
 
-            $adList = $this->service('general.list-ad', $condition);
+            $adList = $this->service('general.list-ad', $condition, 'yes');
             array_walk($adList, function (&$item) use ($controller) {
                 $item = $this->callMethod('sufHandleField', $item, [$item], $controller);
             });

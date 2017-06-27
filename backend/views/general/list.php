@@ -135,13 +135,54 @@ $action = \Yii::$app->controller->action->id;
                 return Helper::$fn($data, $key, $default);
             };
 
-            $handleVal = function ($val) use ($item) {
+            $handleAdorn = function ($val) use ($item) {
                 if (is_callable($val)) {
                     $val = call_user_func($val, $item);
                 }
 
                 return $val;
-            }
+            };
+
+            $adornHtml = function ($val, $field, $value, $item, $notSetFn, $notSetStr) use ($handleAdorn, $empty) {
+                if ($val == $notSetStr) {
+                    return $val;
+                }
+
+                $adorn = $value['adorn'];
+
+                if (isset($adorn['price'])) {
+                    $val = number_format($val, 2);
+                }
+
+                if (isset($adorn['tpl'])) {
+                    $tpl = $handleAdorn($adorn['tpl']);
+                    $val = sprintf($tpl, $val);
+                }
+
+                if (isset($adorn['code'])) {
+                    $color = $handleAdorn($adorn['color']);
+                    if (is_array($color)) {
+                        $_val = $empty($field);
+                        $color = isset($color[$_val]) ? $color[$_val] : $color[$_val ? 1 : 0];
+                    }
+
+                    switch ($notSetFn) {
+                        case 'empty' :
+                            $code = !empty($item[$field]);
+                            break;
+                        case 'isset' :
+                            $code = isset($item[$field]);
+                            break;
+                        default :
+                            $code = null;
+                            break;
+                    }
+
+                    $val = $code ? ('<code class="' . $color . '">' . $val . '</code>') : $val;
+                }
+
+                return $val;
+            };
             ?>
             <?php
             $tip = null;
@@ -165,7 +206,8 @@ $action = \Yii::$app->controller->action->id;
             <tr <?= $tip ?>>
                 <?php if (!empty($recordFilter)): ?>
                     <td>
-                        <input type="<?= $recordFilter ?>" name="<?= $recordFilterName ?>" value="<?= $item[$recordFilterValueName] ?>">
+                        <input type="<?= $recordFilter ?>" name="<?= $recordFilterName ?>"
+                               value="<?= $item[$recordFilterValueName] ?>">
                     </td>
                 <?php endif; ?>
                 <td>
@@ -186,61 +228,62 @@ $action = \Yii::$app->controller->action->id;
                         <div <?= $getStyle($value['adorn']) ?>>
                             <?php
                             $adorn = $value['adorn'];
-                            $color = $adorn['color'];
-                            $color = $handleVal($color);
-                            if (is_array($color)) {
-                                $colorKey = $empty($field);
-                                $color = isset($color[$colorKey]) ? $color[$colorKey] : $color[$colorKey ? 1 : 0];
-                            }
-                            ?>
-                            <?php $notSetFn = isset($adorn['empty']) ? 'empty' : 'isset' ?>
-                            <?php $notSetStr = $adorn['not_set_info'] ?>
-                            <?php
-                            switch ($notSetFn) {
-                                case 'empty' :
-                                    $code = !empty($item[$field]);
-                                    break;
-                                case 'isset' :
-                                    $code = isset($item[$field]);
-                                    break;
-                            }
-                            ?>
-                            <?php $codeBegin = (isset($adorn['code']) && $code) ? '<code class="' . $color . '">' : null ?>
-                            <?php $codeEnd = $codeBegin ? '</code>' : null ?>
 
-                            <?= $codeBegin ?>
+                            $notSetFn = isset($adorn['empty']) ? 'empty' : 'isset';
+                            $notSetStr = $adorn['not_set_info'];
+
+                            $extraParams = [
+                                $field,
+                                $value,
+                                $item,
+                                $notSetFn,
+                                $notSetStr
+                            ];
+                            ?>
+
                             <?php if (isset($adorn['img'])): ?>
                                 <?php
-                                $img = $empty($field, []);
-                                $img = is_string($img) ? $img : current($img);
+                                $content = $empty($field, []);
+                                $content = is_string($content) ? $content : current($content);
                                 ?>
-                                <?php if (empty($img)): ?>
+                                <?php if (empty($content)): ?>
                                     <?= $notSetStr ?>
                                 <?php else: ?>
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <a href="javascript:void(0)" class="thumbnail">
-                                                <img src="<?= $img ?>">
+                                                <img src="<?= $content ?>">
                                             </a>
                                         </div>
                                     </div>
                                 <?php endif; ?>
                             <?php elseif (isset($adorn['info'])): ?>
-                                <?php $content = $empty($field, null, null, $notSetFn) ?>
-                                <?= is_null($content) ? $notSetStr : $empty($field . '_info', $notSetStr, null, $notSetFn) ?>
+                                <?php
+                                $content = $empty($field, null, null, $notSetFn);
+                                $content = is_null($content) ? $notSetStr : $empty($field . '_info', $notSetStr, null, $notSetFn);
+                                echo $adornHtml($content, ...$extraParams);
+                                ?>
                             <?php elseif (isset($adorn['link'])): ?>
-                                <?= $empty($field) ? '<a href="' . $empty($field) . '" target="_blank">' . $adorn['url_info'] . '</a>' : $notSetStr ?>
+                                <?php
+                                if ($empty($field)) {
+                                    $content = '<a href="' . $empty($field) . '" target="_blank">' . $adorn['url_info'] . '</a>';
+                                } else {
+                                    $content = $notSetStr;
+                                }
+                                echo $adornHtml($content, ...$extraParams);
+                                ?>
                             <?php elseif (isset($adorn['html'])): ?>
-                                <?= $empty($field, $notSetStr, null, $notSetFn) ?>
+                                <?php
+                                $content = $empty($field, $notSetStr, null, $notSetFn);
+                                echo $adornHtml($content, ...$extraParams);
+                                ?>
                             <?php else: ?>
                                 <?php
                                 $content = $empty($field, null, null, $notSetFn);
                                 $content = is_null($content) ? $notSetStr : Html::encode($content);
-                                $content = (empty($adorn['tpl']) || $content === $notSetStr) ? $content : sprintf($handleVal($adorn['tpl']), $content);
-                                echo $content;
+                                echo $adornHtml($content, ...$extraParams);
                                 ?>
                             <?php endif; ?>
-                            <?= $codeEnd ?>
                         </div>
                     </td>
                 <?php endforeach; ?>

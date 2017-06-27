@@ -347,7 +347,7 @@ class OrderController extends GeneralController
                 ['order.' . $field => $param],
                 ['order.state' => 1]
             ]
-        ], 'no');
+        ]);
 
         return $detail;
     }
@@ -378,7 +378,7 @@ class OrderController extends GeneralController
 
         $packagePurchaseTimes = $this->service('order.purchase-times', [
             'user_id' => $this->user->id
-        ]);
+        ], 'yes');
 
         $price = 0;
         $_package = [];
