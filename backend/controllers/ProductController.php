@@ -412,11 +412,11 @@ class ProductController extends GeneralController
                 'foreign_key' => 'product_id',
                 'service_api' => 'product.producer-list'
             ],
-            'type_fixed' => [
+            'commission_table_fixed' => [
                 'html',
                 'title' => '固定额分佣'
             ],
-            'type_percent' => [
+            'commission_table_percent' => [
                 'html',
                 'title' => '百分比分佣'
             ],
