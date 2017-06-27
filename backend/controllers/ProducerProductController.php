@@ -77,7 +77,7 @@ class ProducerProductController extends GeneralController
                 'icon' => 'sort'
             ],
             [
-                'text' => '二维码',
+                'text' => '查看产品',
                 'type' => 'script',
                 'value' => '$.showQrCode',
                 'params' => ['link_url'],
