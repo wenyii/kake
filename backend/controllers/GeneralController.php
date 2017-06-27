@@ -1762,7 +1762,8 @@ class GeneralController extends MainController
         $modelInfo = static::$modelInfo;
 
         $assist = $this->callStatic($caller . 'Assist', []);
-        $list = $this->handleAssistForForm($assist, $default = [], $caller);
+        $default = [];
+        $list = $this->handleAssistForForm($assist, $default, $caller);
         $view = $this->pageDocuments($caller);
 
         return $this->display('//general/action', compact('list', 'modelInfo', 'view'));
