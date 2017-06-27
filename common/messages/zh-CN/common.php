@@ -63,4 +63,8 @@ return [
     'check in success' => '入住操作成功',
 
     'has been involved in lottery' => '已经参与过抽奖',
+
+    // producer
+    'withdraw request not exists' => '提现申请不存在',
+    'withdraw must less than quota' => '提现额度不能大于佣金余额',
 ];

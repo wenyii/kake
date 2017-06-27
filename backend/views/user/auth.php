@@ -6,12 +6,13 @@ use yii\helpers\Url;
 
 ?>
 
-<div class="title col-sm-offset-1"><span
-        class="glyphicon glyphicon-cog"></span> 配置用户权限
+<div class="title col-sm-offset-1">
+    <span class="glyphicon glyphicon-cog"></span> 配置用户权限
 </div>
 
 <form class="form-horizontal" method="post" action="<?= Url::to(['/user/edit-auth-form']) ?>">
     <input name="<?= Yii::$app->request->csrfParam ?>" type="hidden" value="<?= Yii::$app->request->csrfToken ?>">
+
     <input name="old_auth" type="hidden" value="<?= implode(',', $record) ?>">
     <input name="user_id" type="hidden" value="<?= $user_id ?>">
 
@@ -36,5 +37,4 @@ use yii\helpers\Url;
         </div>
     </div>
     <br>
-
 </form>

@@ -482,9 +482,11 @@ class GeneralController extends MainController
             foreach ($item['sub'] as $router => &$page) {
                 if (is_array($page)) {
                     $_roles = empty($page['pass_role']) ? $roles : (array) $page['pass_role'];
+                    $params = empty($page['params']) ? [] : (array) $page['params'];
                     $page = $page['name'];
                 } else {
                     $_roles = $roles;
+                    $params = [];
                 }
                 if (count($_roles) == 1) {
                     $_rolesShow = $this->user->role <= current($_roles);
@@ -504,7 +506,8 @@ class GeneralController extends MainController
                 $page = [
                     'title' => $page,
                     'controller' => $controller,
-                    'action' => $action
+                    'action' => $action,
+                    'params' => $params
                 ];
             }
             $item['router'] = $routers;
@@ -761,6 +764,10 @@ class GeneralController extends MainController
             }
 
             if (strpos($key, 'price') !== false) {
+                $_value['price'] = true;
+            }
+
+            if (isset($_value['price']) && !isset($_value['tpl'])) {
                 $_value['tpl'] = '￥%s';
             }
 
@@ -786,7 +793,7 @@ class GeneralController extends MainController
      *
      * @return array
      */
-    public function handleAssistForForm($assist, $default = [], $action = null)
+    public function handleAssistForForm($assist, &$default = [], $action = null)
     {
         $model = new Main(static::$modelName);
 
@@ -1607,13 +1614,16 @@ class GeneralController extends MainController
      *
      * @param string  $caller
      * @param boolean $returnList
+     * @param boolean $logReference
      *
      * @return mixed
      */
-    public function showList($caller = null, $returnList = false)
+    public function showList($caller = null, $returnList = false, $logReference = true)
     {
         $caller = $caller ?: $this->getCaller(2);
-        $this->logReference($this->getControllerName($caller));
+        if ($logReference) {
+            $this->logReference($this->getControllerName($caller));
+        }
 
         $condition = $this->callMethod($caller . 'Condition', []);
         if (empty($condition['size'])) {
@@ -1640,7 +1650,7 @@ class GeneralController extends MainController
                 'db' => static::$modelDb
             ];
             $params = array_merge($params, $condition, $get);
-            $result = $this->service(static::$listApiName, $params, 'no');
+            $result = $this->service(static::$listApiName, $params);
         }
         if (is_string($result)) {
             $this->error(Yii::t('common', $result));
@@ -1654,20 +1664,24 @@ class GeneralController extends MainController
 
         $assist = $this->handleAssistForList($this->callStatic($caller . 'Assist', []));
 
-        $list = $this->callMethod('sufHandleListBeforeField', $list, [
-            $list,
-            $caller
-        ]);
-        array_walk($list, function (&$value) use ($caller) {
-            $value = $this->callMethod('sufHandleField', $value, [
-                $value,
+        if (!empty($list)) {
+            $list = $this->callMethod('sufHandleListBeforeField', $list, [
+                $list,
                 $caller
             ]);
-        });
-        $list = $this->callMethod('sufHandleListAfterField', $list, [
-            $list,
-            $caller
-        ]);
+
+            array_walk($list, function (&$value) use ($caller) {
+                $value = $this->callMethod('sufHandleField', $value, [
+                    $value,
+                    $caller
+                ]);
+            });
+
+            $list = $this->callMethod('sufHandleListAfterField', $list, [
+                $list,
+                $caller
+            ]);
+        }
 
         if ($returnList) {
             return $list;
@@ -1748,7 +1762,7 @@ class GeneralController extends MainController
         $modelInfo = static::$modelInfo;
 
         $assist = $this->callStatic($caller . 'Assist', []);
-        $list = $this->handleAssistForForm($assist, [], $caller);
+        $list = $this->handleAssistForForm($assist, $default = [], $caller);
         $view = $this->pageDocuments($caller);
 
         return $this->display('//general/action', compact('list', 'modelInfo', 'view'));
@@ -1817,15 +1831,19 @@ class GeneralController extends MainController
      *
      * @access public
      *
-     * @param array  $where
-     * @param string $caller
+     * @param array   $where
+     * @param string  $caller
+     * @param boolean $returnRecord
+     * @param boolean $logReference
      *
      * @return mixed
      */
-    public function showFormWithRecord($where = [], $caller = null)
+    public function showFormWithRecord($where = [], $caller = null, $returnRecord = false, $logReference = true)
     {
         $caller = $caller ?: $this->getCaller(2);
-        $this->logReference($this->getControllerName($caller));
+        if ($logReference) {
+            $this->logReference($this->getControllerName($caller));
+        }
 
         if (!empty(static::$getFunctionName)) {
             $result = $this->callMethod(static::$getFunctionName, 'function non-exists');
@@ -1837,12 +1855,15 @@ class GeneralController extends MainController
             $condition['table'] = $model->tableName;
             if (!$where) {
                 $where = [[$model->tableName . '.id' => $id]];
+            } else if (count($where) == count($where, 1)) { // 一维转二维
+                $where = [$where];
             }
             $_where = empty($condition['where']) ? [] : $condition['where'];
             $condition['where'] = array_merge($_where, $where);
 
-            $result = $this->service(static::$getApiName, $condition, 'no');
+            $result = $this->service(static::$getApiName, $condition);
         }
+
         if (is_string($result)) {
             $this->error(Yii::t('common', $result));
         }
@@ -1850,6 +1871,11 @@ class GeneralController extends MainController
         $modelInfo = static::$modelInfo;
         $assist = $this->callStatic($caller . 'Assist', []);
         $list = $this->handleAssistForForm($assist, $result, $caller);
+
+        if ($returnRecord) {
+            return $result;
+        }
+
         $view = $this->pageDocuments($caller);
 
         // 单记录操作

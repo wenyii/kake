@@ -2,7 +2,7 @@
 /* @var $this yii\web\View */
 ?>
 
-<p class="bg-success" style="padding: 15px;">
+<p class="bg-success">
     单个分销订单的分佣金额小数位不限制，结算时将累计的分佣总金额保留到小数点后两位（单位：分）
 </p>
 
@@ -15,7 +15,7 @@
     <li>产品的分佣比例值或固定分佣额的修改将直接影响您的分佣额（一般情况下管理员不会中途修改）。</li>
 </ul>
 
-<p class="bg-warning" style="padding: 15px;">
+<p class="bg-warning">
     不管任意一种分佣策略，当分销订单有部分未完成的子订单时
     <br>
     按照入围订单额和订单总额比例分别计算出固定分佣额或分佣百分比。

@@ -90,7 +90,7 @@ class Main extends ActiveRecord
      * @return mixed
      * @throws \Exception
      */
-    public function service($api, $params = [], $cache = 'true', $project = PROJECT, $lang = 'zh-CN')
+    public function service($api, $params = [], $cache = 'no', $project = PROJECT, $lang = 'zh-CN')
     {
         $conf = Yii::$app->params;
 

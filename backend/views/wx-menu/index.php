@@ -2,12 +2,14 @@
 /* @var $this yii\web\View */
 
 use yii\helpers\Url;
+
 ?>
 
-<div class="title col-sm-offset-1"><span class="glyphicon glyphicon-cog"></span> 编辑菜单接口</div>
+<div class="title col-sm-offset-1">
+    <span class="glyphicon glyphicon-cog"></span> 编辑菜单接口
+</div>
 
 <form class="form-horizontal" method="post" action="<?= Url::to(['/wx-menu/edit']) ?>">
-
     <input name="<?= Yii::$app->request->csrfParam ?>" type="hidden" value="<?= Yii::$app->request->csrfToken ?>">
     <div class="form-group">
         <label class="col-sm-2 control-label">JSON代码</label>

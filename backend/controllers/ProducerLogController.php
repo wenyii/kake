@@ -39,7 +39,7 @@ class ProducerLogController extends GeneralController
     {
         return [
             [
-                'text' => '马上结算',
+                'text' => '结算佣金',
                 'value' => 'settlement',
                 'level' => 'primary confirm-button',
                 'icon' => 'usd'
@@ -132,12 +132,12 @@ class ProducerLogController extends GeneralController
             ],
             'amount_in' => [
                 'title' => '入围订单额',
-                'tpl' => '￥%s',
+                'price',
                 'code'
             ],
             'amount_out' => [
                 'title' => '淘汰订单额',
-                'tpl' => '￥%s',
+                'price',
                 'code'
             ],
             'commission_table' => [
@@ -171,10 +171,10 @@ class ProducerLogController extends GeneralController
             'title' => '产品销量',
             'code'
         ];
-        $assist['commission_volume'] = [
+        $assist['commission_quota'] = [
             'title' => '分佣金额',
             'code',
-            'tpl' => '￥%s'
+            'price',
         ];
 
         return $assist;
@@ -229,7 +229,6 @@ class ProducerLogController extends GeneralController
                 'producer_log.state'
             ],
             'where' => [
-                ['producer_log.state' => 1],
                 ['order.payment_state' => 1],
                 [
                     '<',
@@ -246,9 +245,10 @@ class ProducerLogController extends GeneralController
     public function myCondition()
     {
         $condition = $this->indexCondition();
-        $condition['where'][2] = ['order.state' => 1];
+        $condition['where'][1] = ['order.state' => 1];
         $condition['where'][] = ['producer_log.producer_id' => self::$uid];
         $condition['where'][] = ['producer_product.producer_id' => self::$uid];
+        $condition['where'][] = ['producer_log.state' => 1];
 
         return $condition;
     }
@@ -280,30 +280,42 @@ class ProducerLogController extends GeneralController
      */
     public function actionSettlement()
     {
-        $list = $this->showList('my', true);
+        $list = $this->showList('my', true, false);
+        if (empty($list)) {
+            Yii::$app->session->setFlash('warning', '暂无可结算的分销订单');
+            $this->goReference($this->getControllerName('my'));
+        }
 
-        $volume = 0;
+        $quota = 0;
         $_list = [];
         foreach ($list as $item) {
             $log = Helper::pullSome($item, [
                 'amount_in' => 'log_amount_in',
                 'amount_out' => 'log_amount_out',
                 'sub_counter' => 'log_sub_counter',
-                'commission_volume' => 'log_commission'
+                'commission_quota' => 'log_commission_quota'
             ]);
 
             $log = $this->preHandleField($log);
             $_list[$item['id']] = $log;
-            $volume += $item['commission_volume'];
+            $quota += $item['commission_quota'];
         }
 
         $result = $this->service('producer.settlement', [
             'log' => $_list,
-            'volume' => $volume,
+            'quota' => (int) ($quota * 100),
             'user_id' => self::$uid
         ]);
 
-        $this->dump($result);
+        if (is_string($result)) {
+            Yii::$app->session->setFlash('danger', $result);
+        } else {
+            $quota = Helper::money($quota);
+            $after = Helper::money($result['afterQuota'] / 100);
+            Yii::$app->session->setFlash('success', "本次结算佣金共计：${quota} (保留到小数点后两位)，结算后总佣金余额：${after}");
+        }
+
+        $this->goReference($this->getControllerName('my'));
     }
 
     /**
@@ -412,7 +424,7 @@ class ProducerLogController extends GeneralController
             ];
         }
 
-        $list = $this->service('general.list', $condition, 'no');
+        $list = $this->service('general.list', $condition);
 
         list($list, $orderIds) = Helper::valueToKey($list, 'order_id');
         $subList = $this->listOrderSubByOrderIds($orderIds);
@@ -517,7 +529,7 @@ class ProducerLogController extends GeneralController
 
             $product = $value['product_id'];
             $value['counter'] = 0;
-            $value['commission_volume'] = 0;
+            $value['commission_quota'] = 0;
 
             if (empty($counter[$product]) || empty($value['commission_data'])) {
                 continue;
@@ -528,10 +540,10 @@ class ProducerLogController extends GeneralController
                 if ($count >= $item['from_sales'] && (empty($item['to_sales']) || $count <= $item['to_sales'])) {
 
                     if ($value['type']) {
-                        $value['commission_volume'] = $value['amount_in'] * $item['commission'] / 100;
+                        $value['commission_quota'] = $value['amount_in'] * $item['commission'] / 100;
                     } else {
                         $commission = $value['amount_in'] / $value['price'];
-                        $value['commission_volume'] = $commission * $item['commission'];
+                        $value['commission_quota'] = $commission * $item['commission'];
                     }
                     break;
                 }

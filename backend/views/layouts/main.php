@@ -102,9 +102,11 @@ foreach ($item as $type): ?>
                                 if ($class && $controller == $slave['controller'] && $action == $slave['action']) {
                                     $_class = 'class="active"';
                                 }
+
+                                $routerArr = ['/' . $slave['controller'] . '/' . $slave['action']];
+                                $routerArr = array_merge($routerArr, $slave['params']);
                                 ?>
-                                <li <?= $_class ?>><a
-                                            href="<?= Url::to(['/' . $slave['controller'] . '/' . $slave['action']]) ?>"><?= $slave['title'] ?></a>
+                                <li <?= $_class ?>><a href="<?= Url::to($routerArr) ?>"><?= $slave['title'] ?></a>
                                 </li>
                             <?php } ?>
                         </ul>

@@ -390,7 +390,7 @@ class ProducerProductController extends GeneralController
                 'ajaxModalListProducer'
             ], $controller);
 
-            $key = $record['type'] ? 'type_percent' : 'type_fixed';
+            $key = $record['type'] ? 'commission_table_percent' : 'commission_table_fixed';
             $record['commission'] = isset($data[$key]) ? $data[$key] : null;
         }
 

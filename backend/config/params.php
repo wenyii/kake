@@ -70,8 +70,15 @@ return [
                 'producer-setting.index' => '分销商',
                 'product-producer.index' => '产品分销设置',
                 'producer-product.index' => '分销产品选择',
-                'producer-log.index' => '分销记录',
-                'producer-drawing.index' => '提现申请'
+                'producer-log.index' => [
+                    'name' => '分销记录',
+                    'params' => ['state' => 1]
+                ],
+                'producer-quota.index' => '分销账目',
+                'producer-withdraw.index' => [
+                    'name' => '提现记录',
+                    'params' => ['state' => 1]
+                ]
             ]
         ],
         'j' => [
@@ -89,7 +96,7 @@ return [
                 'producer-setting.spread' => '获取推广资料',
                 'producer-product.my' => '分销产品选择',
                 'producer-log.my' => '分销记录',
-                'producer-drawing.my' => '我要提现'
+                'producer-quota.my' => '我要提现'
             ],
             'pass_role' => 10
         ]
