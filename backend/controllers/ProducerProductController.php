@@ -359,7 +359,7 @@ class ProducerProductController extends GeneralController
                 'ajaxModalListProducer'
             ], $controller);
 
-            if (empty($data['commission_' . ProductController::$type[$record['type']]])) {
+            if (empty($data['commission_data_' . ProductController::$type[$record['type']]])) {
                 Yii::$app->session->setFlash('warning', '该产品没有设置该分佣类型');
                 Yii::$app->session->setFlash('list', $record);
                 $this->goReference('producer-product/' . $action);

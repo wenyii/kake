@@ -405,6 +405,7 @@ class ProductController extends GeneralController
     public static function ajaxModalListProducerAssist()
     {
         return [
+            'id' => 'code',
             'title',
             'producer' => [
                 'hidden',
