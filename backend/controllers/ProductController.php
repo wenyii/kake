@@ -383,6 +383,7 @@ class ProductController extends GeneralController
     public static function ajaxModalListAssist()
     {
         return [
+            'id' => 'code',
             'title',
             'destination',
             'classify' => [
@@ -837,20 +838,31 @@ class ProductController extends GeneralController
             foreach ($record['producer'] as $item) {
                 $key = self::$type[$item['type']];
 
-                $tpl = $item['type'] ? '%s%%' : '￥%s';
-                $to = (empty($item['to_sales']) ? '+∞ )' : ($item['to_sales'] . ' ]'));
+                if ($key == 'fixed') {
+                    $commission = Helper::money($item['commission']);
+                } else {
+                    $commission = Helper::money($item['commission'], '%s%%');
+                }
+
+                if (empty($item['to_sales'])) {
+                    $to = '+∞';
+                    $tpl = '[ %s )';
+                } else {
+                    $to = $item['to_sales'];
+                    $tpl = '[ %s ]';
+                }
 
                 $record['commission_data_' . $key][] = $item;
                 $record['commission_table_' . $key][] = [
-                    "[ ${item['from_sales']}, {$to}",
-                    sprintf($tpl, $item['commission'])
+                    "${item['from_sales']}, {$to}",
+                    $commission
                 ];
             }
 
             unset($record['producer']);
             foreach (self::$type as $value) {
                 if (!empty($record['commission_table_' . $value])) {
-                    $table = ViewHelper::createTable($record['commission_table_' . $value]);
+                    $table = ViewHelper::createTable($record['commission_table_' . $value], null, [$tpl]);
                     $record['commission_table_' . $value] = $table;
                 }
             }
@@ -869,7 +881,8 @@ class ProductController extends GeneralController
     {
         $this->sourceJs = [
             'jquery.ajaxupload',
-            'ckeditor/ckeditor'
+            'ckeditor/ckeditor',
+            'sortable'
         ];
 
         return parent::beforeAction($action);

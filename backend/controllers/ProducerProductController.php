@@ -77,10 +77,14 @@ class ProducerProductController extends GeneralController
                 'icon' => 'sort'
             ],
             [
-                'text' => '查看产品',
+                'text' => '二维码',
                 'type' => 'script',
                 'value' => '$.showQrCode',
-                'params' => ['link_url'],
+                'params' => function ($record) {
+                    $url = "${record['link_url']}&channel=${record['channel']}";
+
+                    return [$url];
+                },
                 'level' => 'success',
                 'icon' => 'qrcode'
             ]
@@ -139,6 +143,7 @@ class ProducerProductController extends GeneralController
     public static function myAssist()
     {
         return [
+            'product_id' => 'code',
             'title' => [
                 'title' => '产品'
             ],
@@ -319,10 +324,60 @@ class ProducerProductController extends GeneralController
     }
 
     /**
+     * 列表指定用户的可结算分享订单
+     *
+     * @access public
+     *
+     * @param integer $userId
+     *
+     * @return array
+     */
+    public function listLog($userId)
+    {
+        $log = $this->service(static::$listApiName, [
+            'table' => 'producer_log',
+            'join' => [
+                [
+                    'table' => 'order',
+                    'left_on_field' => 'id',
+                    'right_on_field' => 'producer_log_id'
+                ]
+            ],
+            'where' => [
+                ['order.payment_state' => 1],
+                ['order.state' => 1],
+                ['producer_log.producer_id' => $userId],
+                ['producer_log.state' => 1]
+            ],
+            'select' => [
+                'producer_log.*',
+                'order.id AS order_id',
+            ],
+            'size' => 0
+        ]);
+
+        $controller = $this->controller('producer-log');
+        $log = $this->callMethod('sufHandleListBeforeField', $log, [$log], $controller);
+
+        foreach ($log as $key => $item) {
+            if (empty($item['sub_counter'])) {
+                unset($log[$key]);
+            }
+        }
+
+        return $log;
+    }
+
+    /**
      * @auth-pass-all
      */
     public function actionEditMyForm()
     {
+        if (!empty($this->listLog(self::$uid))) {
+            Yii::$app->session->setFlash('warning', '更改产品分佣策略前需确保无可结算分销订单');
+            $this->goReference($this->getControllerName('my'));
+        }
+
         $post = Yii::$app->request->post();
         $post['producer_id'] = self::$uid;
 
@@ -392,6 +447,7 @@ class ProducerProductController extends GeneralController
 
             $key = $record['type'] ? 'commission_table_percent' : 'commission_table_fixed';
             $record['commission'] = isset($data[$key]) ? $data[$key] : null;
+            $record['channel'] = Helper::integerEncode($record['producer_id']);
         }
 
         return parent::sufHandleField($record, $action, $callback);

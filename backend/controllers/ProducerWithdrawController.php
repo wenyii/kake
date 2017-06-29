@@ -74,15 +74,30 @@ class ProducerWithdrawController extends GeneralController
         return [
             'producer_name' => [
                 'title' => '分销商',
-                'code'
+                'code',
+                'color' => 'default'
             ],
             'withdraw' => [
                 'title' => '提现金额',
                 'price',
                 'code'
             ],
+            'account_type' => [
+                'table' => 'producer_setting',
+                'info',
+                'code',
+                'color' => [
+                    0 => 'success',
+                    1 => 'info'
+                ]
+            ],
+            'account_number' => [
+                'table' => 'producer_setting',
+                'code',
+                'color' => 'default'
+            ],
             'add_time',
-            'update_time',
+            'update_time' => 'tip',
             'state' => [
                 'code',
                 'info',
@@ -105,10 +120,17 @@ class ProducerWithdrawController extends GeneralController
                 [
                     'table' => 'user',
                     'left_on_field' => 'producer_id'
+                ],
+                [
+                    'table' => 'producer_setting',
+                    'left_on_field' => 'producer_id',
+                    'right_on_field' => 'producer_id'
                 ]
             ],
             'select' => [
                 'user.username AS producer_name',
+                'producer_setting.account_type',
+                'producer_setting.account_number',
                 'producer_withdraw.*'
             ]
         ];

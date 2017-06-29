@@ -426,7 +426,7 @@ class OrderController extends GeneralController
             'price' => $price,
             'order_contacts_id' => $params['order_contacts_id'],
             'package' => $_package,
-            'channel_id' => Helper::integerDecode(Yii::$app->request->get('channel'))
+            'producer_id' => Helper::integerDecode(Yii::$app->request->get('channel'))
         ]);
 
         if (is_string($result)) {

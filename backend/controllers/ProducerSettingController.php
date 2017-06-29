@@ -139,7 +139,8 @@ class ProducerSettingController extends GeneralController
         return [
             'username' => [
                 'code',
-                'table' => 'user'
+                'table' => 'user',
+                'color' => 'default'
             ],
             'name',
             'theme' => [
@@ -153,11 +154,16 @@ class ProducerSettingController extends GeneralController
             ],
             'account_type' => [
                 'info',
-                'code'
+                'code',
+                'color' => [
+                    0 => 'success',
+                    1 => 'info'
+                ]
             ],
             'account_number' => [
                 'code',
-                'empty'
+                'empty',
+                'color' => 'default'
             ],
             'add_time' => 'tip',
             'update_time' => 'tip',
@@ -409,7 +415,7 @@ class ProducerSettingController extends GeneralController
         }
 
         $channel = Helper::integerEncode($userId);
-        $link = Yii::$app->params['frontend_url'] . '/?channel=' . $channel;
+        $link = Yii::$app->params['frontend_url'] . '/?r=distribution&channel=' . $channel;
 
         $logo = current($producer['logo_preview_url']);
         $logoPath = Yii::$app->params['tmp_path'] . '/' . basename($logo);

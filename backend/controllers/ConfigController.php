@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\components\Helper;
 use common\models\Main;
 use Yii;
 use yii\data\Pagination;
@@ -130,8 +131,9 @@ class ConfigController extends GeneralController
                 }
             }
 
-            array_walk($_config, function (&$value) use ($app, $model) {
+            array_walk($_config, function (&$value, $key) use ($app, $model) {
                 $value = [
+                    'name' => $key,
                     'app' => $app,
                     'app_info' => $model->_app[$app],
                     'value' => $value
@@ -147,6 +149,7 @@ class ConfigController extends GeneralController
         $frontendConfig = $handler($frontendConfig, 1);
 
         $config = array_merge($config, $frontendConfig);
+        $config = Helper::arraySort($config, 'name');
 
         // 分页
         $pagination = new Pagination(['totalCount' => count($config)]);

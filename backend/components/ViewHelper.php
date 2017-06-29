@@ -167,20 +167,42 @@ class ViewHelper extends Object
      * @param array $table
      * @param array $head
      * @param array $tpl
+     * @param array $width
      *
      * @return string
      */
-    public static function createTable($table, $head = [], $tpl = [])
+    public static function createTable($table, $head = [], $tpl = [], $width = [])
     {
         if (empty($table)) {
             return null;
         }
 
+        $col = count(current($table));
+        $manualCol = count($width);
+
+        $autoWidth = null;
+        if (!$manualCol) {
+            $autoWidth = 100 / $col;
+        } else if ($col > $manualCol) {
+            $autoWidth = (100 - array_sum($width)) / ($col - $manualCol);
+        }
+
+        $widthStyle = function ($key) use ($width, $autoWidth) {
+            if (isset($width[$key])) {
+                $autoWidth = $width[$key];
+            }
+
+            $style = empty($autoWidth) ? null : " style='width: ${autoWidth}%;'";
+
+            return $style;
+        };
+
         $headHtml = null;
         if (!empty($head)) {
             $headHtml = '<thead><tr>';
-            foreach ($head as $title) {
-                $headHtml .= "<th>{$title}</th>";
+            foreach ($head as $key => $title) {
+                $style = $widthStyle($key);
+                $headHtml .= "<th{$style}>{$title}</th>";
             }
             $headHtml .= '</tr></thead>';
         }
@@ -190,7 +212,8 @@ class ViewHelper extends Object
             $bodyHtml .= '<tr>';
             foreach ($row as $i => $tr) {
                 $tr = isset($tpl[$i]) ? sprintf($tpl[$i], $tr) : $tr;
-                $bodyHtml .= "<td>{$tr}</td>";
+                $style = $widthStyle($i);
+                $bodyHtml .= "<td{$style}>{$tr}</td>";
             }
             $bodyHtml .= '</tr>';
         }

@@ -28,7 +28,6 @@ $action = \Yii::$app->controller->action->id;
                 ?>
 
                 <?= $empty('html') ?>
-
                 <div class="form-group">
                     <label><?= $empty('title') ?></label>
                     <?php if ($item['elem'] == 'input' && $empty('between')): ?> <!-- date -->
@@ -62,7 +61,6 @@ $action = \Yii::$app->controller->action->id;
             <?php endforeach; ?>
 
             <button type="submit" class="btn btn-primary">筛选</button>
-
             <?php if (!empty($ajaxFilter)): ?>
                 <script type="text/javascript">
                     $.ajaxFilterList('<?= $action ?>');
@@ -105,23 +103,17 @@ $action = \Yii::$app->controller->action->id;
                     <?php endif; ?>
                 </th>
             <?php endif; ?>
-            <th>
-                #
-            </th>
+            <th>#</th>
             <?php foreach ($assist as $item): ?>
                 <?php
                 if (!empty($item['adorn']['tip']) || !empty($item['adorn']['hidden'])) {
                     continue;
                 }
                 ?>
-                <th>
-                    <div <?= $getStyle($item['adorn']) ?>><?= $item['title'] ?></div>
-                </th>
+                <th><div <?= $getStyle($item['adorn']) ?>><?= $item['title'] ?></div></th>
             <?php endforeach; ?>
             <?php if (!empty($operation)): ?>
-                <th>
-                    <div>操作</div>
-                </th>
+                <th><div>操作</div></th>
             <?php endif; ?>
         </tr>
         </thead>
@@ -151,7 +143,7 @@ $action = \Yii::$app->controller->action->id;
                 $adorn = $value['adorn'];
 
                 if (isset($adorn['price'])) {
-                    $val = number_format($val, 2);
+                    $val = number_format($val, $adorn['price']);
                 }
 
                 if (isset($adorn['tpl'])) {
@@ -183,8 +175,7 @@ $action = \Yii::$app->controller->action->id;
 
                 return $val;
             };
-            ?>
-            <?php
+
             $tip = null;
             foreach ($assist as $field => $value) {
                 if (!empty($value['adorn']['tip'])) {
@@ -203,10 +194,12 @@ $action = \Yii::$app->controller->action->id;
                 $tip = 'data-toggle="tooltip" data-html="true" data-placement="top" title="' . $tip . '"';
             }
             ?>
+
             <tr <?= $tip ?>>
                 <?php if (!empty($recordFilter)): ?>
                     <td>
-                        <input type="<?= $recordFilter ?>" name="<?= $recordFilterName ?>"
+                        <input type="<?= $recordFilter ?>"
+                               name="<?= $recordFilterName ?>"
                                value="<?= $item[$recordFilterValueName] ?>">
                     </td>
                 <?php endif; ?>
@@ -241,7 +234,7 @@ $action = \Yii::$app->controller->action->id;
                             ];
                             ?>
 
-                            <?php if (isset($adorn['img'])): ?>
+                            <?php if (isset($adorn['img'])): ?> <!-- img -->
                                 <?php
                                 $content = $empty($field, []);
                                 $content = is_string($content) ? $content : current($content);
@@ -257,13 +250,13 @@ $action = \Yii::$app->controller->action->id;
                                         </div>
                                     </div>
                                 <?php endif; ?>
-                            <?php elseif (isset($adorn['info'])): ?>
+                            <?php elseif (isset($adorn['info'])): ?> <!-- enumeration -->
                                 <?php
                                 $content = $empty($field, null, null, $notSetFn);
                                 $content = is_null($content) ? $notSetStr : $empty($field . '_info', $notSetStr, null, $notSetFn);
                                 echo $adornHtml($content, ...$extraParams);
                                 ?>
-                            <?php elseif (isset($adorn['link'])): ?>
+                            <?php elseif (isset($adorn['link'])): ?> <!-- link -->
                                 <?php
                                 if ($empty($field)) {
                                     $content = '<a href="' . $empty($field) . '" target="_blank">' . $adorn['url_info'] . '</a>';
@@ -272,12 +265,12 @@ $action = \Yii::$app->controller->action->id;
                                 }
                                 echo $adornHtml($content, ...$extraParams);
                                 ?>
-                            <?php elseif (isset($adorn['html'])): ?>
+                            <?php elseif (isset($adorn['html'])): ?> <!-- html -->
                                 <?php
                                 $content = $empty($field, $notSetStr, null, $notSetFn);
                                 echo $adornHtml($content, ...$extraParams);
                                 ?>
-                            <?php else: ?>
+                            <?php else: ?> <!-- others -->
                                 <?php
                                 $content = $empty($field, null, null, $notSetFn);
                                 $content = is_null($content) ? $notSetStr : Html::encode($content);

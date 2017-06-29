@@ -265,7 +265,7 @@ class OrderController extends GeneralController
                 ];
             }
 
-            $record['package_info'] = ViewHelper::createTable($record['package_info']);
+            $record['package_info'] = ViewHelper::createTable($record['package_info'], null, null, [75]);
         }
 
         return parent::sufHandleField($record, $action, $callback);
