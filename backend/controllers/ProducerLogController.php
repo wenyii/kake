@@ -117,6 +117,10 @@ class ProducerLogController extends GeneralController
                 'code',
                 'title' => '购买粉丝'
             ],
+            'product_id' => [
+                'title' => '产品ID',
+                'tip'
+            ],
             'type' => [
                 'title' => '分佣类型',
                 'code',
@@ -146,7 +150,7 @@ class ProducerLogController extends GeneralController
                 'table' => 'product_producer'
             ],
             'counter_info' => [
-                'title' => '统计&分佣',
+                'title' => '可否结算',
                 'html'
             ],
             'state' => [
@@ -174,7 +178,7 @@ class ProducerLogController extends GeneralController
         $assist['commission_quota'] = [
             'title' => '分佣金额',
             'code',
-            'price',
+            'price' => 5,
         ];
 
         return $assist;
@@ -203,10 +207,7 @@ class ProducerLogController extends GeneralController
                         'producer_id'
                     ]
                 ],
-                [
-                    'left_table' => 'order',
-                    'table' => 'product'
-                ],
+                ['table' => 'product'],
                 [
                     'table' => 'user',
                     'as' => 'buyer_user'
@@ -281,6 +282,13 @@ class ProducerLogController extends GeneralController
     public function actionSettlement()
     {
         $list = $this->showList('my', true, false);
+
+        foreach ($list as $key => $item) {
+            if (empty($item['sub_counter'])) {
+                unset($list[$key]);
+            }
+        }
+
         if (empty($list)) {
             Yii::$app->session->setFlash('warning', '暂无可结算的分销订单');
             $this->goReference($this->getControllerName('my'));
@@ -310,9 +318,10 @@ class ProducerLogController extends GeneralController
         if (is_string($result)) {
             Yii::$app->session->setFlash('danger', $result);
         } else {
+            $number = count($list);
             $quota = Helper::money($quota);
             $after = Helper::money($result['afterQuota'] / 100);
-            Yii::$app->session->setFlash('success', "本次结算佣金共计：${quota} (保留到小数点后两位)，结算后总佣金余额：${after}");
+            Yii::$app->session->setFlash('success', "本次结算订单共计：${number}个，佣金共计：${quota} (保留到小数点后两位)，结算后总佣金余额：${after}");
         }
 
         $this->goReference($this->getControllerName('my'));
@@ -342,6 +351,11 @@ class ProducerLogController extends GeneralController
                     'in',
                     'order_id',
                     $orderIds
+                ],
+                [
+                    '>=',
+                    'price',
+                    Yii::$app->params['commission_min_price'] * 100
                 ]
             ],
         ]);
@@ -457,7 +471,11 @@ class ProducerLogController extends GeneralController
         list($list, $orderIds) = Helper::valueToKey($list, 'order_id');
         $subList = $this->listOrderSubByOrderIds($orderIds);
 
-        foreach ($list as &$item) {
+        foreach ($list as $key => &$item) {
+            if (empty($subList[$item['order_id']])) {
+                unset($list[$key]);
+                continue;
+            }
             $item['survey'] = $subList[$item['order_id']];
             $survey = Helper::popSome($item['survey'], [
                 'sub_counter',
@@ -494,13 +512,18 @@ class ProducerLogController extends GeneralController
 
             $record['counter_info'] = $record['sub_counter'] ? self::$success : self::$fail;
             $record['survey_table'] = ViewHelper::createTable($record['survey'], [
-                '状态',
-                '个数',
-                '总金额',
-                '分佣',
+                'info' => '状态',
+                'number' => '个数',
+                'amount' => '总金额',
+                'pass' => '分佣',
             ], [
                 'number' => '× %s',
                 'amount' => '￥%s'
+            ], [
+                'info' => 30,
+                'number' => 20,
+                'amount' => 30,
+                'pass' => 20,
             ]);
             unset($record['survey']);
         }
@@ -536,15 +559,23 @@ class ProducerLogController extends GeneralController
             }
 
             $count = $value['counter'] = $counter[$product];
+            $type = ProductController::$type[$value['type']];
+
             foreach ($value['commission_data'] as $item) {
                 if ($count >= $item['from_sales'] && (empty($item['to_sales']) || $count <= $item['to_sales'])) {
 
-                    if ($value['type']) {
-                        $value['commission_quota'] = $value['amount_in'] * $item['commission'] / 100;
+                    $in = $value['amount_in'];
+                    $price = ($in + $value['amount_out']) * 100;
+                    $rate = ($in * 100) / $price;
+
+                    if ($type == 'percent') {
+                        $value['commission_quota'] = $in * (($item['commission'] / 100) * $rate);
+                    } else if ($type == 'fixed') {
+                        $value['commission_quota'] = $item['commission'] * $rate;
                     } else {
-                        $commission = $value['amount_in'] / $value['price'];
-                        $value['commission_quota'] = $commission * $item['commission'];
+                        $value['commission_quota'] = 0;
                     }
+
                     break;
                 }
             }

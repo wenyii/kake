@@ -359,6 +359,11 @@ class GeneralController extends MainController
     {
         $where = [];
 
+        if (isset($options['ids'])) {
+            $ids = is_array($options['ids']) ? $options['ids'] : explode(',', $options['ids']);
+            $where[] = ['product.id' => $ids];
+        }
+
         if (isset($options['manifestation']) && is_numeric($options['manifestation'])) {
             $where[] = ['product.manifestation' => $options['manifestation']];
         }

@@ -175,7 +175,7 @@ EOF
                 'value' => 1
             ],
             'purchase_limit' => [
-                'placeholder' => '留空或0表示不限制',
+                'placeholder' => '0表示不限制',
                 'tip' => '以用户为单位进行限购',
                 'value' => \Yii::$app->params['default_purchase_limit']
             ],

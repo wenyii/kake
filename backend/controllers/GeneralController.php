@@ -730,7 +730,7 @@ class GeneralController extends MainController
             $_value = [];
             foreach ($value as $k => $v) {
                 if (is_numeric($k)) {
-                    $_value[$v] = ++$k;
+                    $_value[$v] = true;
                 } else {
                     $_value[$k] = $v;
                 }
@@ -767,8 +767,14 @@ class GeneralController extends MainController
                 $_value['price'] = true;
             }
 
-            if (isset($_value['price']) && !isset($_value['tpl'])) {
-                $_value['tpl'] = '￥%s';
+            if (isset($_value['price'])) {
+                if (!is_numeric($_value['price'])) {
+                    $_value['price'] = 2;
+                }
+
+                if (!isset($_value['tpl'])) {
+                    $_value['tpl'] = '￥%s';
+                }
             }
 
             $title = Helper::popOne($_value, 'title');
@@ -1694,26 +1700,34 @@ class GeneralController extends MainController
         $operation = $this->callStatic($caller . 'Operation');
         $operations = $this->callStatic($caller . 'Operations');
 
+        $isset = function ($var, $default = null) {
+            if (isset(static::${$var})) {
+                return static::${$var};
+            }
+
+            return $default;
+        };
+
         // 针对记录展示单选框/复选框/无
         $recordFilter = $caller . 'RecordFilter';
-        $recordFilter = isset(static::${$recordFilter}) ? static::${$recordFilter} : ($modal ? 'radio' : false);
+        $recordFilter = $isset($recordFilter, $modal ? 'radio' : false);
         $recordFilter = in_array($recordFilter, [
             'checkbox',
             'radio'
         ]) ? $recordFilter : false;
 
         $recordFilterName = $caller . 'RecordFilterName';
-        $recordFilterName = isset(static::${$recordFilterName}) ? static::${$recordFilterName} : $recordFilter;
+        $recordFilterName = $isset($recordFilterName, $recordFilter);
 
         $recordFilterValueName = $caller . 'RecordFilterValueName';
-        $recordFilterValueName = isset(static::${$recordFilterValueName}) ? static::${$recordFilterValueName} : 'id';
+        $recordFilterValueName = $isset($recordFilterValueName, 'id');
 
         // 是否 ajax 分页、ajax 筛选
         $ajaxPage = $ajaxFilter = $modal;
 
         // 宏操作显示的方位
         $operationsPosition = $caller . 'OperationsPosition';
-        $operationsPosition = isset(static::${$operationsPosition}) ? static::${$operationsPosition} : ($modal ? 'bottom' : false);
+        $operationsPosition = $isset($operationsPosition, $modal ? 'bottom' : false);
         $operationsPosition = in_array($operationsPosition, [
             'top',
             'bottom'

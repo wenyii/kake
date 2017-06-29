@@ -118,22 +118,59 @@ if ($modal) {
                 if (empty($attachment)) {
                     $attachment = [];
                 }
-                ?>
 
-                <?php $uploader = Helper::issetDefault($list, $empty('upload_key')) ?>
+                $uploader = Helper::issetDefault($list, $empty('upload_key'));
+
+                $attachmentName = Helper::emptyDefault($uploader, 'field_name');
+                $previewName = Helper::emptyDefault($uploader, 'preview_name', $field);
+                $multiple = Helper::emptyDefault($uploader, 'multiple');
+
+                $json = [
+                    'attachmentName' => $attachmentName,
+                    'previewName' => $previewName,
+                    'previewLabel' => $empty('img_label', 4),
+                    'multiple' => $multiple,
+                    'action' => !$empty('readonly')
+                ];
+                ?>
                 <?php if (!empty($attachment)): ?>
                     <script type="text/javascript">
                         $(function () {
-                            <?php foreach ($attachment as $id => $url): ?>
-                            $.createThumb({
-                                data: <?= json_encode(compact('id', 'url'), JSON_UNESCAPED_UNICODE) ?>,
-                                attachmentName: '<?= Helper::emptyDefault($uploader, 'field_name') ?>',
-                                previewName: '<?= Helper::emptyDefault($uploader, 'preview_name', $field) ?>',
-                                previewLabel: '<?= $empty('img_label', 4) ?>',
-                                multiple: '<?= Helper::emptyDefault($uploader, 'multiple', 0) ?>',
-                                action: <?= ($empty('readonly') ? 0 : 1) ?>
-                            });
+                            <?php
+                            foreach ($attachment as $id => $url):
+                            $json['data'] = compact('id', 'url');
+                            $_json = json_encode($json, JSON_UNESCAPED_UNICODE);
+                            ?>
+                            $.createThumb(<?= $_json ?>);
                             <?php endforeach; ?>
+
+                            <?php if ($multiple): ?>
+                            var htmlBox = $('div[name="<?= $previewName ?>"]')[0];
+                            Sortable.create(htmlBox, {
+                                group: 'slave',
+                                animation: 200,
+                                onEnd: function (e) {
+                                    var _new = e.newIndex - 1;
+                                    var _old = e.oldIndex - 1;
+                                    if (_new !== _old) {
+                                        var valueBox = $('input[name="<?= $attachmentName ?>"]');
+                                        var value = valueBox.val().split(',');
+
+                                        if (_old < _new) { // 往后排
+                                            for (var k = 0; k < _new; k++) {
+                                                value.down(k);
+                                            }
+                                        } else { // 往前排
+                                            for (var v = _old; v > 0; v--) {
+                                                value.up(v);
+                                            }
+                                        }
+
+                                        valueBox.val(value.join(','));
+                                    }
+                                }
+                            });
+                            <?php endif; ?>
                         });
                     </script>
                 <?php endif; ?>
@@ -191,16 +228,21 @@ if ($modal) {
     <?php elseif ($item['elem'] == 'tag'): ?>  <!-- tag -->
         <div class="col-sm-<?= $empty('label', 6) ?> <?= $av_class ?>" <?= $as_tip ?> <?= $as_name ?>
              format="<?= $empty('format') ?>"></div>
-    <?php if (!empty($av_value)): ?>
+    <?php
+    if (!empty($av_value)):
+    $json = [
+        'containerName' => $av_name,
+        'fieldName' => $empty('field_name'),
+        'fieldNameNew' => 'new_' . $empty('field_name')
+    ]; ?>
         <script type="text/javascript">
             $(function () {
-                <?php foreach ($av_value as $pk): ?>
-                $.createTag({
-                    data: <?= json_encode($pk, JSON_UNESCAPED_UNICODE) ?>,
-                    containerName: '<?= $av_name ?>',
-                    fieldName: '<?= $empty('field_name') ?>',
-                    fieldNameNew: 'new_<?= $empty('field_name') ?>'
-                });
+                <?php
+                foreach ($av_value as $pk):
+                $json['data'] = $pk;
+                $_json = json_encode($json, JSON_UNESCAPED_UNICODE);
+                ?>
+                $.createTag(<?= $_json ?>);
                 <?php endforeach; ?>
             });
         </script>
@@ -220,23 +262,26 @@ if ($modal) {
     <?= $html_end_div ?>
 
     <?php if ($element == 'input' && $av_type == 'file'): ?>
-    <?php $previewRule = Helper::emptyDefault($list, $empty('preview_name'), []) ?>
+    <?php
+    $previewRule = Helper::emptyDefault($list, $empty('preview_name'), []);
+    $json = [
+        'uploadInput' => "#{$av_name}",
+        'action' => Url::to(['general/ajax-upload']),
+        'data' => [
+            'tag' => $empty('tag'),
+            'controller' => Yii::$app->controller->id,
+            'action' => Yii::$app->controller->action->id,
+            Yii::$app->request->csrfParam => Yii::$app->request->csrfToken
+        ],
+        'attachmentName' => $empty('field_name'),
+        'previewName' => $empty('preview_name'),
+        'multiple' => $empty('multiple'),
+        'previewLabel' => Helper::emptyDefault($previewRule, 'img_label', 4)
+    ];
+    ?>
         <script type="text/javascript">
             $(function () {
-                $.uploadAttachment({
-                    uploadInput: $('#<?= $av_name ?>'),
-                    action: '<?= Url::to(['general/ajax-upload']) ?>',
-                    data: {
-                        'tag': '<?= $empty('tag') ?>',
-                        'controller': '<?= Yii::$app->controller->id ?>',
-                        'action': '<?= Yii::$app->controller->action->id ?>',
-                        '<?= Yii::$app->request->csrfParam ?>': '<?= Yii::$app->request->csrfToken ?>'
-                    },
-                    attachmentName: '<?= $empty('field_name') ?>',
-                    previewName: '<?= $empty('preview_name', 0) ?>',
-                    multiple: '<?= $empty('multiple', 0) ?>',
-                    previewLabel: '<?= Helper::emptyDefault($previewRule, 'img_label', 4) ?>'
-                });
+                $.uploadAttachment(<?= json_encode($json, JSON_UNESCAPED_UNICODE)?>);
             });
         </script>
         <div class="form-group">
@@ -245,7 +290,7 @@ if ($modal) {
             <div class="col-sm-<?= $empty('label_tips', 4) ?>" <?= $as_tip ?>>
                 <table class="table table-bordered table-striped">
                     <tbody>
-                    <?php if ($empty('multiple', 0)): ?>
+                    <?php if ($empty('multiple')): ?>
                         <tr>
                             <td><kbd>允许多张</kbd></td>
                             <td><code class="success">是</code></td>

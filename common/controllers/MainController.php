@@ -657,6 +657,7 @@ class MainController extends Controller
             $attachment = $this->service('general.list-attachment-by-ids', [
                 'ids' => $record[$attachmentIdsKey]
             ]);
+            $attachment = Helper::arraySortAppointIndex($attachment, 'id', $record[$attachmentIdsKey]);
 
             foreach ($attachment as &$item) {
                 $item = $this->createAttachmentUrl($item, 'id');
@@ -1178,7 +1179,7 @@ class MainController extends Controller
         $qrCode->setWriterByName('png');
         $qrCode->setMargin($qrWidth / 25);
         $qrCode->setEncoding('utf-8');
-        $qrCode->setErrorCorrectionLevel(ErrorCorrectionLevel::HIGH);
+        $qrCode->setErrorCorrectionLevel(ErrorCorrectionLevel::MEDIUM);
         $qrCode->setForegroundColor([
             'r' => 0,
             'g' => 0,

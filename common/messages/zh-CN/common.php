@@ -67,4 +67,6 @@ return [
     // producer
     'withdraw request not exists' => '提现申请不存在',
     'withdraw must less than quota' => '提现额度不能大于佣金余额',
+    'become a producer please contact service' => '要成为分销商请联系客服',
+    'please add distribution products first' => '请先到后台选择你要分销的酒店产品',
 ];

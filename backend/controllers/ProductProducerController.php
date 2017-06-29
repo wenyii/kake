@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\components\Helper;
 use Yii;
 
 /**
@@ -91,6 +92,10 @@ class ProductProducerController extends GeneralController
     public static function indexAssist()
     {
         return [
+            'product_id' => [
+                'code',
+                'color' => 'default'
+            ],
             'title' => [
                 'title' => '产品'
             ],
