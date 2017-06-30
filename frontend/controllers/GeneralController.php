@@ -64,10 +64,13 @@ class GeneralController extends MainController
             $result = Yii::$app->wx->user();
             $result = $this->service('user.get-with-we-chat', $result);
             if (is_string($result)) {
-                $this->error(Yii::t('common', $result));
+                $this->redirect([
+                    '/general/error',
+                    'message' => Yii::t('common', $result)
+                ]);
+            } else {
+                $this->loginUser($result, isset($result['state']) ? 'we-chat-login' : 'we-chat-bind');
             }
-
-            $this->loginUser($result, isset($result['state']) ? 'we-chat-login' : 'we-chat-bind');
         }
     }
 
@@ -114,7 +117,7 @@ class GeneralController extends MainController
      */
     public function mustLogin()
     {
-        if (!$this->user || !isset($this->user->openid)) {
+        if (!$this->user) {
             Yii::$app->wx->config('oauth.callback', $this->currentUrl());
 
             return Yii::$app->wx->auth();

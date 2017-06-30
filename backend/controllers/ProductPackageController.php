@@ -97,7 +97,12 @@ EOF
             ],
             'state' => [
                 'value' => 'all'
-            ]
+            ],
+            'status' => [
+                'title' => '产品状态',
+                'table' => 'product',
+                'field' => 'state'
+            ],
         ];
     }
 
@@ -109,7 +114,7 @@ EOF
         return [
             'product_id' => 'code',
             'name' => [
-                'max-width' => '180px'
+                'max-width' => '120px'
             ],
             'price' => 'code',
             'sale_price' => [
@@ -127,10 +132,10 @@ EOF
             'purchase_limit' => [
                 'code',
                 'empty',
-                'not_set_info' => '<span class="not-set">(无限量)</span>'
+                'not_set_info' => '<span class="not-set">+∞</span>'
             ],
             'info' => [
-                'max-width' => '280px',
+                'max-width' => '250px',
                 'tpl' => '<pre>%s</pre>'
             ],
             'state' => [
@@ -139,9 +144,10 @@ EOF
                 'info'
             ],
             'status' => [
-                'title' => '所属产品',
+                'title' => '产品状态',
                 'code',
                 'color' => 'auto',
+                'tip',
                 'info'
             ]
         ];
@@ -299,6 +305,10 @@ EOF
                 'product.state AS status',
                 'product_package.*'
             ],
+            'order' => [
+                'product_package.product_id ASC',
+                'product_package.update_time DESC'
+            ]
         ];
     }
 }

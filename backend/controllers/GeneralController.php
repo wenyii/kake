@@ -1585,7 +1585,7 @@ class GeneralController extends MainController
      */
     public function sufHookLogic($record, $action)
     {
-        if ($action == 'filter') {
+        if (strpos($action, 'Filter') !== false) {
             return $record;
         }
 

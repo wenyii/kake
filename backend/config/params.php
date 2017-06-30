@@ -14,7 +14,10 @@ return [
         'b' => [
             'name' => '项目配置',
             'sub' => [
-                'config.index' => '常规配置',
+                'config.index' => [
+                    'name' => '常规配置',
+                    'params' => ['state' => 1]
+                ],
                 'config.file' => '文件预配置'
             ]
         ],
@@ -45,8 +48,17 @@ return [
             'name' => '酒店和产品',
             'sub' => [
                 'hotel.index' => '酒店管理',
-                'product.index' => '产品管理',
-                'product-package.index' => '产品套餐管理',
+                'product.index' => [
+                    'name' => '产品管理',
+                    'params' => ['state' => 1]
+                ],
+                'product-package.index' => [
+                    'name' => '产品套餐管理',
+                    'params' => [
+                        'state' => 1,
+                        'status' => 1
+                    ]
+                ]
             ]
         ],
         'g' => [

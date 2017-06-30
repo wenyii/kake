@@ -1,8 +1,8 @@
 <?php
 /* @var $this yii\web\View */
 
-use yii\widgets\LinkPager;
 use yii\helpers\Url;
+use backend\components\ViewHelper;
 
 ?>
 
@@ -40,11 +40,5 @@ use yii\helpers\Url;
 </table>
 
 <div class="page">
-    <?php
-    echo LinkPager::widget([
-        'pagination' => $page,
-        'firstPageLabel' => true,
-        'lastPageLabel' => true
-    ]);
-    ?>
+    <?= ViewHelper::page($page) ?>
 </div>

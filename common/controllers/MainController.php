@@ -80,7 +80,7 @@ class MainController extends Controller
                 $this->logReference('callback', $callback);
             }
         } else {
-            $this->goReference('callback');
+            $this->goReference('callback', null, false);
         }
 
         return parent::beforeAction($action);
@@ -253,26 +253,34 @@ class MainController extends Controller
      *
      * @access public
      * @auth-pass-all
+     *
+     * @param string  $message
+     * @param integer $code
+     * @param string  $title
+     *
      * @return void
      */
-    public function actionError()
+    public function actionError($message = null, $code = 400, $title = 'Error')
     {
-        $error = $this->parseError();
-
-        /**
-         * @var $code      integer
-         * @var $title     string
-         * @var $message   string
-         * @var $exception object
-         */
-        extract($error);
+        if (!$message) {
+            /**
+             * @var $code      integer
+             * @var $title     string
+             * @var $message   string
+             * @var $exception object
+             */
+            $error = $this->parseError();
+            extract($error);
+            $trace = YII_DEBUG ? strval($exception->getPrevious()) : null;
+        } else {
+            $trace = null;
+        }
 
         if (Yii::$app->request->isAjax) {
             $this->fail($title . ':' . $message);
-        } else {
-            $trace = YII_DEBUG ? strval($exception->getPrevious()) : null;
-            $this->error($message, $code, $trace);
         }
+
+        $this->error($message, $code, $trace);
     }
 
     /**
@@ -890,7 +898,7 @@ class MainController extends Controller
      *
      * @return void
      */
-    public function goReference($key, $params = [])
+    public function goReference($key, $params = [], $auto = true)
     {
         if (Yii::$app->request->isAjax) {
             return;
@@ -898,16 +906,19 @@ class MainController extends Controller
 
         $reference = Yii::$app->session->get(static::REFERENCE);
         if (empty($reference) || empty($reference[$key])) {
-            return;
-        }
+            if (!$auto) {
+                return;
+            }
+            $url = Yii::$app->params[Yii::$app->id . '_url'];
+        } else {
+            $url = $reference[$key];
+            if (!empty($params)) {
+                $url .= (strpos($url, '?') === false ? '?' : '&') . http_build_query($params);
+            }
 
-        $url = $reference[$key];
-        if (!empty($params)) {
-            $url .= (strpos($url, '?') === false ? '?' : '&') . http_build_query($params);
+            unset($reference[$key]);
+            Yii::$app->session->set(static::REFERENCE, $reference);
         }
-
-        unset($reference[$key]);
-        Yii::$app->session->set(static::REFERENCE, $reference);
 
         header('Location: ' . $url);
         exit();

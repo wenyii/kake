@@ -80,6 +80,7 @@ class ProductController extends GeneralController
      * @var array Field
      */
     public static $_sale = [
+        0 => '否',
         1 => '是'
     ];
 
@@ -98,7 +99,7 @@ class ProductController extends GeneralController
         $from = strtotime($record['sale_from']);
         $to = strtotime($record['sale_to']);
 
-        return !empty($record['sale_rate']) && $from < TIME && $to > TIME;
+        return (!empty($record['sale_rate']) && $from < TIME && $to > TIME) ? 1 : 0;
     }
 
     /**
@@ -364,8 +365,8 @@ class ProductController extends GeneralController
                 'code',
                 'info'
             ],
-            'virtual_sales',
-            'real_sales',
+            'virtual_sales' => 'tip',
+            'real_sales' => 'tip',
             'share_times' => 'tip',
             'state' => [
                 'code',
