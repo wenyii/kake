@@ -39,7 +39,9 @@ class AppLogController extends GeneralController
     public static function indexFilter()
     {
         return [
-            'level',
+            'level' => [
+                'value' => 'all'
+            ],
             'log_time' => [
                 'elem' => 'input',
                 'type' => 'date',
@@ -60,12 +62,13 @@ class AppLogController extends GeneralController
                 'min-width' => '70px',
                 'info',
                 'code',
+                'tip'
             ],
             'log_time' => [
                 'min-width' => '170px',
                 'html'
             ],
-            'prefix',
+            'prefix' => 'tip',
             'message' => 'html',
         ];
     }

@@ -12,17 +12,6 @@ use yii\helpers\Html;
 class UserController extends GeneralController
 {
     /**
-     * Displays homepage.
-     */
-    public function actionIndex()
-    {
-        $this->sourceCss = null;
-        $this->sourceJs = null;
-
-        return $this->render('index');
-    }
-
-    /**
      * 退出登录
      *
      * @access public

@@ -4,7 +4,10 @@ namespace backend\components;
 
 use common\components\Helper;
 use yii\base\Object;
+use yii\data\Pagination;
+use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\widgets\LinkPager;
 
 /**
  * Helper components
@@ -14,6 +17,26 @@ use yii\helpers\Url;
  */
 class ViewHelper extends Object
 {
+    /**
+     * 分页组件
+     *
+     * @access public
+     *
+     * @param object $pagination
+     *
+     * @return string
+     */
+    public static function page($pagination)
+    {
+        return LinkPager::widget([
+            'pagination' => $pagination,
+            'firstPageLabel' => true,
+            'lastPageLabel' => true,
+            'prevPageLabel' => '上一页',
+            'nextPageLabel' => '下一页'
+        ]);
+    }
+
     /**
      * 转义脚本代码
      *
@@ -221,5 +244,126 @@ class ViewHelper extends Object
         $tableHtml = "<table class='table table-bordered table-striped'>{$headHtml}{$bodyHtml}</table>";
 
         return $tableHtml;
+    }
+
+    /**
+     * 生成列表页的数据修饰
+     *
+     * @access public
+     *
+     * @param string $field
+     * @param array  $value
+     * @param array  $item
+     *
+     * @return string
+     */
+    public static function adornHtml($field, $value, $item)
+    {
+        $empty = function ($key, $default = null, $data = null, $fn = 'empty') use ($item) {
+            $data = $data ?: $item;
+            $fn = $fn . 'Default';
+
+            return Helper::$fn($data, $key, $default);
+        };
+
+        $handleAdorn = function ($val) use ($item) {
+            if (is_callable($val)) {
+                $val = call_user_func($val, $item);
+            }
+
+            return $val;
+        };
+
+        $adorn = $value['adorn'];
+        $notSetFn = isset($adorn['empty']) ? 'empty' : 'isset';
+        $notSetStr = $adorn['not_set_info'];
+
+        if (isset($adorn['img'])) { // img
+            $content = $empty($field, []);
+            $content = is_string($content) ? $content : current($content);
+
+            if (empty($content)) {
+                $content = $notSetStr;
+            } else {
+                $content = '<div class="row"><div class="col-sm-12"><a href="javascript:void(0)" class="thumbnail"><img src="<?= $content ?>"></a></div></div>';
+            }
+        } elseif (isset($adorn['info'])) { // enumeration
+            $content = $empty($field, null, null, $notSetFn);
+            $content = is_null($content) ? $notSetStr : $empty($field . '_info', $notSetStr, null, $notSetFn);
+        } elseif (isset($adorn['link'])) { // link
+            if ($empty($field)) {
+                $content = '<a href="' . $empty($field) . '" target="_blank">' . $adorn['url_info'] . '</a>';
+            } else {
+                $content = $notSetStr;
+            }
+        } elseif (isset($adorn['html'])) { // html
+            $content = $empty($field, $notSetStr, null, $notSetFn);
+        } else { // others
+            $content = $empty($field, null, null, $notSetFn);
+            $content = is_null($content) ? $notSetStr : Html::encode($content);
+        }
+
+        if ($content == $notSetStr) {
+            return $content;
+        }
+
+        if (isset($adorn['price'])) {
+            $content = number_format(floatval($content), $adorn['price']);
+        }
+
+        if (isset($adorn['tpl'])) {
+            $tpl = $handleAdorn($adorn['tpl']);
+            $content = sprintf($tpl, $content);
+        }
+
+        if (isset($adorn['code'])) {
+            $color = $handleAdorn($adorn['color']);
+            if (is_array($color)) {
+                $_val = $empty($field);
+                $color = isset($color[$_val]) ? $color[$_val] : $color[$_val ? 1 : 0];
+            }
+
+            switch ($notSetFn) {
+                case 'empty' :
+                    $code = !empty($item[$field]);
+                    break;
+                case 'isset' :
+                    $code = isset($item[$field]);
+                    break;
+                default :
+                    $code = null;
+                    break;
+            }
+
+            $content = $code ? ('<code class="' . $color . '">' . $content . '</code>') : $content;
+        }
+
+        return $content;
+    }
+
+    /**
+     * 根据 adorn 数据获取样式
+     *
+     * @access public
+     *
+     * @param array $adorn
+     *
+     * @return string
+     */
+    public static function getStyleByAdorn($adorn)
+    {
+        $styleArray = [];
+        $attributes = [
+            'width',
+            'max-width',
+            'min-width'
+        ];
+        foreach ($attributes as $attribute) {
+            if (!empty($adorn[$attribute])) {
+                $styleArray[] = $attribute . ':' . $adorn[$attribute];
+            }
+        }
+
+        return 'style="' . implode(';', $styleArray) . '"';
     }
 }
