@@ -145,31 +145,7 @@ if ($modal) {
                             <?php endforeach; ?>
 
                             <?php if ($multiple): ?>
-                            var htmlBox = $('div[name="<?= $previewName ?>"]')[0];
-                            Sortable.create(htmlBox, {
-                                group: 'slave',
-                                animation: 200,
-                                onEnd: function (e) {
-                                    var _new = e.newIndex - 1;
-                                    var _old = e.oldIndex - 1;
-                                    if (_new !== _old) {
-                                        var valueBox = $('input[name="<?= $attachmentName ?>"]');
-                                        var value = valueBox.val().split(',');
-
-                                        if (_old < _new) { // 往后排
-                                            for (var k = 0; k < _new; k++) {
-                                                value.down(k);
-                                            }
-                                        } else { // 往前排
-                                            for (var v = _old; v > 0; v--) {
-                                                value.up(v);
-                                            }
-                                        }
-
-                                        valueBox.val(value.join(','));
-                                    }
-                                }
-                            });
+                            $.sortable('div[name="<?= $previewName ?>"]', 'input[name="<?= $attachmentName ?>"]');
                             <?php endif; ?>
                         });
                     </script>
