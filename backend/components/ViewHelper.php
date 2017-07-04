@@ -285,7 +285,7 @@ class ViewHelper extends Object
             if (empty($content)) {
                 $content = $notSetStr;
             } else {
-                $content = '<div class="row"><div class="col-sm-12"><a href="javascript:void(0)" class="thumbnail"><img src="<?= $content ?>"></a></div></div>';
+                $content = '<div class="row"><div class="col-sm-12"><a href="javascript:void(0)" class="thumbnail"><img src="' . $content . '"></a></div></div>';
             }
         } elseif (isset($adorn['info'])) { // enumeration
             $content = $empty($field, null, null, $notSetFn);
