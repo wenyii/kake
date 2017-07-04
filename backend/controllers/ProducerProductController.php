@@ -204,7 +204,7 @@ class ProducerProductController extends GeneralController
             ],
             'type' => [
                 'elem' => 'select',
-                'value' => 1
+                'value' => 0
             ],
             'state' => [
                 'elem' => 'select',

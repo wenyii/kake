@@ -114,7 +114,9 @@ class HotelController extends GeneralController
     {
         return [
             'name',
-            'address',
+            'address' => [
+                'max-width' => '450px'
+            ],
             'state' => [
                 'code',
                 'color' => 'auto',

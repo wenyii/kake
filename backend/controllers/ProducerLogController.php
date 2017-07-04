@@ -275,13 +275,18 @@ class ProducerLogController extends GeneralController
     }
 
     /**
-     * 分销订单结算
+     * 列表我的可结算订单记录
      *
-     * @auth-pass-all
+     * @access public
+     * @param boolean $settlement
+     * @return mixed
      */
-    public function actionSettlement()
+    public function listProducerLog($settlement = true)
     {
         $list = $this->showList('my', true, false);
+        if (!$settlement) {
+            return $list;
+        }
 
         foreach ($list as $key => $item) {
             if (empty($item['sub_counter'])) {
@@ -289,6 +294,17 @@ class ProducerLogController extends GeneralController
             }
         }
 
+        return $list;
+    }
+
+    /**
+     * 分销订单结算
+     *
+     * @auth-pass-all
+     */
+    public function actionSettlement()
+    {
+        $list = $this->listProducerLog();
         if (empty($list)) {
             Yii::$app->session->setFlash('warning', '暂无可结算的分销订单');
             $this->goReference($this->getControllerName('my'));
