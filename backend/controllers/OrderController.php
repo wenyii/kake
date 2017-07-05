@@ -24,6 +24,11 @@ class OrderController extends GeneralController
      */
     public static $hookPriceNumber = ['price'];
 
+    public static $payment = [
+        0 => 'WeChat',
+        1 => 'AliPay'
+    ];
+
     /**
      * @inheritDoc
      */
@@ -281,7 +286,8 @@ class OrderController extends GeneralController
      */
     public function actionSelectOrder($order_number, $payment_method)
     {
-        if ($payment_method) {
+        $payment = self::$payment[$payment_method];
+        if ($payment == 'AliPay') {
             $paymentState = [
                 'WAIT_BUYER_PAY' => '订单等待支付中',
                 'TRADE_CLOSED' => '订单已全额退款(或未付款)',
@@ -309,13 +315,11 @@ class OrderController extends GeneralController
             if (isset($result->trade_state)) {
                 $info = $paymentState[$result->trade_state];
             } else {
-                $info = '交易不存在';
+                $info = '订单号不存在';
             }
         }
 
-        $prefix = $payment_method ? '[支付宝反馈] ' : '[微信反馈] ';
-
-        Yii::$app->session->setFlash('info', $prefix . $info);
+        Yii::$app->session->setFlash('info', '<' . $payment . ' : 接口反馈> ' . $info);
         $this->goReference($this->getControllerName('index'));
     }
 }

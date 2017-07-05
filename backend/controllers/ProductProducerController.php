@@ -221,11 +221,13 @@ class ProductProducerController extends GeneralController
     /**
      * 获取下一档次起始销量
      *
+     * @access public
+     * @auth-pass-all
      *
      * @param integer $product_id
      * @param integer $type
      */
-    public function actionGetFromSales($product_id, $type)
+    public function actionAjaxGetFromSales($product_id, $type)
     {
         $where = [
             [
