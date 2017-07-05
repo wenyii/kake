@@ -1105,6 +1105,7 @@ class MainController extends Controller
      * Boom phone number
      *
      * @access public
+     * @auth-pass-all
      *
      * @param string $phone
      *
