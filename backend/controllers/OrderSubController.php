@@ -433,7 +433,8 @@ class OrderSubController extends GeneralController
 
         // 支付宝
         $success = true;
-        if ($order['payment_method']) {
+        $payment = OrderController::$payment[$order['payment_method']];
+        if ($payment == 'AliPay') {
             $price = intval($order['price']) / 100;
             $result = Yii::$app->ali->alipayTradeRefund($orderNo, $refundNo, $price);
             if (is_string($result)) {
@@ -442,14 +443,14 @@ class OrderSubController extends GeneralController
             } else {
                 $info = '退款申请已经提交';
             }
-        } else { // 微信
+        } else {
             try {
                 $result = Yii::$app->wx->payment->refund($orderNo, $refundNo, $order['total_price'], $order['price']);
             } catch (\Exception $e) {
                 $this->error($e->getMessage());
             }
 
-            if (isset($result->err_code_des)) {
+            if (isset($result) && isset($result->err_code_des)) {
                 $success = false;
                 $info = $result->err_code_des;
             } else {
@@ -457,7 +458,7 @@ class OrderSubController extends GeneralController
             }
         }
 
-        $info = ($order['payment_method'] ? '[支付宝反馈] ' : '[微信反馈] ') . $info;
+        $info = '<' . $payment . ' : 接口反馈> ' . $info;
         Yii::info('UID:' . $this->user->id . ' -> ' . $info);
 
         if (!$success) {
