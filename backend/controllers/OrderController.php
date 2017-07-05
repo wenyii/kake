@@ -31,7 +31,7 @@ class OrderController extends GeneralController
     {
         return array_merge(parent::indexOperation(), [
             [
-                'text' => '状态',
+                'text' => '查询订单',
                 'value' => 'select-order',
                 'level' => 'primary',
                 'icon' => 'globe',
@@ -244,7 +244,7 @@ class OrderController extends GeneralController
                 'producer_user.username AS producer_username',
                 'order.*'
             ],
-            'order' => 'order.id DESC'
+            'order' => 'order.state DESC, order.id DESC'
         ];
     }
 
