@@ -19,14 +19,15 @@ class DistributionController extends GeneralController
         $this->sourceJs = null;
 
         $channel = Yii::$app->request->get('channel');
+        $channel = Helper::integerDecode($channel);
         if (!$channel) {
-            $this->error(Yii::t('common', 'params channel is required'));
+            $this->error(Yii::t('common', 'distributor params illegal'));
         }
 
         // 获取分销商信息
-        $producer = $this->getProducer($this->user->id);
+        $producer = $this->getProducer($channel);
         if (empty($producer)) {
-            $this->error(Yii::t('common', 'become a producer please contact service'));
+            $this->error(Yii::t('common', 'distributor params illegal'));
         }
 
         // 获取分销产品
