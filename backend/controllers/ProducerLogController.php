@@ -577,6 +577,7 @@ class ProducerLogController extends GeneralController
             $count = $value['counter'] = $counter[$product];
             $type = ProductController::$type[$value['type']];
 
+            $value['commission_quota'] = 0;
             foreach ($value['commission_data'] as $item) {
                 if ($count >= $item['from_sales'] && (empty($item['to_sales']) || $count <= $item['to_sales'])) {
 
@@ -588,8 +589,6 @@ class ProducerLogController extends GeneralController
                         $value['commission_quota'] = $in * (($item['commission'] / 100) * $rate);
                     } else if ($type == 'fixed') {
                         $value['commission_quota'] = $item['commission'] * $rate;
-                    } else {
-                        $value['commission_quota'] = 0;
                     }
 
                     break;

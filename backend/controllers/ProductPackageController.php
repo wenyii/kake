@@ -177,7 +177,7 @@ EOF
             ],
             'bidding' => [
                 'elem' => 'select',
-                'tip' => '是否参与价格显示',
+                'tip' => '是否参与最低价格显示',
                 'value' => 1
             ],
             'purchase_limit' => [
@@ -213,7 +213,7 @@ EOF
             ],
             'bidding' => [
                 'elem' => 'select',
-                'tip' => '是否参与价格显示',
+                'tip' => '是否参与最低价格显示',
                 'value' => 1
             ],
             'purchase_limit' => [
