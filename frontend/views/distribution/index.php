@@ -21,92 +21,96 @@ $params = \Yii::$app -> params;
 		<div class="distri_content" ng-hide="isShowAni">
 			<div class="gif"><img src="<?= $params['frontend_source'] ?>/img/distribution/holiday.gif"/></div>
 			<div class="line"><img src="<?= $params['frontend_source'] ?>/img/distribution/line.png"/></div>
-			<div class="logo"><img src="<?= $params['frontend_source'] ?>/img/distribution/logo1.png"/></div>
+			<div class="logo"><img src="<?= current($producer['logo_preview_url']) ?>"/></div>
 			<div class="product-bg"><img src="<?= $params['frontend_source'] ?>/img/distribution/productbg.png"/></div>
 			<!--产品列表-->
 			<div class="product_list">
 				<ul>
+                    <?php if (isset($product[0])): ?>
 					<li> 
 						<a href="javascript:;">
 							<div class="photoleft">
-								
-								<img src="<?= $params['frontend_source'] ?>/img/distribution/产品1.png"/>
+								<img src="<?= current($product[0]['cover_preview_url']) ?>"/>
 							</div>
 							<div class="descriptionleft">
 								<img src="<?= $params['frontend_source'] ?>/img/distribution/proprice.gif"/>
 								<div class="btn"><img src="<?= $params['frontend_source'] ?>/img/distribution/lookup-btn.png"/></div>
 								<div class="text">
-									<h2>杭州钱江新城</h2>
-									<span>假日酒店</span>
-									<small>￥788/晚</small>
+									<h2><?= $product[0]['name'] ?></h2>
+									<small>￥<?= $product[0]['min_price'] ?></small>
 								</div>
 							</div>
 						</a>
 					</li>
+                    <?php endif; ?>
+                    <?php if (isset($product[1])): ?>
 					<li> 
 						<a href="javascript:;">
 							<div class="photoright">
-								<img src="<?= $params['frontend_source'] ?>/img/distribution/产品2.png"/>
+								<img src="<?= current($product[1]['cover_preview_url']) ?>"/>
 							</div>
 							<div class="descriptionright">
 								<img src="<?= $params['frontend_source'] ?>/img/distribution/proprice.gif"/>
 								<div class="btn"><img src="<?= $params['frontend_source'] ?>/img/distribution/lookup-btn.png"/></div>
 								<div class="text">
-									<h2>杭州钱江新城</h2>
-									<span>假日酒店</span>
-									<small>￥788/晚</small>
+									<h2><?= $product[1]['name'] ?></h2>
+									<small>￥<?= $product[1]['min_price'] ?></small>
 								</div>
 							</div>
 						</a>
 					</li>
+                    <?php endif; ?>
+                    <?php if (isset($product[2])): ?>
 					<li> 
 						<a href="javascript:;">
 							<div class="photoleft">
-								<img src="<?= $params['frontend_source'] ?>/img/distribution/产品3.png"/>
+								<img src="<?= current($product[2]['cover_preview_url']) ?>"/>
 							</div>
 							<div class="descriptionleft">
 								<img src="<?= $params['frontend_source'] ?>/img/distribution/proprice.gif"/>
 								<div class="btn"><img src="<?= $params['frontend_source'] ?>/img/distribution/lookup-btn.png"/></div>
 								<div class="text">
-									<h2>杭州钱江新城</h2>
-									<span>假日酒店假日酒店</span>
-									<small>￥788/晚</small>
+									<h2><?= $product[2]['name'] ?></h2>
+									<small>￥<?= $product[2]['min_price'] ?></small>
 								</div>
 							</div>
 						</a>
 					</li>
+                    <?php endif; ?>
+                    <?php if (isset($product[3])): ?>
 					<li> 
 						<a href="javascript:;">
 							<div class="photoright">
-								<img src="<?= $params['frontend_source'] ?>/img/distribution/产品1.png"/>
+								<img src="<?= current($product[3]['cover_preview_url']) ?>"/>
 							</div>
 							<div class="descriptionright">
 								<img src="<?= $params['frontend_source'] ?>/img/distribution/proprice.gif"/>
 								<div class="btn"><img src="<?= $params['frontend_source'] ?>/img/distribution/lookup-btn.png"/></div>
 								<div class="text">
-									<h2>杭州钱江新城</h2>
-									<span>假日酒店</span>
-									<small>￥788/晚</small>
+									<h2><?= $product[3]['name'] ?></h2>
+									<small>￥<?= $product[3]['min_price'] ?></small>
 								</div>
 							</div>
 						</a>
 					</li>
+                    <?php endif; ?>
+                    <?php if (isset($product[4])): ?>
 					<li> 
 						<a href="javascript:;">
 							<div class="photoleft">
-								<img src="<?= $params['frontend_source'] ?>/img/distribution/产品2.png"/>
+								<img src="<?= current($product[4]['cover_preview_url']) ?>"/>
 							</div>
 							<div class="descriptionleft">
 								<img src="<?= $params['frontend_source'] ?>/img/distribution/proprice.gif"/>
 								<div class="btn"><img src="<?= $params['frontend_source'] ?>/img/distribution/lookup-btn.png"/></div>
 								<div class="text">
-									<h2>杭州钱江新城</h2>
-									<span>假日酒店</span>
-									<small>￥788/晚</small>
+									<h2><?= $product[4]['name'] ?></h2>
+									<small>￥<?= $product[4]['min_price'] ?></small>
 								</div>
 							</div>
 						</a>
 					</li>
+                    <?php endif; ?>
 				</ul>
 				<div class="footer">
 					<a href="javascript:;"><img src="<?= $params['frontend_source'] ?>/img/distribution/footerlogo.png"/></a>
