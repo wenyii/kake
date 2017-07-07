@@ -330,7 +330,7 @@ class OrderSubController extends GeneralController
                 'order.payment_state',
                 'order_sub.*'
             ],
-            'order' => 'order_sub.id DESC'
+            'order' => 'order.state DESC, order_sub.id DESC'
         ];
     }
 
