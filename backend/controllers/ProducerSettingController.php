@@ -453,7 +453,8 @@ class ProducerSettingController extends GeneralController
     public function actionSpread()
     {
         $spread = $this->spreadInfo($this->user->id);
-        if (empty($spread[1])) {
+
+        if (!isset($spread[1])) {
             Yii::$app->session->setFlash('warning', '请先完善个人设置');
 
             return $this->redirect(['producer-setting/center']);
