@@ -63,7 +63,7 @@ $params = \Yii::$app -> params;
 			<!--斜箭头-->
 			<div class="slopearrow" ><img src="<?= $params['frontend_source'] ?>/img/distribution/slopearrow.png"/></div>
 			<!--照相机-->
-			<div class="camera" ><img src="<?= $params['frontend_source'] ?>/img/distribution/camera.png"/></div>
+			<!--<div class="camera" ><img src="<?= $params['frontend_source'] ?>/img/distribution/camera.png"/></div>-->
 			<!--指南针-->
 			<div class="compass" ><img src="<?= $params['frontend_source'] ?>/img/distribution/compass.png"/></div>
 			<!--向下箭头-->
