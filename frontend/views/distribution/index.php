@@ -64,7 +64,6 @@ $params = \Yii::$app -> params;
 				</div>
 			</div>
 			<!--球-->
-<<<<<<< Updated upstream
 			<div class="ball" ><img src="<?= $params['frontend_source'] ?>/img/distribution/ball.png"/></div>
 			<!--眼镜-->
 			<div class="glasses" ><img src="<?= $params['frontend_source'] ?>/img/distribution/glasses.png"/></div>
@@ -78,9 +77,6 @@ $params = \Yii::$app -> params;
 			<div class="compass" ><img src="<?= $params['frontend_source'] ?>/img/distribution/compass.png"/></div>
 			<!--向下箭头-->
 			<!--<div class="downarrow" ><img src="<?= $params['frontend_source'] ?>/img/distribution/downarrow.png"/></div>-->
-=======
-			
->>>>>>> Stashed changes
 		</div>
 	</div>
 </body>
