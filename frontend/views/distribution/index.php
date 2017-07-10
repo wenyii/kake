@@ -28,12 +28,21 @@ $params = \Yii::$app -> params;
 			<!--产品列表-->
 			<div class="product_list">
 				<ul>
+					<?php
+					$topMap = [
+						0 => '0px',
+						1 => '0px',
+						2 => '150px',
+						3 => '40px',
+						4 => '150px'
+					];	
+					?>
                     <?php foreach ($product as $i => $item): ?>
                     <?php
                         $picCls = ($i % 2 == 0) ? 'photoleft' : 'photoright';
                         $desCls = ($i % 2 == 0) ? 'descriptionleft' : 'descriptionright';
                     ?>
-					<li> 
+					<li style="margin-top:<?= $topMap[$i] ?>"> 
 						<a href="<?= Url::to(['detail/index', 'id' => $item['id']]) ?>">
 							<div class="<?= $picCls ?>">
 								<img src="<?= current($item['cover_preview_url']) ?>"/>
@@ -55,6 +64,7 @@ $params = \Yii::$app -> params;
 				</div>
 			</div>
 			<!--球-->
+<<<<<<< Updated upstream
 			<div class="ball" ><img src="<?= $params['frontend_source'] ?>/img/distribution/ball.png"/></div>
 			<!--眼镜-->
 			<div class="glasses" ><img src="<?= $params['frontend_source'] ?>/img/distribution/glasses.png"/></div>
@@ -68,6 +78,9 @@ $params = \Yii::$app -> params;
 			<div class="compass" ><img src="<?= $params['frontend_source'] ?>/img/distribution/compass.png"/></div>
 			<!--向下箭头-->
 			<!--<div class="downarrow" ><img src="<?= $params['frontend_source'] ?>/img/distribution/downarrow.png"/></div>-->
+=======
+			
+>>>>>>> Stashed changes
 		</div>
 	</div>
 </body>
