@@ -4,11 +4,12 @@
 use yii\helpers\Url;
 
 $params = \Yii::$app -> params;
-\Yii::$app -> params['ng_ctrl'] = 'distribution';
+\Yii::$app->params['ng_ctrl'] = 'distribution';
 ?>
 
 <body>
 	<div class="distri_panel">
+
 		<!--入场动画-->
 		<div class="distri_ani" ng-show="isShowAni">
 			<img src="<?= $params['frontend_source'] ?>/img/distribution/ani-bg.png" class="ani-bg"/>
@@ -17,102 +18,40 @@ $params = \Yii::$app -> params;
 			<img src="<?= $params['frontend_source'] ?>/img/distribution/people.png" class="people"/>
 			<img src="<?= $params['frontend_source'] ?>/img/distribution/car.png" class="car"/>
 		</div>
+
 		<!--内容页-->
 		<div class="distri_content" ng-hide="isShowAni">
 			<div class="gif"><img src="<?= $params['frontend_source'] ?>/img/distribution/holiday.gif"/></div>
 			<div class="line"><img src="<?= $params['frontend_source'] ?>/img/distribution/line.png"/></div>
 			<div class="logo"><img src="<?= current($producer['logo_preview_url']) ?>"/></div>
 			<div class="product-bg"></div>
+
 			<!--产品列表-->
 			<div class="product_list">
 				<ul>
-                    <?php if (isset($product[0])): ?>
+                    <?php foreach ($product as $i => $item): ?>
+                    <?php
+                        $picCls = ($i % 2 == 0) ? 'photoleft' : 'photoright';
+                        $desCls = ($i % 2 == 0) ? 'descriptionleft' : 'descriptionright';
+                    ?>
 					<li> 
-						<a href="<?= Url::to(['detail/index', 'id' => $product[0]['id']]) ?>">
-							<div class="photoleft">
-								<img src="<?= current($product[0]['cover_preview_url']) ?>"/>
+						<a href="<?= Url::to(['detail/index', 'id' => $item['id']]) ?>">
+							<div class="<?= $picCls ?>">
+								<img src="<?= current($item['cover_preview_url']) ?>"/>
 							</div>
-							<div class="descriptionleft">
+							<div class="<?= $desCls ?>">
 								<img src="<?= $params['frontend_source'] ?>/img/distribution/proprice.gif"/>
 								<div class="btn"><img src="<?= $params['frontend_source'] ?>/img/distribution/lookup-btn.png"/></div>
 								<div class="text">
-									<h2><?= $product[0]['name'] ?></h2>
-									<small>￥<?= $product[0]['min_price'] ?></small>
+									<h2><?= $item['name'] ?></h2>
+									<small>￥<?= $item['min_price'] ?></small>
 								</div>
 							</div>
 						</a>
 					</li>
-                    <?php endif; ?>
-                    <?php if (isset($product[1])): ?>
-					<li> 
-						<a href="javascript:;">
-							<div class="photoright">
-								<img src="<?= current($product[1]['cover_preview_url']) ?>"/>
-							</div>
-							<div class="descriptionright">
-								<img src="<?= $params['frontend_source'] ?>/img/distribution/proprice.gif"/>
-								<div class="btn"><img src="<?= $params['frontend_source'] ?>/img/distribution/lookup-btn.png"/></div>
-								<div class="text">
-									<h2><?= $product[1]['name'] ?></h2>
-									<small>￥<?= $product[1]['min_price'] ?></small>
-								</div>
-							</div>
-						</a>
-					</li>
-                    <?php endif; ?>
-                    <?php if (isset($product[2])): ?>
-					<li> 
-						<a href="javascript:;">
-							<div class="photoleft">
-								<img src="<?= current($product[2]['cover_preview_url']) ?>"/>
-							</div>
-							<div class="descriptionleft">
-								<img src="<?= $params['frontend_source'] ?>/img/distribution/proprice.gif"/>
-								<div class="btn"><img src="<?= $params['frontend_source'] ?>/img/distribution/lookup-btn.png"/></div>
-								<div class="text">
-									<h2><?= $product[2]['name'] ?></h2>
-									<small>￥<?= $product[2]['min_price'] ?></small>
-								</div>
-							</div>
-						</a>
-					</li>
-                    <?php endif; ?>
-                    <?php if (isset($product[3])): ?>
-					<li> 
-						<a href="javascript:;">
-							<div class="photoright">
-								<img src="<?= current($product[3]['cover_preview_url']) ?>"/>
-							</div>
-							<div class="descriptionright">
-								<img src="<?= $params['frontend_source'] ?>/img/distribution/proprice.gif"/>
-								<div class="btn"><img src="<?= $params['frontend_source'] ?>/img/distribution/lookup-btn.png"/></div>
-								<div class="text">
-									<h2><?= $product[3]['name'] ?></h2>
-									<small>￥<?= $product[3]['min_price'] ?></small>
-								</div>
-							</div>
-						</a>
-					</li>
-                    <?php endif; ?>
-                    <?php if (isset($product[4])): ?>
-					<li> 
-						<a href="javascript:;">
-							<div class="photoleft">
-								<img src="<?= current($product[4]['cover_preview_url']) ?>"/>
-							</div>
-							<div class="descriptionleft">
-								<img src="<?= $params['frontend_source'] ?>/img/distribution/proprice.gif"/>
-								<div class="btn"><img src="<?= $params['frontend_source'] ?>/img/distribution/lookup-btn.png"/></div>
-								<div class="text">
-									<h2><?= $product[4]['name'] ?></h2>
-									<small>￥<?= $product[4]['min_price'] ?></small>
-								</div>
-							</div>
-						</a>
-					</li>
-                    <?php endif; ?>
-                    	<div class="footer">
-						<a href="javascript:;"><img src="<?= $params['frontend_source'] ?>/img/distribution/footerlogo.png"/></a>
+                    <?php endforeach; ?>
+                    <div class="footer">
+						<a href="javascript:void();"><img src="<?= $params['frontend_source'] ?>/img/distribution/footerlogo.png"/></a>
 					</div>
 				</ul>
 				
