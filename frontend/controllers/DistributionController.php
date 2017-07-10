@@ -33,7 +33,7 @@ class DistributionController extends GeneralController
         // 获取分销产品
         $limit = Yii::$app->params['distribution_limit'];
         $product = $this->service('producer.list-product-ids', [
-            'producer_id' => $this->user->id,
+            'producer_id' => $channel,
             'limit' => $limit
         ]);
         if (empty($product)) {
