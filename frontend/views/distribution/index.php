@@ -51,7 +51,10 @@ $params = \Yii::$app -> params;
 								<img src="<?= $params['frontend_source'] ?>/img/distribution/proprice.gif"/>
 								<div class="btn"><img src="<?= $params['frontend_source'] ?>/img/distribution/lookup-btn.png"/></div>
 								<div class="text">
-									<h2><?= $item['name'] ?></h2>
+									<?php
+									$name = strpos($item['name'], '|') ? explode('|', $item['name'])[1] : $item['name'];	
+									?>
+									<h2><?= trim($name) ?></h2>
 									<small>￥<?= $item['min_price'] ?></small>
 								</div>
 							</div>
@@ -60,7 +63,7 @@ $params = \Yii::$app -> params;
                     <?php endforeach; ?>
 				</ul>
 				<div class="footer">
-					<a href="javascript:void();"><img src="<?= $params['frontend_source'] ?>/img/distribution/footerlogo.png"/></a>
+					<a href="/"><img src="<?= $params['frontend_source'] ?>/img/distribution/footerlogo.png"/></a>
 				</div>
 			</div>
 		</div>
