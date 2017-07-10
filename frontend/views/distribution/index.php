@@ -5,6 +5,7 @@ use yii\helpers\Url;
 
 $params = \Yii::$app -> params;
 \Yii::$app->params['ng_ctrl'] = 'distribution';
+\Yii::$app->params['title'] = $producer['name'];
 ?>
 
 <body>
@@ -51,10 +52,7 @@ $params = \Yii::$app -> params;
 								<img src="<?= $params['frontend_source'] ?>/img/distribution/proprice.gif"/>
 								<div class="btn"><img src="<?= $params['frontend_source'] ?>/img/distribution/lookup-btn.png"/></div>
 								<div class="text">
-									<?php
-									$name = strpos($item['name'], '|') ? explode('|', $item['name'])[1] : $item['name'];	
-									?>
-									<h2><?= trim($name) ?></h2>
+									<h2><?= str_replace(' | ', '', $item['name']) ?></h2>
 									<small>￥<?= $item['min_price'] ?></small>
 								</div>
 							</div>
