@@ -24,7 +24,6 @@ $params = \Yii::$app -> params;
 			<div class="gif"><img src="<?= $params['frontend_source'] ?>/img/distribution/holiday.gif"/></div>
 			<div class="line"><img src="<?= $params['frontend_source'] ?>/img/distribution/line.png"/></div>
 			<div class="logo"><img src="<?= current($producer['logo_preview_url']) ?>"/></div>
-			<div class="product-bg"></div>
 
 			<!--产品列表-->
 			<div class="product_list">
@@ -50,24 +49,23 @@ $params = \Yii::$app -> params;
 						</a>
 					</li>
                     <?php endforeach; ?>
-                    <div class="footer">
-						<a href="javascript:void();"><img src="<?= $params['frontend_source'] ?>/img/distribution/footerlogo.png"/></a>
-					</div>
 				</ul>
-				
+				<div class="footer">
+					<a href="javascript:void();"><img src="<?= $params['frontend_source'] ?>/img/distribution/footerlogo.png"/></a>
+				</div>
 			</div>
 			<!--球-->
 			<div class="ball" ><img src="<?= $params['frontend_source'] ?>/img/distribution/ball.png"/></div>
 			<!--眼镜-->
 			<div class="glasses" ><img src="<?= $params['frontend_source'] ?>/img/distribution/glasses.png"/></div>
 			<!--鞋子-->
-			<!--<div class="shoes" ><img src="<?= $params['frontend_source'] ?>/img/distribution/shoes.png"/></div>-->
+			<div class="shoes" ><img src="<?= $params['frontend_source'] ?>/img/distribution/shoes.png"/></div>
 			<!--斜箭头-->
-			<!--<div class="slopearrow" ><img src="<?= $params['frontend_source'] ?>/img/distribution/slopearrow.png"/></div>-->
+			<div class="slopearrow" ><img src="<?= $params['frontend_source'] ?>/img/distribution/slopearrow.png"/></div>
 			<!--照相机-->
-			<!--<div class="camera" ><img src="<?= $params['frontend_source'] ?>/img/distribution/camera.png"/></div>-->
+			<div class="camera" ><img src="<?= $params['frontend_source'] ?>/img/distribution/camera.png"/></div>
 			<!--指南针-->
-			<!--<div class="compass" ><img src="<?= $params['frontend_source'] ?>/img/distribution/compass.png"/></div>-->
+			<div class="compass" ><img src="<?= $params['frontend_source'] ?>/img/distribution/compass.png"/></div>
 			<!--向下箭头-->
 			<!--<div class="downarrow" ><img src="<?= $params['frontend_source'] ?>/img/distribution/downarrow.png"/></div>-->
 		</div>
