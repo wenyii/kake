@@ -122,6 +122,7 @@ foreach ($item as $type): ?>
         }
         ?>
         <div id="content-div" class="<?= $class ?>">
+            <span id="menu-toggle"></span>
             <?= $content ?>
         </div>
     </div>
