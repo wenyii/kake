@@ -95,9 +95,10 @@ if ($modal) {
 
         <?= $html_begin_div ?>
         <?= $html_label ?>
-        <?php if ($element == 'input'): ?> <!-- input -->
+
+    <?php if ($element == 'input'): ?> <!-- input -->
         <div class="col-sm-<?= $empty('label', 3) ?> <?= $av_class ?>" <?= $as_tip ?>>
-            <?php $as_name = (($av_type == 'file' ? 'id' : 'name') . '=' . $av_name) ?>
+            <?php $av_type == 'file' && $as_name = 'id="' . $av_name . '"' ?>
             <input class="form-control"
                 <?= $as_name ?>
                 <?= $as_readonly ?>
@@ -107,7 +108,6 @@ if ($modal) {
         </div>
     <?php elseif ($element == 'text'): ?> <!-- text -->
         <div class="col-sm-<?= $empty('label', 3) ?> <?= $av_class ?>" <?= $as_tip ?>>
-            <?php $as_name = (($av_type == 'file' ? 'id' : 'name') . '=' . $av_name) ?>
             <p class="bg-info" <?= $as_name ?>><?= $av_value ?></p>
         </div>
     <?php elseif ($element == 'img'): ?> <!-- img -->
