@@ -12,16 +12,22 @@ $params = \Yii::$app -> params;
 	<div class="distri_panel">
 
 		<!--入场动画-->
-		<div class="distri_ani" ng-show="isShowAni">
-			<img src="<?= $params['frontend_source'] ?>/img/distribution/ani-bg.png" class="ani-bg"/>
-			<img src="<?= $params['frontend_source'] ?>/img/distribution/l-leef.png" class="l-leef"/>
-			<img src="<?= $params['frontend_source'] ?>/img/distribution/r-leef.png" class="r-leef"/>
+		<div class="distri_ani">
+			<div class="content">
+				<img src="<?= $params['frontend_source'] ?>/img/distribution/ani-bg.png"/>
+			</div>
+			<img src="<?= $params['frontend_source'] ?>/img/distribution/halo.png" class="halo"/>
 			<img src="<?= $params['frontend_source'] ?>/img/distribution/people.png" class="people"/>
-			<img src="<?= $params['frontend_source'] ?>/img/distribution/car.png" class="car"/>
+			<div class="box-false">
+	            <div class="box">
+	                <img class="car" src="<?= $params['frontend_source'] ?>/img/distribution/car.png">
+	                <img class="gas" src="<?= $params['frontend_source'] ?>/img/distribution/gas.png">
+	            </div>
+	        </div>
 		</div>
-
+		
 		<!--内容页-->
-		<div class="distri_content" ng-hide="isShowAni">
+		<div class="distri_content hidden" style="display: none;">
 			<div class="gif"><img src="<?= $params['frontend_source'] ?>/img/distribution/holiday.gif"/></div>
 			<div class="line"><img src="<?= $params['frontend_source'] ?>/img/distribution/line.png"/></div>
 			<div class="logo"><img src="<?= current($producer['logo_preview_url']) ?>"/></div>
