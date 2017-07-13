@@ -6,6 +6,7 @@ use backend\components\ViewHelper;
 use common\components\Helper;
 use common\models\Main;
 use Yii;
+use yii\helpers\Url;
 
 /**
  * 酒店产品管理
@@ -237,6 +238,30 @@ class ProductController extends GeneralController
                 'icon' => 'qrcode'
             ]
         ]);
+    }
+
+    /**
+     * 微操作
+     *
+     * @inheritDoc
+     */
+    public static function ajaxModalListProducerOperation()
+    {
+        return [
+            [
+                'text' => '二维码',
+                'type' => 'script',
+                'value' => '$.showQrCode',
+                'params' => function ($record) {
+                    $url = Url::toRoute(['detail/index', 'id' => $record['id']]);
+                    $url = Yii::$app->params['frontend_url'] . $url;
+
+                    return [$url];
+                },
+                'level' => 'success',
+                'icon' => 'qrcode'
+            ]
+        ];
     }
 
     /**
@@ -503,13 +528,14 @@ class ProductController extends GeneralController
                 'hidden' => true
             ],
             'old_package_ids' => [
-                'value_field' => 'package_ids',
+                'value_key' => 'package_ids',
                 'hidden' => true
             ],
-            // format 将指定的字段按该格式替换掉并返回给 JS 处理
-            // table 写入到该表
-            // foreign_key 对应当前表的外键字段
-            // handler_controller 对应处理数据的模型
+            // format               完成标签表单后将值格式化成该模板返回给 JS 处理
+            // table                列表数据和写入数据的目标表
+            // foreign_key          列表数据和写入数据对应当前表的外键字段
+            // handler_controller   列表数据后处理或写入数据的前处理对应方法所在的控制器
+            // service_api          列表数据的接口
             'package' => [
                 'title' => '套餐',
                 'elem' => 'tag',
@@ -558,13 +584,13 @@ class ProductController extends GeneralController
                 'hidden' => true
             ],
             'old_attachment_cover' => [
-                'value_field' => 'attachment_cover',
+                'value_key' => 'attachment_cover',
                 'hidden' => true
             ],
             'cover_preview_url' => [
                 'title' => '封面图预览',
                 'elem' => 'img',
-                'upload_key' => 'upload_cover'
+                'upload_name' => 'upload_cover'
             ],
             'upload_cover' => [
                 'title' => '',
@@ -584,25 +610,24 @@ class ProductController extends GeneralController
                 'hidden' => true
             ],
             // < 存储旧时附件 item >
+            // value_key    标示该值和指定 key 的值保持一致
             'old_attachment_ids' => [
-                'value_field' => 'attachment_ids',
+                'value_key' => 'attachment_ids',
                 'hidden' => true
             ],
             // < 附件预览 item >
-            // upload_key 标示指向要绑定的 < 上传附件 item > 的 key 名
+            // upload_name  < 上传附件 item > 的 name 值
             'slave_preview_url' => [
                 'title' => '次要图预览',
                 'elem' => 'img',
-                'upload_key' => 'upload_slave'
+                'upload_name' => 'upload_slave'
             ],
             // < 上传附件 item >
-            // rules 标示上传附件的规范 (实为 common\components\Upload 组件的参数)
-            // tag 标记 (用于 common\components\Upload 组件寻找 rules 所设定), 单控制器不重复出现
-            // preview_name < 附件预览 item > 的 name 值
-            // field_name < 存储当前附件 item > 的 name 值
-            // multiple 是否支持多附件
-            // cover 是否需要设定封面图, 在 multiple 为 true 时有效
-            // cover_name 封面附件存储 item 的 name 值
+            // tag              标记 (用于 common\components\Upload 组件寻找 rules 所设定), 单控制器不重复出现
+            // rules            标示上传附件的规范 (实为 common\components\Upload 组件的参数)
+            // preview_name     < 附件预览 item > 的 name 值
+            // field_name       < 存储当前附件 item > 的 name 值
+            // multiple         是否支持多附件
             'upload_slave' => [
                 'title' => '',
                 'type' => 'file',
@@ -882,9 +907,11 @@ class ProductController extends GeneralController
     {
         $this->sourceJs = [
             'jquery.ajaxupload',
+            'jquery.cropper',
             'ckeditor/ckeditor',
             'sortable'
         ];
+        $this->sourceCss = ['cropper'];
 
         return parent::beforeAction($action);
     }

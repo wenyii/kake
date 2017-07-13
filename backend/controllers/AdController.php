@@ -155,13 +155,13 @@ class AdController extends GeneralController
                 'hidden' => true
             ],
             'old_attachment_id' => [
-                'value_field' => 'attachment_id',
+                'value_key' => 'attachment_id',
                 'hidden' => true
             ],
             'preview_url' => [
                 'elem' => 'img',
                 'img_label' => 4,
-                'upload_key' => 'upload'
+                'upload_name' => 'upload'
             ],
             'upload' => [
                 'type' => 'file',
@@ -231,8 +231,10 @@ class AdController extends GeneralController
     public function beforeAction($action)
     {
         $this->sourceJs = [
-            'jquery.ajaxupload'
+            'jquery.ajaxupload',
+            'jquery.cropper'
         ];
+        $this->sourceCss = ['cropper'];
 
         return parent::beforeAction($action);
     }

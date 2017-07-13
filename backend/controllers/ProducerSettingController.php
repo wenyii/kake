@@ -230,14 +230,14 @@ class ProducerSettingController extends GeneralController
                 'hidden' => true
             ],
             'old_logo_attachment_id' => [
-                'value_field' => 'logo_attachment_id',
+                'value_key' => 'logo_attachment_id',
                 'hidden' => true
             ],
             'logo_preview_url' => [
                 'img_label' => 2,
                 'title' => 'LOGO预览',
                 'elem' => 'img',
-                'upload_key' => 'upload_logo'
+                'upload_name' => 'upload_logo'
             ],
             'upload_logo' => [
                 'title' => '',
@@ -472,8 +472,10 @@ class ProducerSettingController extends GeneralController
     {
         $this->sourceJs = [
             'jquery.ajaxupload',
+            'jquery.cropper',
             'ckeditor/ckeditor'
         ];
+        $this->sourceCss = ['cropper'];
 
         return parent::beforeAction($action);
     }

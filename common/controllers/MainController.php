@@ -495,39 +495,47 @@ class MainController extends Controller
      * @access protected
      *
      * @param array $config
+     * @param mixed $crop
      *
      * @return void
      */
-    protected function ajaxUploader($config = [])
+    protected function ajaxUploader($config = [], $crop = null)
     {
         $uploader = Yii::createObject([
             'class' => Upload::className(),
             'config' => $config
         ]);
 
-        $result = $uploader->upload($_FILES);
+        $file = $uploader->upload($_FILES);
+
+        if (is_string($file)) {
+            $this->fail($file);
+        }
+        $file = current($file);
+
+        $result = $this->service('general.add-for-backend', [
+            'table' => 'attachment',
+            'deep_path' => $file['save_path'],
+            'filename' => $file['save_name']
+        ]);
 
         if (is_string($result)) {
             $this->fail($result);
         }
 
-        $result = current($result);
+        $url = Yii::$app->params['upload_url'];
+        $result = [
+            'id' => $result['id'],
+            'url' => Helper::joinString('/', $url, $file['save_path'], $file['save_name'])
+        ];
 
-        $res = $this->service('general.add-for-backend', [
-            'table' => 'attachment',
-            'deep_path' => $result['save_path'],
-            'filename' => $result['save_name']
-        ]);
-
-        if (is_string($res)) {
-            $this->fail($res);
+        if ($crop && !empty($crop['width']) && !empty($crop['height'])) {
+            if ($crop['width'] != $file['width'] || $crop['height'] != $file['height']) {
+                $result['crop'] = $crop;
+            }
         }
 
-        $url = Yii::$app->params['upload_url'];
-        $this->success([
-            'id' => $res['id'],
-            'url' => Helper::joinString('/', $url, $result['save_path'], $result['save_name'])
-        ]);
+        $this->success($result);
     }
 
     /**
@@ -563,7 +571,17 @@ class MainController extends Controller
             ]);
         }
 
-        $this->ajaxUploader($rules[$params['tag']]);
+        $rule = $rules[$params['tag']];
+        $crop = null;
+        if (!empty($rule['pic_sizes']) && strpos($rule['pic_sizes'], '*') !== false) {
+            list($width, $height) = explode('*', $rule['pic_sizes']);
+            if (is_numeric($width) && is_numeric($height)) {
+                $rule['pic_sizes'] = "${width}-MAX*${height}-MAX";
+                $crop = compact('width', 'height');
+            }
+        }
+
+        $this->ajaxUploader($rule, $crop);
     }
 
     /**
@@ -787,7 +805,8 @@ class MainController extends Controller
             if (isset($assist['handler_controller'])) {
                 $controller = $assist['handler_controller'];
             } else {
-                $controller = '\backend\controllers\\' . Helper::underToCamel($assist['table'], false) . 'Controller';
+                $controller = str_replace('_', '-', $assist['table']);
+                $controller = $this->controller($controller, Yii::$app->id, false);
             }
 
             $extraData = [];

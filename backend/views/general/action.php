@@ -47,16 +47,10 @@ if ($modal) {
             return Helper::$fn($data, $key, $default);
         };
 
-        // 附加的组件
-        $html_add = null;
-        if (!empty($item['add'])) {
-            $html_add = '<div class="col-sm-' . $empty('label', 2, $item['add']) . '">' . $empty('html', null, $item['add']) . '</div>';
-        }
-
-        // 同一行
+        // 下一个 item 与当前 item 同一行
         $same_row = $empty('same_row');
 
-        // 是否隐藏
+        // 开始标签和结尾标签
         $html_begin_div = $pre_same_row ? null : '<div class="form-group ' . ($empty('hidden', false) ? 'hidden' : null) . '">';
         $html_end_div = $same_row ? null : '</div>';
 
@@ -65,27 +59,28 @@ if ($modal) {
         // 栅格数和标题
         $html_label = ($item['title'] === false) ? null : '<label class="col-sm-2 control-label">' . $empty('title') . '</label>';
 
-        // element
+        // 主标签声明
         $element = $empty('elem', 'input');
 
-        // attribute value
+        // 标签属性值
         $av_name = $empty('name', $field);
         $av_type = $empty('type', 'text');
         $av_value = !empty($flash[$av_name]) ? $flash[$av_name] : $empty('value', null, null, 'isset');
-
+        $av_script = ViewHelper::escapeScript($empty('script'));
         $av_class = $empty('class');
+        $av_assist = $empty('assist');
 
-        // attribute string
+        // 标签属性字符串
         $as_readonly = empty($item['readonly']) ? null : 'readonly=readonly';
         $as_placeholder = 'placeholder="' . $empty('placeholder') . '"';
+        $as_name = ($av_assist ? 'id' : 'name') . '="' . $av_name . '"';
+        $as_type = 'type="' . $av_type . '"';
+        $as_script = $av_script ? 'onclick="' . $av_script . '"' : '';
 
         if (!is_array($av_value)) {
             $av_value = Html::encode($av_value);
             $as_value = 'value="' . strval($av_value) . '"';
         }
-
-        $as_name = 'name="' . $av_name . '"';
-        $as_type = 'type="' . $av_type . '"';
 
         $as_tip = null;
         if ($tip = $empty('tip')) {
@@ -93,25 +88,75 @@ if ($modal) {
         }
         ?>
 
-        <?= $html_begin_div ?>
-        <?= $html_label ?>
+    <?php if ($element == 'input' && $av_type == 'file'): ?> <!-- input.file description -->
+        <div class="form-group">
+            <label class="col-sm-2 control-label"></label>
+            <div class="col-sm-<?= $empty('label_tips', 4) ?>" <?= $as_tip ?>>
+                <table class="table table-bordered table-striped">
+                    <tbody>
+                    <?php if ($empty('multiple')): ?>
+                        <tr>
+                            <td><kbd>允许多张</kbd></td>
+                            <td><code class="success">是</code></td>
+                        </tr>
+                    <?php endif; ?>
+                    <?php foreach ($item['rules'] as $k => $v): ?>
+                        <tr>
+                            <td><kbd><?= $item['rules_info'][$k] ?></kbd></td>
+                            <td><code class="info"><?= is_array($v) ? implode(',', $v) : $v ?></code></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?= $html_begin_div ?>
+    <?= $html_label ?>
 
     <?php if ($element == 'input'): ?> <!-- input -->
         <div class="col-sm-<?= $empty('label', 3) ?> <?= $av_class ?>" <?= $as_tip ?>>
             <?php $av_type == 'file' && $as_name = 'id="' . $av_name . '"' ?>
             <input class="form-control"
                 <?= $as_name ?>
+                <?= $as_script ?>
                 <?= $as_readonly ?>
                 <?= $as_placeholder ?>
                 <?= $as_type ?>
                 <?= $as_value ?>>
         </div>
+
+        <?php
+        if ($av_type == 'file') :
+            $previewRule = Helper::emptyDefault($list, $empty('preview_name'), []);
+            $json = [
+                'triggerTarget' => "#{$av_name}",
+                'action' => Url::to(['general/ajax-upload']),
+                'data' => [
+                    'tag' => $empty('tag'),
+                    'controller' => Yii::$app->controller->id,
+                    'action' => Yii::$app->controller->action->id,
+                    Yii::$app->request->csrfParam => Yii::$app->request->csrfToken
+                ],
+                'attachmentName' => $empty('field_name'),
+                'previewName' => $empty('preview_name'),
+                'multiple' => $empty('multiple') ? 1 : 0,
+                'previewLabel' => Helper::emptyDefault($previewRule, 'img_label', 4)
+            ];
+        ?>
+        <script type="text/javascript">
+            $(function () {
+                $.uploadAttachment(<?= json_encode($json, JSON_UNESCAPED_UNICODE) ?>);
+            });
+        </script>
+        <?php endif; ?>
     <?php elseif ($element == 'text'): ?> <!-- text -->
         <div class="col-sm-<?= $empty('label', 3) ?> <?= $av_class ?>" <?= $as_tip ?>>
-            <p class="bg-info" <?= $as_name ?>><?= $av_value ?></p>
+            <p class="bg-info" <?= $as_name ?> <?= $as_script ?>><?= $av_value ?></p>
         </div>
     <?php elseif ($element == 'img'): ?> <!-- img -->
-        <div class="col-sm-<?= $empty('label', 10) ?> <?= $av_class ?>" <?= $as_tip ?>>
+        <div class="col-sm-<?= $empty('label', 10) ?> <?= $av_class ?>" <?= $as_tip ?> <?= $as_script ?>>
             <div class="row" <?= $as_name ?>>
                 <?php
                 $attachment = (array) $empty($field, $empty('value'), $flash);
@@ -119,7 +164,7 @@ if ($modal) {
                     $attachment = [];
                 }
 
-                $uploader = Helper::issetDefault($list, $empty('upload_key'));
+                $uploader = Helper::issetDefault($list, $empty('upload_name'));
 
                 $attachmentName = Helper::emptyDefault($uploader, 'field_name');
                 $previewName = Helper::emptyDefault($uploader, 'preview_name', $field);
@@ -153,30 +198,30 @@ if ($modal) {
             </div>
         </div>
     <?php elseif ($element == 'select'): ?> <!-- select -->
-        <div class="col-sm-<?= $empty('label', 2) ?> <?= $av_class ?>" <?= $as_tip ?>>
+        <div class="col-sm-<?= $empty('label', 2) ?> <?= $av_class ?>" <?= $as_tip ?> <?= $as_script ?>>
             <?php
             $value = $empty('value');
             $selected = Helper::issetDefault($flash, $field, $value['selected']);
-            echo Helper::createSelect($value['list'], $value['name'], $selected, 'key', $empty('readonly', false));
+            echo Helper::createSelect($value['list'], $as_name, $selected, 'key', $empty('readonly', false));
             ?>
         </div>
     <?php elseif ($element == 'radio'): ?> <!-- radio -->
-        <div class="col-sm-<?= $empty('label', 2) ?> <?= $av_class ?>" <?= $as_tip ?>>
+        <div class="col-sm-<?= $empty('label', 2) ?> <?= $av_class ?>" <?= $as_tip ?> <?= $as_script ?>>
             <?php
             $value = $empty('value');
             $selected = Helper::issetDefault($flash, $field, $value['selected']);
-            echo Helper::createRadio($value['list'], $value['name'], $selected, 'key', $empty('readonly', false));
+            echo Helper::createRadio($value['list'], $as_name, $selected, 'key', $empty('readonly', false));
             ?>
         </div>
     <?php elseif ($element == 'checkbox'): ?> <!-- checkbox -->
-        <div class="col-sm-<?= $empty('label', 2) ?> <?= $av_class ?>" <?= $as_tip ?>>
+        <div class="col-sm-<?= $empty('label', 2) ?> <?= $av_class ?>" <?= $as_tip ?> <?= $as_script ?>>
             <?php
             $value = $empty('value');
             $selected = Helper::issetDefault($flash, $field, $value['selected']);
             if (is_string($selected)) {
                 $selected = explode(',', $selected);
             }
-            echo Helper::createCheckbox($value['list'], $value['name'], $selected, 'key', $empty('readonly', false));
+            echo Helper::createCheckbox($value['list'], $as_name, $selected, 'key', $empty('readonly', false));
             ?>
         </div>
     <?php elseif ($element == 'textarea'): ?> <!-- textarea -->
@@ -185,10 +230,11 @@ if ($modal) {
             <textarea class="form-control"
                 <?= $as_name ?>
                 <?= $as_row ?>
+                <?= $as_script ?>
                 <?= $as_placeholder ?>><?= $av_value ?></textarea>
         </div>
     <?php elseif ($item['elem'] == 'ckeditor'): ?> <!-- ckeditor -->
-        <div class="col-sm-<?= $empty('label', 10) ?> <?= $av_class ?>" <?= $as_tip ?>>
+        <div class="col-sm-<?= $empty('label', 10) ?> <?= $av_class ?>" <?= $as_tip ?> <?= $as_script ?>>
             <textarea
                 <?= $as_name ?>
                 <?= $as_placeholder ?>><?= $av_value ?></textarea>
@@ -202,8 +248,11 @@ if ($modal) {
             });
         </script>
     <?php elseif ($item['elem'] == 'tag'): ?>  <!-- tag -->
-        <div class="col-sm-<?= $empty('label', 6) ?> <?= $av_class ?>" <?= $as_tip ?> <?= $as_name ?>
-             format="<?= $empty('format') ?>"></div>
+        <div class="col-sm-<?= $empty('label', 6) ?> <?= $av_class ?>"
+            <?= $as_tip ?>
+            <?= $as_name ?>
+            <?= $as_script ?>
+            format="<?= $empty('format') ?>"></div>
     <?php
     if (!empty($av_value)):
     $json = [
@@ -224,65 +273,16 @@ if ($modal) {
         </script>
     <?php endif; ?>
     <?php elseif ($item['elem'] == 'button'): ?>  <!-- button -->
-        <?php
-        $script = ViewHelper::escapeScript($empty('script'));
-        $script = empty($script) ? '' : 'onclick="' . $script . '"';
-        ?>
-        <div class="col-sm-<?= $empty('label', 6) ?> <?= $av_class ?>" <?= $as_tip ?> <?= $as_name ?>
-             format="<?= $empty('format') ?>">
-            <button type="button"
-                    class="btn btn-<?= $empty('level', 'primary') ?>" <?= $script ?>><?= $av_value ?></button>
+        <div class="col-sm-<?= $empty('label', 6) ?> <?= $av_class ?>"
+            format="<?= $empty('format') ?>"
+            <?= $as_tip ?>
+            <?= $as_name ?>>
+                <button class="btn btn-<?= $empty('level', 'primary') ?>"
+                    type="button"
+                    <?= $as_script ?>><?= $av_value ?></button>
         </div>
     <?php endif; ?>
-    <?= $html_add ?>
     <?= $html_end_div ?>
-
-    <?php if ($element == 'input' && $av_type == 'file'): ?>
-    <?php
-    $previewRule = Helper::emptyDefault($list, $empty('preview_name'), []);
-    $json = [
-        'uploadInput' => "#{$av_name}",
-        'action' => Url::to(['general/ajax-upload']),
-        'data' => [
-            'tag' => $empty('tag'),
-            'controller' => Yii::$app->controller->id,
-            'action' => Yii::$app->controller->action->id,
-            Yii::$app->request->csrfParam => Yii::$app->request->csrfToken
-        ],
-        'attachmentName' => $empty('field_name'),
-        'previewName' => $empty('preview_name'),
-        'multiple' => $empty('multiple'),
-        'previewLabel' => Helper::emptyDefault($previewRule, 'img_label', 4)
-    ];
-    ?>
-        <script type="text/javascript">
-            $(function () {
-                $.uploadAttachment(<?= json_encode($json, JSON_UNESCAPED_UNICODE)?>);
-            });
-        </script>
-        <div class="form-group">
-            <label class="col-sm-2 control-label"></label>
-
-            <div class="col-sm-<?= $empty('label_tips', 4) ?>" <?= $as_tip ?>>
-                <table class="table table-bordered table-striped">
-                    <tbody>
-                    <?php if ($empty('multiple')): ?>
-                        <tr>
-                            <td><kbd>允许多张</kbd></td>
-                            <td><code class="success">是</code></td>
-                        </tr>
-                    <?php endif; ?>
-                    <?php foreach ($item['rules'] as $k => $v): ?>
-                        <tr>
-                            <td><kbd><?= $item['rules_info'][$k] ?></kbd></td>
-                            <td><code class="info"><?= is_array($v) ? implode(',', $v) : $v ?></code></td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    <?php endif; ?>
     <?php endforeach; ?>
 
     <div class="form-group">
