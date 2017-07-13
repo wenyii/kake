@@ -91,6 +91,17 @@ EOF
                 'equal' => true
             ],
             'name' => 'input',
+            'title' => [
+                'title' => '产品',
+                'elem' => 'input',
+                'table' => 'product'
+            ],
+            'hotel_name' => [
+                'title' => '酒店',
+                'elem' => 'input',
+                'table' => 'hotel',
+                'field' => 'name'
+            ],
             'info' => 'input',
             'bidding' => [
                 'value' => 'all'
@@ -115,6 +126,14 @@ EOF
             'product_id' => 'code',
             'name' => [
                 'max-width' => '120px'
+            ],
+            'title' => [
+                'title' => '产品',
+                'tip'
+            ],
+            'hotel_name' => [
+                'title' => '酒店',
+                'tip'
             ],
             'price' => 'code',
             'sale_price' => [
@@ -295,14 +314,20 @@ EOF
     {
         return [
             'join' => [
-                ['table' => 'product']
+                ['table' => 'product'],
+                [
+                    'left_table' => 'product',
+                    'table' => 'hotel'
+                ]
             ],
             'select' => [
+                'product.title',
                 'product.sale_type',
                 'product.sale_rate',
                 'product.sale_from',
                 'product.sale_to',
                 'product.state AS status',
+                'hotel.name AS hotel_name',
                 'product_package.*'
             ],
             'order' => [

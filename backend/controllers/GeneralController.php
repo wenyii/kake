@@ -789,6 +789,37 @@ class GeneralController extends MainController
     }
 
     /**
+     * 处理下拉框的数据
+     *
+     * @access private
+     *
+     * @param array   $value
+     * @param object  $model
+     * @param string  $key
+     * @param array   $default
+     * @param boolean $addAll
+     *
+     * @return void
+     */
+    private function handleSelectList(&$value, $model, $key, $default, $addAll = false)
+    {
+        $valued = isset($value['value']) ? $value['value'] : null;
+
+        $list = empty($value['list']) ? null : (array) $value['list'];
+        $list = $this->getEnumerate($model, $key, $list);
+
+        if ($addAll) {
+            $list['all'] = 'All';
+        }
+
+        $value['value'] = [
+            'list' => $list,
+            'name' => $key,
+            'selected' => Helper::issetDefault($default, $key, $valued)
+        ];
+    }
+
+    /**
      * 获取表单相关需要的辅助信息
      *
      * @access public
@@ -853,13 +884,7 @@ class GeneralController extends MainController
                 case 'select' :
                 case 'radio' :
                 case 'checkbox' :
-                    $valued = isset($value['value']) ? $value['value'] : null;
-                    $list = empty($value['list']) ? null : $value['list'];
-                    $value['value'] = [
-                        'list' => $this->getEnumerate($model, $key, $list),
-                        'name' => $key,
-                        'selected' => Helper::issetDefault($default, $key, $valued)
-                    ];
+                    $this->handleSelectList($value, $model, $key, $default);
                     break;
 
                 case 'input' :
@@ -870,9 +895,9 @@ class GeneralController extends MainController
                         $value['rules_info'] = $model->_upload_rules;
                     }
 
-                    if (!empty($value['value_field'])) {
-                        if (isset($default[$value['value_field']])) {
-                            $value['value'] = $default[$value['value_field']];
+                    if (!empty($value['value_key'])) {
+                        if (isset($default[$value['value_key']])) {
+                            $value['value'] = $default[$value['value_key']];
                         }
                     } else if (isset($default[$key])) {
                         $value['value'] = $default[$key];
@@ -945,15 +970,9 @@ class GeneralController extends MainController
 
             switch ($value['elem']) {
                 case 'select' :
-                    $list = $this->getEnumerate($model, $key);
-                    $list['all'] = '全部';
-
-                    $selected = isset($value['value']) ? $value['value'] : null;
-                    $value['value'] = [
-                        'list' => $list,
-                        'name' => $key,
-                        'selected' => Helper::issetDefault($get, $key, $selected)
-                    ];
+                case 'radio' :
+                case 'checkbox' :
+                    $this->handleSelectList($value, $model, $key, $get, true);
                     break;
 
                 case 'input' :
@@ -1197,15 +1216,15 @@ class GeneralController extends MainController
             }
 
             if (empty($item['field_name'])) {
-                throw new \Exception('Key field_name is required.');
+                throw new \Exception('Key `field_name` is required.');
             }
 
             if (empty($item['table'])) {
-                throw new \Exception('Key table is required.');
+                throw new \Exception('Key `table` is required.');
             }
 
             if (empty($item['foreign_key'])) {
-                throw new \Exception('Key foreign_key is required.');
+                throw new \Exception('Key `foreign_key` is required.');
             }
 
             $key = $item['field_name'];
@@ -1983,6 +2002,36 @@ class GeneralController extends MainController
         }
 
         $this->goReference($reference ?: $this->getControllerName('index'));
+    }
+
+    /**
+     * 裁切图片
+     *
+     * @auth-pass-all
+     */
+    public function actionAjaxModalCrop()
+    {
+        $options = Yii::$app->request->post();
+        $view['title_info'] = '图片选区';
+
+        return $this->display('general/crop', compact('options', 'view'));
+    }
+
+    /**
+     * 保存裁切的图片
+     *
+     * @auth-pass-all
+     */
+    public function actionAjaxSaveCrop()
+    {
+        $base64 = Yii::$app->request->post('base64');
+        $url = Yii::$app->request->post('url');
+        $url = str_replace(Yii::$app->params['upload_url'], null, $url);
+        $file = Yii::$app->params['upload_path'] . $url;
+
+        $base64 = preg_replace('/^(data:\s*image\/(\w+);base64,)/', '', $base64);
+        @file_put_contents($file, base64_decode($base64));
+        $this->success();
     }
 
     /**

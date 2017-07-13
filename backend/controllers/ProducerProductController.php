@@ -113,6 +113,16 @@ class ProducerProductController extends GeneralController
                 'elem' => 'input',
                 'equal' => true
             ],
+            'title' => [
+                'elem' => 'input',
+                'title' => '产品',
+                'table' => 'product'
+            ],
+            'name' => [
+                'elem' => 'input',
+                'title' => '酒店',
+                'table' => 'hotel'
+            ],
             'type' => [
                 'value' => 'all'
             ],
@@ -145,7 +155,12 @@ class ProducerProductController extends GeneralController
         return [
             'product_id' => 'code',
             'title' => [
-                'title' => '产品'
+                'title' => '产品',
+                'max-width' => '180px'
+            ],
+            'name' => [
+                'title' => '酒店',
+                'max-width' => '180px'
             ],
             'type' => [
                 'code',
@@ -253,10 +268,15 @@ class ProducerProductController extends GeneralController
                 [
                     'table' => 'user',
                     'left_on_field' => 'producer_id'
+                ],
+                [
+                    'left_table' => 'product',
+                    'table' => 'hotel'
                 ]
             ],
             'select' => [
                 'product.title',
+                'hotel.name',
                 'producer_product.*',
                 'user.username'
             ],

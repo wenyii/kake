@@ -143,7 +143,7 @@ class ProducerQuotaController extends GeneralController
     {
         $reference = $this->getControllerName('my');
         $quota = Yii::$app->request->post('quota');
-        if (empty($quota)) {
+        if (empty($quota) || $quota <= 0) {
             Yii::$app->session->setFlash('warning', '请输入申请提现金额');
             $this->goReference($reference);
         }
