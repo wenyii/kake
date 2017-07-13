@@ -15,9 +15,7 @@ $params = \Yii::$app -> params;
 
 		<!--入场动画-->
 		<div class="distri_ani">
-			<div class="content">
-				<img src="<?= $params['frontend_source'] ?>/img/distribution/ani-bg.png"/>
-			</div>
+			<div class="content"></div>
 			<img src="<?= $params['frontend_source'] ?>/img/distribution/halo.png" class="halo"/>
 			<img src="<?= $params['frontend_source'] ?>/img/distribution/people.png" class="people"/>
 			<div class="box-false">

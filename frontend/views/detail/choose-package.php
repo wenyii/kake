@@ -34,8 +34,11 @@ $params = \Yii::$app->params;
                             <?php $_item = '{id: ' . $item['id'] . ', number: 1, price: ' . $item['min_price'] . '}'; ?>
                             <div class="combo-1"
                                  kk-tap="<?= $package ?> = (<?= $number ?> ? null : <?= $_item ?>); calPrice()">
-                                <b ng-class="{'current': <?= $number ?>}"></b><?= $item['name'] ?>
-                                <span>￥<?= $item['min_price'] ?></span>
+	                            	<div class="lable">
+	                            		<b ng-class="{'current': <?= $number ?>}"></b>
+	                               	<span class="title"><?= $item['name'] ?></span>
+	                               	<i class="price">￥<?= $item['min_price'] ?><i/>
+	                            	</div>
                             </div>
                             <div class="combo-2 kk-animate ng-hide" ng-class="{'kk-b2s': <?= $number ?>}"
                                  ng-show="<?= $number ?>">
