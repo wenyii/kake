@@ -55,7 +55,6 @@ return [
                 'product-package.index' => [
                     'name' => '产品套餐管理',
                     'params' => [
-                        'state' => 1,
                         'status' => 1
                     ]
                 ]
