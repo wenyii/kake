@@ -24,25 +24,6 @@ class UserController extends GeneralController
      */
     public static $ajaxModalListTitle = '选择用户';
 
-    // 权限控制 - 手动排除
-    public static $keyInheritExcept = '@auth-inherit-except';
-
-    // 权限控制 - 允许所有人
-    public static $keyPassAll = '@auth-pass-all';
-
-    // 权限控制 - 允许指定角色 （含逗号时在该范围内，否则应比指定的权限小）
-    public static $keyPassRole = '@auth-pass-role';
-
-    // 权限控制 - 同指定的方法
-    public static $keySame = '@auth-same';
-
-    // 权限控制 - 标题样式控制
-    public static $keyInfoStyle = '@auth-info-style';
-
-    // 权限描述相关标识
-    public static $varCtrl = '{ctrl}';
-    public static $varInfo = '{info}';
-
     /**
      * @inheritDoc
      */
@@ -272,8 +253,7 @@ class UserController extends GeneralController
             $this->error('用户ID参数未指定');
         }
 
-        $userInfo = $this->service('user.detail', ['where' => [['id' => $userId]]]);
-        $authList = $this->authList(true, 1, $userInfo['role']);
+        $authList = $this->authList(true);
         $authRecord = array_keys($this->authRecord($userId));
 
         return $this->display('auth', [
