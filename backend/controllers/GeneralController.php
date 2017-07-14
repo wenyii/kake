@@ -143,6 +143,32 @@ class GeneralController extends MainController
     }
 
     /**
+     * 获取根用户
+     *
+     * @access private
+     * @return array
+     */
+    private function getRootUsers()
+    {
+        if (empty(Yii::$app->params['private'])) {
+            return [];
+        }
+
+        if (empty(Yii::$app->params['private'][self::$rootUserKey])) {
+            return [];
+        }
+
+        $user = Yii::$app->params['private'][self::$rootUserKey];
+        if (is_array($user)) {
+            return $user;
+        }
+
+        $user = Helper::handleString($user);
+
+        return $user;
+    }
+
+    /**
      * @inheritdoc
      */
     public function beforeAction($action)
@@ -168,8 +194,7 @@ class GeneralController extends MainController
         ) {
             $this->mustLogin();
 
-            $rootUsers = explode(',', Yii::$app->params['private']['root_user_ids']);
-            if (!in_array($this->user->id, $rootUsers)) {
+            if (!in_array($this->user->id, $this->getRootUsers())) {
                 $auth = $this->authVerify($router);
                 if (is_string($auth)) {
                     if (Yii::$app->request->isAjax) {
