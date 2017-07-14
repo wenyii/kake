@@ -8,8 +8,12 @@ return [
             'name' => '生产环境',
             'sub' => [
                 'environment.index' => '生产环境'
+<<<<<<< Updated upstream
             ],
             'pass_role' => 10
+=======
+            ]
+>>>>>>> Stashed changes
         ],
         'b' => [
             'name' => '项目配置',
@@ -109,8 +113,7 @@ return [
                 'producer-product.my' => '分销产品选择',
                 'producer-log.my' => '分销记录',
                 'producer-quota.my' => '我要提现'
-            ],
-            'pass_role' => 10
+            ]
         ]
     ]
 ];

@@ -93,14 +93,39 @@ class GeneralController extends MainController
      */
     public static $hookLogic;
 
-    /**
-     * @var array 无需验证权限的控制器
-     */
-    public static $passAuthCtrl = [
+    // ---
+
+    // 权限控制 - 只用于继承的控制器
+    private static $inheritControllers = [
         'MainController',
         'GeneralController'
     ];
 
+<<<<<<< Updated upstream
+=======
+    // 权限控制
+    private static $rootUserKey = 'root_user_ids';
+
+    // 权限控制 - 手动排除
+    private static $keyInheritExcept = '@auth-inherit-except';
+
+    // 权限控制 - 允许所有人
+    private static $keyPassAll = '@auth-pass-all';
+
+    // 权限控制 - 允许指定角色 （含逗号时在该范围内，否则应比指定的权限小）
+    private static $keyPassRole = '@auth-pass-role';
+
+    // 权限控制 - 同指定的方法
+    private static $keySame = '@auth-same';
+
+    // 权限控制 - 标题样式控制
+    private static $keyInfoStyle = '@auth-info-style';
+
+    // 权限描述相关标识
+    private static $varCtrl = '{ctrl}';
+    private static $varInfo = '{info}';
+
+>>>>>>> Stashed changes
     // ---
 
     /**
@@ -184,57 +209,22 @@ class GeneralController extends MainController
     protected function authVerify($router)
     {
         $router = str_replace('.', '/', $router);
-        $_router = $router;
+        $authList = $this->authList(false, $this->user->id);
 
-        // 首次鉴权
-        list($ctrl) = explode('/', $_router);
-        $ctrl = Helper::underToCamel($ctrl, false, '-') . 'Controller';
-        if (in_array($ctrl, self::$passAuthCtrl)) {
-            return true;
-        }
-
-        // 二次鉴权
-        $authRecord = $this->authRecord($this->user->id);
-        if (!empty($authRecord[$_router])) {
-            return true;
-        }
-
-        // 根据注释完善辅助数据
-        $authList = $this->authList();
-        $perfectAuthData = function () use (&$authList, &$authRecord, &$router, $_router, &$perfectAuthData) {
-
-            list($class, $method) = explode('/', $router);
-            $class = $this->controller($class);
-            $method = 'action' . Helper::underToCamel($method, false, '-');
-
-            $classDoc = Yii::$app->reflection->getClassDocument($class);
-            $methodDoc = Yii::$app->reflection->getMethodDocument($class, $method);
-
-            if (isset($methodDoc[UserController::$keySame])) {
-                $authList[$router] = $classDoc['info'] . ' > ' . $methodDoc['info'];
-                $router = str_replace(UserController::$varCtrl, $this->getControllerName(), current($methodDoc[UserController::$keySame]));
-                if (!empty($authRecord[$router])) {
-                    $authRecord[$_router] = $authRecord[$router];
-                }
-                $perfectAuthData();
-            } else if (isset($methodDoc[UserController::$keyPassRole])) {
-                $roles = explode(',', current($methodDoc[UserController::$keyPassRole]));
-                $roles = count($roles) == 1 ? ($this->user->role <= current($roles)) : in_array($this->user->role, $roles);
-                if ($roles) {
-                    $authRecord[$_router] = 1;
-                }
+        $authListDec = $this->authList();
+        $_authListDec = [];
+        foreach ($authListDec as $ctrlInfo => $item) {
+            foreach ($item as $k => $actInfo) {
+                $_authListDec[$k] = $ctrlInfo . ' > ' . $actInfo;
             }
-        };
+        }
 
-        $perfectAuthData();
-
-        // 三次鉴权
-        if (empty($authList[$_router]) || !empty($authRecord[$_router])) {
+        if (!empty($authList[$router])) {
             return true;
         }
 
-        Yii::trace('操作权限鉴定失败: ' . $_router . ' (' . $authList[$_router] . ')');
-        $info = Helper::deleteHtml('"' . $authList[$_router] . '" 操作权限不足');
+        Yii::trace('操作权限鉴定失败: ' . $router . ' (' . $_authListDec[$router] . ')');
+        $info = Helper::deleteHtml('"' . $_authListDec[$router] . '" 操作权限不足');
 
         return $info;
     }
@@ -244,32 +234,79 @@ class GeneralController extends MainController
      *
      * @access public
      *
-     * @param boolean $keepModule
-     * @param mixed   $roleCtrl
+     * @param boolean $manager
      * @param integer $userRole
      *
      * @return array
      */
-    public function authList($keepModule = false, $roleCtrl = null, $userRole = null)
+    public function authList($manager = true, $userRole = null)
     {
         return $this->cache([
             'controller.auth.list',
             func_get_args()
-        ], function () use ($keepModule, $roleCtrl, $userRole) {
-            $list = $this->reflectionAuthList($roleCtrl, $userRole);
+        ], function () use ($manager, $userRole) {
 
+            $list = $this->reflectionAuthList();
             $_list = [];
-            foreach ($list as $module => $items) {
-                $_items = [];
-                foreach ($items as $item) {
-                    $key = $item['controller'] . '/' . $item['action'];
-                    $info = ($keepModule ? null : $module . ' > ') . $item['info'];
-                    $_items[$key] = $info;
+
+            // 统一处理
+            foreach ($list as $ctrl => $item) {
+                if ($manager && in_array($ctrl, self::$inheritControllers)) {
+                    continue;
                 }
-                $_list[$module] = $_items;
+
+                $_items = [];
+                foreach ($item['sub'] as $act) {
+                    $key = $act['controller'] . '/' . $act['action'];
+                    if ($manager) {
+                        if (!empty($act[self::$keySame]) || isset($act[self::$keyPassAll])) {
+                            continue;
+                        }
+                        $_items[$key] = $act['info'];
+                    } else {
+                        unset($act['controller'], $act['action'], $act['info']);
+                        $_items[$key] = empty($act) ? false : $act;
+                    }
+                }
+
+                if (!empty($_items)) {
+                    $_list[$item['info']] = $_items;
+                }
             }
 
-            !$keepModule && $_list = array_merge(...array_values($_list));
+            // 非管理页列表时特殊处理
+            if (!$manager) {
+                $authRecord = $this->authRecord($this->user->id);
+                $_list = array_merge(...(array_values($_list)));
+
+                foreach ($_list as $router => &$item) {
+                    if (empty($item)) {
+                        !empty($authRecord[$router]) && $item = true;
+                    } else if (isset($item[self::$keyPassAll])) {
+                        $item = true;
+                    } else if (!empty($item[self::$keyPassRole])) {
+                        $role = $item[self::$keyPassRole];
+                        $item = is_array($role) ? in_array($userRole, $role) : $userRole <= $role;
+                    }
+                }
+
+                $authSame = function ($list, $v) use ($authRecord, &$authSame) {
+                    if (is_array($v) && !empty($v[self::$keySame])) {
+                        $prev = $v[self::$keySame];
+                        if (isset($list[$prev])) {
+                            return $authSame($list, $list[$prev]);
+                        } else {
+                            return false;
+                        }
+                    }
+
+                    return $v;
+                };
+
+                foreach ($_list as $router => &$item) {
+                    $item = $authSame($_list, $item);
+                }
+            }
 
             return $_list;
         }, YEAR, null, Yii::$app->params['use_cache']);
@@ -360,91 +397,120 @@ class GeneralController extends MainController
      * 获取应被纳入权限控制的操作列表
      *
      * @access public
-     *
-     * @param mixed   $roleCtrl
-     * @param integer $userRole
-     * @param array   $exceptControllers
-     *
      * @return array
      */
-    public function reflectionAuthList($roleCtrl = null, $userRole = null, $exceptControllers = [])
+    public function reflectionAuthList()
     {
-        $exceptControllers = array_merge($exceptControllers, self::$passAuthCtrl);
         $directory = Yii::getAlias('@backend') . DS . 'controllers';
         $controllers = Helper::readDirectory($directory, ['php'], 'IN');
 
         $list = [];
 
-        foreach ($controllers as &$controller) {
+        foreach ($controllers as $ctrl) {
 
             // 处理文件路径
-            $controller = Helper::cutString($controller, [
+            $ctrl = Helper::cutString($ctrl, [
                 '/^0^desc',
                 '.^0'
             ]);
-            if (in_array($controller, $exceptControllers)) {
-                continue;
-            }
 
             // 获取注释
-            $class = $this->controller($controller);
+            $class = $this->controller($ctrl);
             $classDoc = Yii::$app->reflection->getClassDocument($class);
             $comment = Yii::$app->reflection->getMethodsDocument($class, null);
 
             $self = [];
 
             // 处理注释
-            foreach ($comment as $key => $val) {
+            foreach ($comment as $act => $val) {
 
-                // 非 http 方法
-                if (0 !== strpos($key, 'action') || !preg_match('/^(action)[A-Z]/', $key)) {
+                // 排除非 http 方法
+                if (!preg_match('/^(action)[A-Z]/', $act)) {
                     continue;
                 }
 
-                // 手动排除方法
-                $action = Helper::camelToUnder(preg_replace('/action/', null, $key, 1), '-');
-                if (!empty($classDoc[UserController::$keyInheritExcept]) && in_array($action, $classDoc[UserController::$keyInheritExcept])) {
-                    continue;
+                if (!empty($val[self::$keySame])) {
+                    $val[self::$keySame] = current($val[self::$keySame]);
                 }
 
-                // 无需通过后台配置即可决定权限的标示
-                if (isset($val[UserController::$keyPassAll]) || isset($val[UserController::$keySame])) {
-                    continue;
+                if (isset($val[self::$keyPassAll])) {
+                    $val[self::$keyPassAll] = true;
+                    $file = Helper::cutString($val['file'], [
+                        '/^0^desc',
+                        '.^0'
+                    ]);
+                    if (in_array($file, self::$inheritControllers) && !in_array($ctrl, self::$inheritControllers)) {
+                        continue;
+                    }
+                }
+
+                // 手动排除不需要继承的方法
+                $act = preg_replace('/action/', null, $act, 1);
+                $act = Helper::camelToUnder($act, '-');
+
+                if (!empty($classDoc[self::$keyInheritExcept])) {
+                    if (in_array($act, $classDoc[self::$keyInheritExcept])) {
+                        continue;
+                    }
+
+                    if (!empty($val[self::$keySame])) {
+                        $_act = explode('/', $val[self::$keySame])[1];
+                        if (in_array($_act, $classDoc[self::$keyInheritExcept])) {
+                            continue;
+                        }
+                    }
                 }
 
                 // Ajax 操作标题修饰
-                if (strpos($action, 'ajax-') === 0) {
-                    $style = UserController::$varInfo . ' (<b>Ajax</b>)';
-                    if (empty($val[UserController::$keyInfoStyle])) {
-                        $val[UserController::$keyInfoStyle] = [$style];
+                if (strpos($act, 'ajax-') === 0) {
+                    $style = self::$varInfo . ' (<b>Ajax</b>)';
+                    if (empty($val[self::$keyInfoStyle])) {
+                        $val[self::$keyInfoStyle] = [$style];
                     } else {
-                        $val[UserController::$keyInfoStyle] = [str_replace(UserController::$varInfo, current($val[UserController::$keyInfoStyle]), $style)];
+                        $style = str_replace(self::$varInfo, current($val[self::$keyInfoStyle]), $style);
+                        $val[self::$keyInfoStyle] = [$style];
                     }
                 }
 
                 // 普通操作标题修饰
-                if (!empty($val[UserController::$keyInfoStyle])) {
-                    $val['info'] = str_replace(UserController::$varInfo, $val['info'], current($val[UserController::$keyInfoStyle]));
+                if (!empty($val[self::$keyInfoStyle])) {
+                    $val['info'] = str_replace(self::$varInfo, $val['info'], current($val[self::$keyInfoStyle]));
                 }
 
-                $roles = explode(',', empty($val[UserController::$keyPassRole]) ? $roleCtrl : current($val[UserController::$keyPassRole]));
-                $roles = count($roles) == 1 ? ($userRole <= current($roles)) : in_array($userRole, $roles);
-
-                if (!$roleCtrl || $roles) {
-                    $controller = Helper::camelToUnder(str_replace('Controller', null, $controller), '-');
-                    if (empty($val['info'])) {
-                        $this->error("${controller}/${action} 未规范注释，无法纳入权限控制");
+                if (!empty($val[self::$keyPassRole])) {
+                    $val[self::$keyPassRole] = current($val[self::$keyPassRole]);
+                    if (!is_numeric($val[self::$keyPassRole])) {
+                        $val[self::$keyPassRole] = explode(',', (string) $val[self::$keyPassRole]);
                     }
-                    $self[] = [
-                        'info' => $val['info'],
-                        'controller' => $controller,
-                        'action' => $action
-                    ];
                 }
+
+                $_ctrl = str_replace('Controller', null, $ctrl);
+                $_ctrl = Helper::camelToUnder($_ctrl, '-');
+                if (empty($val['info'])) {
+                    $val['info'] = "${_ctrl}/${act} 不规范的注释";
+                }
+
+                if (!empty($val[self::$keySame])) {
+                    $val[self::$keySame] = str_replace(self::$varCtrl, $_ctrl, $val[self::$keySame]);
+                }
+
+                $val = Helper::pullSome($val, [
+                    self::$keySame,
+                    self::$keyPassAll,
+                    'info'
+                ]);
+
+                $self[] = array_merge($val, [
+                    'controller' => $_ctrl,
+                    'action' => $act
+                ]);
             }
 
             if (!empty($self)) {
-                $list[$classDoc['info'] ?: 'Unknown'] = $self;
+                $list[$ctrl] = [
+                    'info' => $classDoc['info'] ?: 'UnknownController',
+                    'sub' => $self
+                ];
             }
         }
 
@@ -465,8 +531,10 @@ class GeneralController extends MainController
         Yii::$app->view->params['user_info'] = $this->user;
         $menu = $hideMenu ? [] : Yii::$app->params['menu'];
 
-        foreach ($menu as $key => &$item) {
+        $authList = $this->authList(false, $this->user->role);
+        $rootUser = $this->getRootUsers();
 
+<<<<<<< Updated upstream
             $roles = empty($item['pass_role']) ? [1] : (array) $item['pass_role'];
             if (count($roles) == 1) {
                 $rolesShow = $this->user->role <= current($roles);
@@ -477,37 +545,39 @@ class GeneralController extends MainController
                 unset($menu[$key]);
                 continue;
             }
+=======
+        foreach ($menu as $key => &$item) {
 
             $routers = [];
             foreach ($item['sub'] as $router => &$page) {
-                if (is_array($page)) {
-                    $_roles = empty($page['pass_role']) ? $roles : (array) $page['pass_role'];
-                    $params = empty($page['params']) ? [] : (array) $page['params'];
-                    $page = $page['name'];
-                } else {
-                    $_roles = $roles;
-                    $params = [];
-                }
-                if (count($_roles) == 1) {
-                    $_rolesShow = $this->user->role <= current($_roles);
-                } else {
-                    $_rolesShow = in_array($this->user->role, $_roles);
-                }
-                if (!$_rolesShow) {
-                    unset($item['sub'][$router]);
-                    continue;
-                }
 
                 list($controller, $action) = explode('.', $router);
+                $_router = $controller . '/' . $action;
+
+                if (empty($authList[$_router]) && !in_array($this->user->id, $rootUser)) {
+                    unset($item['sub'][$router]);
+                    if (empty($item['sub'])) {
+                        unset($menu[$key]);
+                        continue 2;
+                    }
+                    continue;
+                }
+>>>>>>> Stashed changes
+
+                if (is_array($page)) {
+                    $params = empty($page['params']) ? [] : (array) $page['params'];
+                    $page = $page['name'];
+                }
+
                 if (!in_array($controller, $routers)) {
-                    $routers[] = $controller . '/' . $action;
+                    $routers[] = $_router;
                 }
 
                 $page = [
                     'title' => $page,
                     'controller' => $controller,
                     'action' => $action,
-                    'params' => $params
+                    'params' => empty($params) ? [] : $params
                 ];
             }
             $item['router'] = $routers;

@@ -168,7 +168,7 @@ if ($modal) {
 
                 $attachmentName = Helper::emptyDefault($uploader, 'field_name');
                 $previewName = Helper::emptyDefault($uploader, 'preview_name', $field);
-                $multiple = Helper::emptyDefault($uploader, 'multiple');
+                $multiple = Helper::emptyDefault($uploader, 'multiple') ? 1 : 0;
 
                 $json = [
                     'attachmentName' => $attachmentName,
