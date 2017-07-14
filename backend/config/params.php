@@ -8,12 +8,7 @@ return [
             'name' => '生产环境',
             'sub' => [
                 'environment.index' => '生产环境'
-<<<<<<< Updated upstream
-            ],
-            'pass_role' => 10
-=======
             ]
->>>>>>> Stashed changes
         ],
         'b' => [
             'name' => '项目配置',
