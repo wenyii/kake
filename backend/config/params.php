@@ -46,6 +46,7 @@ return [
         'f' => [
             'name' => '酒店和产品',
             'sub' => [
+                'ad.index' => '广告管理',
                 'hotel.index' => '酒店管理',
                 'product.index' => [
                     'name' => '产品管理',
@@ -95,7 +96,6 @@ return [
         'j' => [
             'name' => '其他',
             'sub' => [
-                'ad.index' => '广告管理',
                 'attachment.index' => '附件管理',
                 'wx-menu.index' => '服务号菜单',
             ]

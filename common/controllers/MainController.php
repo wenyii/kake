@@ -806,7 +806,7 @@ class MainController extends Controller
                 $controller = $assist['handler_controller'];
             } else {
                 $controller = str_replace('_', '-', $assist['table']);
-                $controller = $this->controller($controller, Yii::$app->id, false);
+                $controller = $this->controller($controller, 'backend', false);
             }
 
             $extraData = [];
