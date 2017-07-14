@@ -101,8 +101,6 @@ class GeneralController extends MainController
         'GeneralController'
     ];
 
-<<<<<<< Updated upstream
-=======
     // 权限控制
     private static $rootUserKey = 'root_user_ids';
 
@@ -125,7 +123,6 @@ class GeneralController extends MainController
     private static $varCtrl = '{ctrl}';
     private static $varInfo = '{info}';
 
->>>>>>> Stashed changes
     // ---
 
     /**
@@ -534,18 +531,6 @@ class GeneralController extends MainController
         $authList = $this->authList(false, $this->user->role);
         $rootUser = $this->getRootUsers();
 
-<<<<<<< Updated upstream
-            $roles = empty($item['pass_role']) ? [1] : (array) $item['pass_role'];
-            if (count($roles) == 1) {
-                $rolesShow = $this->user->role <= current($roles);
-            } else {
-                $rolesShow = in_array($this->user->role, $roles);
-            }
-            if (!$rolesShow) {
-                unset($menu[$key]);
-                continue;
-            }
-=======
         foreach ($menu as $key => &$item) {
 
             $routers = [];
@@ -562,7 +547,6 @@ class GeneralController extends MainController
                     }
                     continue;
                 }
->>>>>>> Stashed changes
 
                 if (is_array($page)) {
                     $params = empty($page['params']) ? [] : (array) $page['params'];
