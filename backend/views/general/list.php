@@ -13,6 +13,9 @@ $action = \Yii::$app->controller->action->id;
 
 <div id="<?= $action ?>">
 
+    <!-- 当前 url -->
+    <input type="hidden" name="current-url" value="<?= Yii::$app->request->getHostInfo() . Yii::$app->request->url ?>">
+
     <!-- 筛选器 -->
     <?php if (!empty($filter)): ?>
         <form class="form-inline filter">
@@ -65,6 +68,8 @@ $action = \Yii::$app->controller->action->id;
             <?php endforeach; ?>
 
             <button type="submit" class="btn btn-primary">筛选</button>
+
+            <!-- ajax 筛选 -->
             <?php if (!empty($ajaxFilter)): ?>
                 <script type="text/javascript">
                     $.ajaxFilterList('<?= $action ?>');
@@ -129,6 +134,14 @@ $action = \Yii::$app->controller->action->id;
                     </div>
                 </th>
             <?php endforeach; ?>
+
+            <!-- ajax 排序 -->
+            <?php if (!empty($ajaxPage)): ?>
+                <script type="text/javascript">
+                    $.ajaxSorterList('<?= $action ?>');
+                </script>
+            <?php endif; ?>
+
             <?php if (!empty($operation)): ?>
                 <th>
                     <div>操作</div>
@@ -221,6 +234,8 @@ $action = \Yii::$app->controller->action->id;
     <!-- 分页 -->
     <div class="page">
         <?= ViewHelper::page($page) ?>
+
+        <!-- ajax 分页 -->
         <?php if (!empty($ajaxPage)): ?>
             <script type="text/javascript">
                 $.ajaxPageList('<?= $action ?>');

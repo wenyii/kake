@@ -415,6 +415,17 @@ class ProductController extends GeneralController
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function ajaxModalListSorter()
+    {
+        return [
+            'id',
+            'classify'
+        ];
+    }
+
+    /**
      * 生成列表页的辅助数据
      *
      * @inheritDoc

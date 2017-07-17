@@ -982,6 +982,25 @@ class Helper extends Object
     }
 
     /**
+     * Get the One/Two-dimensional from Two-dimensional simple
+     *
+     * @access public
+     *
+     * @param array  $array
+     * @param string $keyTag
+     * @param mixed  $valTag
+     *
+     * @return array
+     */
+    public static function arrayColumnSimple($array, $keyTag, $valTag)
+    {
+        $keyArray = array_column($array, $keyTag);
+        $valArray = array_column($array, $valTag);
+
+        return array_combine($keyArray, $valArray);
+    }
+
+    /**
      * Create select'html
      *
      * @param array   $array
