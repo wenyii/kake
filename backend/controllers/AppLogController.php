@@ -40,7 +40,7 @@ class AppLogController extends GeneralController
     {
         return [
             'level' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'log_time' => [
                 'elem' => 'input',
@@ -48,6 +48,16 @@ class AppLogController extends GeneralController
                 'between' => true
             ],
             'message' => 'input'
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function indexSorter()
+    {
+        return [
+            'log_time'
         ];
     }
 
@@ -79,7 +89,10 @@ class AppLogController extends GeneralController
     public function indexCondition()
     {
         return [
-            'order' => 'log_time DESC, id DESC'
+            'order' => [
+                'log_time DESC',
+                'id DESC'
+            ]
         ];
     }
 

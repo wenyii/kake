@@ -64,14 +64,25 @@ class AdController extends GeneralController
     {
         return [
             'type' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'target' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function indexSorter()
+    {
+        return [
+            'from',
+            'to'
         ];
     }
 

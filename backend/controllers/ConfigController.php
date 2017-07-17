@@ -42,14 +42,26 @@ class ConfigController extends GeneralController
     {
         return [
             'app' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'key' => 'input',
             'value' => 'input',
             'remark' => 'input',
             'state' => [
-                'value' => 'all'
+                'value' => 1
             ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function indexSorter()
+    {
+        return [
+            'app',
+            'key',
+            'state'
         ];
     }
 
@@ -67,7 +79,9 @@ class ConfigController extends GeneralController
             'value' => [
                 'max-width' => '300px'
             ],
-            'remark',
+            'remark' => [
+                'max-width' => '300px'
+            ],
             'state' => [
                 'code',
                 'color' => 'auto',

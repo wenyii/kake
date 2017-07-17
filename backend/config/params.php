@@ -13,10 +13,7 @@ return [
         'b' => [
             'name' => '项目配置',
             'sub' => [
-                'config.index' => [
-                    'name' => '常规配置',
-                    'params' => ['state' => 1]
-                ],
+                'config.index' => '常规配置',
                 'config.file' => '文件预配置'
             ]
         ],
@@ -25,14 +22,14 @@ return [
             'sub' => [
                 'mission.cache' => '缓存任务',
                 'mission.attachment' => '附件任务',
-                'mission.log' => '日志任务',
+                'mission.log' => '日志任务'
             ]
         ],
         'd' => [
             'name' => '用户',
             'sub' => [
                 'user.index' => '用户管理',
-                'login-log.index' => '登录日志',
+                'login-log.index' => '登录日志'
             ]
         ],
         'e' => [
@@ -48,16 +45,8 @@ return [
             'sub' => [
                 'ad.index' => '广告管理',
                 'hotel.index' => '酒店管理',
-                'product.index' => [
-                    'name' => '产品管理',
-                    'params' => ['state' => 1]
-                ],
-                'product-package.index' => [
-                    'name' => '产品套餐管理',
-                    'params' => [
-                        'status' => 1
-                    ]
-                ]
+                'product.index' => '产品管理',
+                'product-package.index' => '产品套餐管理'
             ]
         ],
         'g' => [
@@ -66,7 +55,7 @@ return [
                 'order.index' => '主订单管理',
                 'order-sub.index' => '子订单管理',
                 'bill.index' => '发票管理',
-                'order-instructions-log.index' => '订单操作日志',
+                'order-instructions-log.index' => '订单操作日志'
             ]
         ],
         'h' => [
@@ -81,22 +70,16 @@ return [
                 'producer-setting.index' => '分销商',
                 'product-producer.index' => '产品分销设置',
                 'producer-product.index' => '分销产品选择',
-                'producer-log.index' => [
-                    'name' => '分销记录',
-                    'params' => ['state' => 1]
-                ],
+                'producer-log.index' => '分销记录',
                 'producer-quota.index' => '分销账目',
-                'producer-withdraw.index' => [
-                    'name' => '提现记录',
-                    'params' => ['state' => 1]
-                ]
+                'producer-withdraw.index' => '提现记录'
             ]
         ],
         'j' => [
             'name' => '其他',
             'sub' => [
                 'attachment.index' => '附件管理',
-                'wx-menu.index' => '服务号菜单',
+                'wx-menu.index' => '服务号菜单'
             ]
         ],
         'k' => [

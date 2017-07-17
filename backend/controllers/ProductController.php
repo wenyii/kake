@@ -253,7 +253,10 @@ class ProductController extends GeneralController
                 'type' => 'script',
                 'value' => '$.showQrCode',
                 'params' => function ($record) {
-                    $url = Url::toRoute(['detail/index', 'id' => $record['id']]);
+                    $url = Url::toRoute([
+                        'detail/index',
+                        'id' => $record['id']
+                    ]);
                     $url = Yii::$app->params['frontend_url'] . $url;
 
                     return [$url];
@@ -285,14 +288,14 @@ class ProductController extends GeneralController
                 'title' => '酒店名称'
             ],
             'classify' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'sale_type' => [
-                'value' => 'all',
+                'value' => parent::SELECT_KEY_ALL
             ],
             'sale' => [
                 'title' => '打折中',
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'stock' => [
                 'elem' => 'input',
@@ -303,10 +306,10 @@ class ProductController extends GeneralController
                 'equal' => true
             ],
             'manifestation' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'state' => [
-                'value' => 'all'
+                'value' => 1
             ]
         ];
     }
@@ -325,10 +328,10 @@ class ProductController extends GeneralController
                 'title' => '酒店名称'
             ],
             'classify' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
         ];
     }
@@ -339,6 +342,16 @@ class ProductController extends GeneralController
     public static function ajaxModalListProducerFilter()
     {
         return self::ajaxModalListFilter();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function indexSorter()
+    {
+        return [
+            'id'
+        ];
     }
 
     /**
@@ -702,7 +715,11 @@ class ProductController extends GeneralController
                 'hotel.name AS hotel_name',
                 'product.*'
             ],
-            'order' => 'product.top DESC, product.state DESC, product.update_time DESC'
+            'order' => [
+                'product.top DESC',
+                'product.state DESC',
+                'product.update_time DESC'
+            ]
         ];
     }
 

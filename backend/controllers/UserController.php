@@ -81,10 +81,10 @@ class UserController extends GeneralController
             'username' => 'input',
             'phone' => 'input',
             'role' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'sex' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'country' => 'input',
             'province' => 'input',
@@ -95,8 +95,21 @@ class UserController extends GeneralController
                 'between' => true
             ],
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function indexSorter()
+    {
+        return [
+            'id',
+            'username',
+            'update_time',
+            'state'
         ];
     }
 
@@ -109,13 +122,13 @@ class UserController extends GeneralController
             'username' => 'input',
             'phone' => 'input',
             'role' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'sex' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
         ];
     }
@@ -253,8 +266,8 @@ class UserController extends GeneralController
             $this->error('用户ID参数未指定');
         }
 
-        $authList = $this->authList(true);
-        $authRecord = array_keys($this->authRecord($userId));
+        $authList = $this->getAuthList(true);
+        $authRecord = array_keys($this->getAuthRecord($userId));
 
         return $this->display('auth', [
             'user_id' => $userId,

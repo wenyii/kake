@@ -104,7 +104,6 @@ foreach ($item as $type): ?>
                                 }
 
                                 $routerArr = ['/' . $slave['controller'] . '/' . $slave['action']];
-                                $routerArr = array_merge($routerArr, $slave['params']);
                                 ?>
                                 <li <?= $_class ?>><a href="<?= Url::to($routerArr) ?>"><?= $slave['title'] ?></a>
                                 </li>

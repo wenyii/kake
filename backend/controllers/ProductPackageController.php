@@ -104,16 +104,28 @@ EOF
             ],
             'info' => 'input',
             'bidding' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'state' => [
-                'value' => 'all'
+                'value' => 1
             ],
             'status' => [
                 'title' => '产品状态',
                 'table' => 'product',
-                'field' => 'state'
+                'field' => 'state',
+                'value' => 1
             ],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function indexSorter()
+    {
+        return [
+            'product_id',
+            'price'
         ];
     }
 

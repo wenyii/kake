@@ -5,6 +5,7 @@ namespace backend\controllers;
 use common\components\Helper;
 use common\controllers\MainController;
 use common\models\Main;
+use function GuzzleHttp\Psr7\parse_query;
 use yii;
 use yii\helpers\Url;
 
@@ -22,6 +23,17 @@ class GeneralController extends MainController
      * @cont string reference
      */
     const REFERENCE = 'backend_reference';
+
+    /**
+     * @cont string key for select all
+     */
+    const SELECT_KEY_ALL = 'all';
+
+    /**
+     * @cont string order by
+     */
+    const ORDER_ASC = 'ASC';
+    const ORDER_DESC = 'DESC';
 
     /**
      * @var string 数据库
@@ -143,32 +155,6 @@ class GeneralController extends MainController
     }
 
     /**
-     * 获取根用户
-     *
-     * @access private
-     * @return array
-     */
-    private function getRootUsers()
-    {
-        if (empty(Yii::$app->params['private'])) {
-            return [];
-        }
-
-        if (empty(Yii::$app->params['private'][self::$rootUserKey])) {
-            return [];
-        }
-
-        $user = Yii::$app->params['private'][self::$rootUserKey];
-        if (is_array($user)) {
-            return $user;
-        }
-
-        $user = Helper::handleString($user);
-
-        return $user;
-    }
-
-    /**
      * @inheritdoc
      */
     public function beforeAction($action)
@@ -195,7 +181,7 @@ class GeneralController extends MainController
             $this->mustLogin();
 
             if (!in_array($this->user->id, $this->getRootUsers())) {
-                $auth = $this->authVerify($router);
+                $auth = $this->verifyAuth($router);
                 if (is_string($auth)) {
                     if (Yii::$app->request->isAjax) {
                         $this->fail($auth);
@@ -220,6 +206,32 @@ class GeneralController extends MainController
     }
 
     /**
+     * 获取根用户
+     *
+     * @access protected
+     * @return array
+     */
+    protected function getRootUsers()
+    {
+        if (empty(Yii::$app->params['private'])) {
+            return [];
+        }
+
+        if (empty(Yii::$app->params['private'][self::$rootUserKey])) {
+            return [];
+        }
+
+        $user = Yii::$app->params['private'][self::$rootUserKey];
+        if (is_array($user)) {
+            return $user;
+        }
+
+        $user = Helper::handleString($user);
+
+        return $user;
+    }
+
+    /**
      * 操作权限验证
      *
      * @access protected
@@ -228,12 +240,12 @@ class GeneralController extends MainController
      *
      * @return mixed
      */
-    protected function authVerify($router)
+    protected function verifyAuth($router)
     {
         $router = str_replace('.', '/', $router);
-        $authList = $this->authList(false, $this->user->id);
+        $authList = $this->getAuthList(false, $this->user->role);
 
-        $authListDec = $this->authList();
+        $authListDec = $this->getAuthList();
         $_authListDec = [];
         foreach ($authListDec as $ctrlInfo => $item) {
             foreach ($item as $k => $actInfo) {
@@ -252,16 +264,16 @@ class GeneralController extends MainController
     }
 
     /**
-     * Get the auth list from php file
+     * Get the auth list from php file and record
      *
-     * @access public
+     * @access protected
      *
      * @param boolean $manager
      * @param integer $userRole
      *
      * @return array
      */
-    public function authList($manager = true, $userRole = null)
+    protected function getAuthList($manager = true, $userRole = null)
     {
         return $this->cache([
             'controller.auth.list',
@@ -298,7 +310,7 @@ class GeneralController extends MainController
 
             // 非管理页列表时特殊处理
             if (!$manager) {
-                $authRecord = $this->authRecord($this->user->id);
+                $authRecord = $this->getAuthRecord($this->user->id);
                 $_list = array_merge(...(array_values($_list)));
 
                 foreach ($_list as $router => &$item) {
@@ -337,13 +349,13 @@ class GeneralController extends MainController
     /**
      * Get the auth list from php file
      *
-     * @access public
+     * @access protected
      *
      * @param integer
      *
      * @return array
      */
-    public function authRecord($userId)
+    protected function getAuthRecord($userId)
     {
         return $this->cache([
             'controller.auth.record',
@@ -351,7 +363,7 @@ class GeneralController extends MainController
         ], function () use ($userId) {
             $record = $this->service(static::$listApiName, [
                 'table' => 'admin_auth',
-                'size' => 'all',
+                'size' => 0,
                 'where' => [
                     ['user_id' => $userId],
                     ['state' => 1]
@@ -369,59 +381,12 @@ class GeneralController extends MainController
     }
 
     /**
-     * 必须登录的操作前置判断
-     *
-     * @access public
-     * @return mixed
-     */
-    public function mustLogin()
-    {
-        if ($this->user) {
-            return true;
-        }
-
-        if (Yii::$app->request->isAjax) {
-            $this->fail('login first');
-        } else {
-            $url = Helper::unsetParamsForUrl('callback', $this->currentUrl());
-            header('Location: ' . Url::to([
-                    '/login/index',
-                    'callback' => $url
-                ]));
-            exit();
-        }
-
-        return false;
-    }
-
-    /**
-     * 必须非登录的操作前置判断
-     *
-     * @access public
-     * @return mixed
-     */
-    public function mustUnLogin()
-    {
-        if (!$this->user) {
-            return true;
-        }
-
-        if (Yii::$app->request->isAjax) {
-            $this->fail('already login');
-        } else {
-            $this->error(Yii::t('common', 'already login'));
-        }
-
-        return false;
-    }
-
-    /**
      * 获取应被纳入权限控制的操作列表
      *
-     * @access public
+     * @access private
      * @return array
      */
-    public function reflectionAuthList()
+    private function reflectionAuthList()
     {
         $directory = Yii::getAlias('@backend') . DS . 'controllers';
         $controllers = Helper::readDirectory($directory, ['php'], 'IN');
@@ -519,6 +484,7 @@ class GeneralController extends MainController
                 $val = Helper::pullSome($val, [
                     self::$keySame,
                     self::$keyPassAll,
+                    self::$keyPassRole,
                     'info'
                 ]);
 
@@ -548,12 +514,12 @@ class GeneralController extends MainController
      *
      * @return void
      */
-    public function commonParams($hideMenu = false)
+    public function setCommonParams($hideMenu = false)
     {
         Yii::$app->view->params['user_info'] = $this->user;
         $menu = $hideMenu ? [] : Yii::$app->params['menu'];
 
-        $authList = $this->authList(false, $this->user->role);
+        $authList = $this->getAuthList(false, $this->user->role);
         $rootUser = $this->getRootUsers();
 
         foreach ($menu as $key => &$item) {
@@ -573,11 +539,6 @@ class GeneralController extends MainController
                     continue;
                 }
 
-                if (is_array($page)) {
-                    $params = empty($page['params']) ? [] : (array) $page['params'];
-                    $page = $page['name'];
-                }
-
                 if (!in_array($controller, $routers)) {
                     $routers[] = $_router;
                 }
@@ -585,8 +546,7 @@ class GeneralController extends MainController
                 $page = [
                     'title' => $page,
                     'controller' => $controller,
-                    'action' => $action,
-                    'params' => empty($params) ? [] : $params
+                    'action' => $action
                 ];
             }
             $item['router'] = $routers;
@@ -596,75 +556,6 @@ class GeneralController extends MainController
 
         $hideMenu = isset($this->user->hide_menu) ? $this->user->hide_menu : false;
         Yii::$app->view->params['hidden_menu'] = $hideMenu;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function error($message, $code = null, $trace = null)
-    {
-        $this->sourceCss = false;
-        $this->commonParams(true);
-        parent::error($message, $code, $trace);
-    }
-
-    /**
-     * 渲染页面
-     *
-     * @access public
-     *
-     * @param string $view
-     * @param array  $params
-     *
-     * @return bool|string
-     */
-    public function display($view, $params = [])
-    {
-        $this->commonParams();
-
-        $fetchTpl = false;
-        foreach (Helper::functionCallTrance('all') as $index => $fn) {
-            if (strpos($fn, 'actionAjaxModal') === 0) {
-                $fetchTpl = $index;
-                break;
-            }
-        }
-
-        if ($fetchTpl) {
-            if (empty($params['view'])) {
-                $titleKey = $this->getCaller($fetchTpl) . 'Title';
-                $title = isset(static::${$titleKey}) ? static::${$titleKey} : null;
-            } else {
-                $title = empty($params['view']['title_info']) ? null : $params['view']['title_info'];
-            }
-
-            return $this->modal($view, $params, $title);
-        }
-
-        return $this->render($view, $params);
-    }
-
-    /**
-     * 渲染模态框
-     *
-     * @access public
-     *
-     * @param string $view
-     * @param array  $params
-     * @param string $title
-     *
-     * @return bool
-     */
-    public function modal($view, $params = [], $title = null)
-    {
-        $tpl = Yii::$app->getViewPath() . DS . ltrim($view, '/') . '.php';
-        $content = $this->renderFile($tpl, $params);
-        $this->success([
-            'title' => $title,
-            'message' => $content
-        ]);
-
-        return true;
     }
 
     // ---
@@ -794,7 +685,7 @@ class GeneralController extends MainController
      *
      * @return array
      */
-    public function handleAssistForList($assist)
+    public function getListAssist($assist)
     {
         $labels = (new Main(static::$modelName))->attributeLabels();
         $_assist = [];
@@ -868,37 +759,6 @@ class GeneralController extends MainController
     }
 
     /**
-     * 处理下拉框的数据
-     *
-     * @access private
-     *
-     * @param array   $value
-     * @param object  $model
-     * @param string  $key
-     * @param array   $default
-     * @param boolean $addAll
-     *
-     * @return void
-     */
-    private function handleSelectList(&$value, $model, $key, $default, $addAll = false)
-    {
-        $valued = isset($value['value']) ? $value['value'] : null;
-
-        $list = empty($value['list']) ? null : (array) $value['list'];
-        $list = $this->getEnumerate($model, $key, $list);
-
-        if ($addAll) {
-            $list['all'] = 'All';
-        }
-
-        $value['value'] = [
-            'list' => $list,
-            'name' => $key,
-            'selected' => Helper::issetDefault($default, $key, $valued)
-        ];
-    }
-
-    /**
      * 获取表单相关需要的辅助信息
      *
      * @access public
@@ -909,7 +769,7 @@ class GeneralController extends MainController
      *
      * @return array
      */
-    public function handleAssistForForm($assist, &$default = [], $action = null)
+    public function getEditAssist($assist, &$default = [], $action = null)
     {
         $model = new Main(static::$modelName);
 
@@ -992,6 +852,37 @@ class GeneralController extends MainController
     }
 
     /**
+     * 处理下拉框的数据
+     *
+     * @access private
+     *
+     * @param array   $value
+     * @param object  $model
+     * @param string  $key
+     * @param array   $default
+     * @param boolean $addAll
+     *
+     * @return void
+     */
+    private function handleSelectList(&$value, $model, $key, $default, $addAll = false)
+    {
+        $valued = isset($value['value']) ? $value['value'] : null;
+
+        $list = empty($value['list']) ? null : (array) $value['list'];
+        $list = $this->getEnumerate($model, $key, $list);
+
+        if ($addAll) {
+            $list[self::SELECT_KEY_ALL] = 'All';
+        }
+
+        $value['value'] = [
+            'list' => $list,
+            'name' => $key,
+            'selected' => Helper::issetDefault($default, $key, $valued)
+        ];
+    }
+
+    /**
      * 获取过滤所需数据
      *
      * @access public
@@ -1006,18 +897,20 @@ class GeneralController extends MainController
         $caller .= 'Filter';
         $filter = $this->callStatic($caller);
         if (!$filter) {
-            return [];
+            return [
+                null,
+                null
+            ];
         }
 
         $model = new Main(static::$modelName);
         $labels = $model->attributeLabels();
-        $_filter = [];
-
         $get = $this->callMethod('sufHandleField', $get, [
             $get,
             $caller
         ]);
 
+        $_filter = [];
         foreach ($filter as $key => $value) {
 
             if (is_numeric($key)) {
@@ -1062,15 +955,13 @@ class GeneralController extends MainController
                         $value['value'] = htmlspecialchars_decode($get[$key]);
                     }
 
-                    $from = '_from';
-                    $to = '_to';
-
-                    if (!empty($get[$key . $from])) {
-                        $value['value' . $from] = $get[$key . $from];
-                    }
-
-                    if (!empty($get[$key . $to])) {
-                        $value['value' . $to] = $get[$key . $to];
+                    if (!empty($value['between'])) {
+                        if (!empty($get[$key . '_from'])) {
+                            $value['value_from'] = $get[$key . '_from'];
+                        }
+                        if (!empty($get[$key . '_to'])) {
+                            $value['value_to'] = $get[$key . '_to'];
+                        }
                     }
 
                     if (!empty($value['equal'])) {
@@ -1083,27 +974,23 @@ class GeneralController extends MainController
             $_filter[$key] = $value;
         }
 
-        return $_filter;
+        return [
+            $this->getWhereByFilter($_filter),
+            $_filter
+        ];
     }
 
     /**
      * 通过过滤条件获取 where 数组
      *
-     * @access public
+     * @access protected
      *
-     * @param array  $filter
-     * @param array  $default
-     * @param string $caller
+     * @param array $filter
      *
      * @return array
      */
-    public function getWhereByFilter($filter, $default, $caller)
+    protected function getWhereByFilter($filter)
     {
-        $default = $this->callMethod('preHandleField', $default, [
-            $default,
-            $caller
-        ]);
-
         $where = [];
         foreach ($filter as $name => $item) {
 
@@ -1111,37 +998,118 @@ class GeneralController extends MainController
             switch ($item['elem']) {
 
                 case 'select' :
-                    if (isset($default[$name]) && $default[$name] != 'all') {
-                        $where[] = [$field => $default[$name]];
+                    $v = $item['value'];
+                    if ($v['selected'] != self::SELECT_KEY_ALL && isset($v['list'][$v['selected']])) {
+                        $where[] = [
+                            $field => $v['selected']
+                        ];
                     }
                     break;
 
                 case 'input' :
                 default:
 
-                    $from = $name . '_from';
-                    $to = $name . '_to';
-
-                    if (!empty($item['between']) && !empty($default[$from]) && !empty($default[$to])) {
+                    if (!empty($item['between']) && !empty($item['value_from']) && !empty($item['value_to'])) {
                         $where[] = [
                             'between',
                             $field,
-                            $default[$from],
-                            $default[$to]
+                            $item['value_from'],
+                            $item['value_to']
                         ];
-                    } elseif (!empty($item['equal']) && !empty($default[$name])) {
-                        $where[] = [$field => $default[$name]];
-                    } elseif (!empty($default[$name])) {
+                    } elseif (!empty($item['equal']) && !empty($item['value'])) {
+                        $where[] = [$field => $item['value']];
+                    } elseif (!empty($item['value'])) {
                         $where[] = [
                             'like',
                             $field,
-                            $default[$name]
+                            $item['value']
                         ];
                     }
             }
         }
 
         return $where;
+    }
+
+    /**
+     * 从 url 中获取排序数组
+     *
+     * @access protected
+     *
+     * @param array  $get
+     * @param string $key
+     *
+     * @return array
+     */
+    protected function getSorterFromUrl($get, $key = 'sorter')
+    {
+        $default = [];
+        if (!empty($get[$key])) {
+            $get = urldecode($get[$key]);
+            foreach (explode(',', $get) as $item) {
+                list($name, $sort) = explode(' ', trim($item));
+                $default[$name] = $sort;
+            }
+        }
+
+        return $default;
+    }
+
+    /**
+     * 获取排序所需数据
+     *
+     * @access public
+     *
+     * @param array  $get
+     * @param string $caller
+     *
+     * @return array
+     */
+    public function getSorter($get, $caller)
+    {
+        $caller .= 'Sorter';
+        $sorter = $this->callStatic($caller);
+        if (!$sorter) {
+            return [
+                null,
+                null
+            ];
+        }
+
+        $model = new Main(static::$modelName);
+
+        $_sorter = $default = [];
+        foreach ($sorter as $key => $value) {
+
+            if (is_numeric($key)) {
+                $key = $value;
+                $value = [];
+            }
+
+            $field = isset($value['field']) ? $value['field'] : $key;
+            $table = isset($value['table']) ? $value['table'] : $model->tableName;
+            $value['name'] = $name = $table . '.' . $field;
+
+            if (!empty($get[$name])) {
+                $value['value'] = $get[$name];
+            }
+
+            if (!empty($value['value'])) {
+                $value['value'] = strtoupper($value['value']);
+                if ($value['value'] == self::ORDER_ASC || $value['value'] == self::ORDER_DESC) {
+                    $default[] = "${name} ${value['value']}";
+                } else {
+                    unset($value['value']);
+                }
+            }
+
+            $_sorter[$key] = $value;
+        }
+
+        return [
+            $default,
+            $_sorter
+        ];
     }
 
     /**
@@ -1739,13 +1707,17 @@ class GeneralController extends MainController
         } else {
 
             $get = Yii::$app->request->get();
-            $filter = $this->getFilter($get, $caller);
 
-            $where = $this->getWhereByFilter($filter, $get, $caller);
-            $where = $this->preHookLogicForWhere($where);
-            if (!Helper::arrayEmpty($where)) {
+            list($filterDefault, $filter) = $this->getFilter($get, $caller);
+            $filterDefault = $this->preHookLogicForWhere($filterDefault);
+            if (!Helper::arrayEmpty($filterDefault)) {
                 $_where = empty($condition['where']) ? [] : $condition['where'];
-                $condition['where'] = array_merge($_where, $where);
+                $condition['where'] = array_merge($_where, $filterDefault);
+            }
+
+            list($sorterDefault, $sorter) = $this->getSorter($this->getSorterFromUrl($get), $caller);
+            if (!empty($sorterDefault)) {
+                $condition['order'] = $sorterDefault;
             }
 
             $model = new Main(static::$modelName);
@@ -1766,7 +1738,7 @@ class GeneralController extends MainController
         $pagination->setPageSize($condition['size']);
         $page = $pagination;
 
-        $assist = $this->handleAssistForList($this->callStatic($caller . 'Assist', []));
+        $assist = $this->getListAssist($this->callStatic($caller . 'Assist', []));
 
         if (!empty($list)) {
             $list = $this->callMethod('sufHandleListBeforeField', $list, [
@@ -1836,6 +1808,7 @@ class GeneralController extends MainController
             'list',
             'assist',
             'filter',
+            'sorter',
             'operation',
             'operations',
             'recordFilter',
@@ -1875,7 +1848,7 @@ class GeneralController extends MainController
 
         $assist = $this->callStatic($caller . 'Assist', []);
         $default = [];
-        $list = $this->handleAssistForForm($assist, $default, $caller);
+        $list = $this->getEditAssist($assist, $default, $caller);
         $view = $this->pageDocuments($caller);
 
         return $this->display('//general/action', compact('list', 'modelInfo', 'view'));
@@ -1983,7 +1956,7 @@ class GeneralController extends MainController
 
         $modelInfo = static::$modelInfo;
         $assist = $this->callStatic($caller . 'Assist', []);
-        $list = $this->handleAssistForForm($assist, $result, $caller);
+        $list = $this->getEditAssist($assist, $result, $caller);
 
         if ($returnRecord) {
             return $result;
@@ -2083,6 +2056,8 @@ class GeneralController extends MainController
         $this->goReference($reference ?: $this->getControllerName('index'));
     }
 
+    // ---
+
     /**
      * 裁切图片
      *
@@ -2127,5 +2102,121 @@ class GeneralController extends MainController
         Yii::$app->session->set(static::USER, $user);
 
         $this->success();
+    }
+
+    /**
+     * 必须登录的操作前置判断
+     *
+     * @access public
+     * @return mixed
+     */
+    public function mustLogin()
+    {
+        if ($this->user) {
+            return true;
+        }
+
+        if (Yii::$app->request->isAjax) {
+            $this->fail('login first');
+        } else {
+            $url = Helper::unsetParamsForUrl('callback', $this->currentUrl());
+            header('Location: ' . Url::to([
+                    '/login/index',
+                    'callback' => $url
+                ]));
+            exit();
+        }
+
+        return false;
+    }
+
+    /**
+     * 必须非登录的操作前置判断
+     *
+     * @access public
+     * @return mixed
+     */
+    public function mustUnLogin()
+    {
+        if (!$this->user) {
+            return true;
+        }
+
+        if (Yii::$app->request->isAjax) {
+            $this->fail('already login');
+        } else {
+            $this->error(Yii::t('common', 'already login'));
+        }
+
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function error($message, $code = null, $trace = null)
+    {
+        $this->sourceCss = false;
+        $this->setCommonParams(true);
+        parent::error($message, $code, $trace);
+    }
+
+    /**
+     * 渲染页面
+     *
+     * @access public
+     *
+     * @param string $view
+     * @param array  $params
+     *
+     * @return bool|string
+     */
+    public function display($view, $params = [])
+    {
+        $this->setCommonParams();
+
+        $fetchTpl = false;
+        foreach (Helper::functionCallTrance('all') as $index => $fn) {
+            if (strpos($fn, 'actionAjaxModal') === 0) {
+                $fetchTpl = $index;
+                break;
+            }
+        }
+
+        if ($fetchTpl) {
+            if (empty($params['view'])) {
+                $titleKey = $this->getCaller($fetchTpl) . 'Title';
+                $title = isset(static::${$titleKey}) ? static::${$titleKey} : null;
+            } else {
+                $title = empty($params['view']['title_info']) ? null : $params['view']['title_info'];
+            }
+
+            return $this->modal($view, $params, $title);
+        }
+
+        return $this->render($view, $params);
+    }
+
+    /**
+     * 渲染模态框
+     *
+     * @access public
+     *
+     * @param string $view
+     * @param array  $params
+     * @param string $title
+     *
+     * @return bool
+     */
+    public function modal($view, $params = [], $title = null)
+    {
+        $tpl = Yii::$app->getViewPath() . DS . ltrim($view, '/') . '.php';
+        $content = $this->renderFile($tpl, $params);
+        $this->success([
+            'title' => $title,
+            'message' => $content
+        ]);
+
+        return true;
     }
 }

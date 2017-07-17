@@ -93,14 +93,29 @@ class OrderController extends GeneralController
                 'title' => '酒店名称'
             ],
             'payment_method' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'payment_state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function indexSorter()
+    {
+        return [
+            'id',
+            'order_number',
+            'price',
+            'payment_state',
+            'payment_method',
+            'state'
         ];
     }
 
@@ -249,7 +264,10 @@ class OrderController extends GeneralController
                 'producer_user.username AS producer_username',
                 'order.*'
             ],
-            'order' => 'order.state DESC, order.id DESC'
+            'order' => [
+                'order.state DESC',
+                'order.id DESC'
+            ]
         ];
     }
 

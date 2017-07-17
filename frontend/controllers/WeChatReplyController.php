@@ -91,6 +91,6 @@ class WeChatReplyController extends GeneralController
             return "【已参与过抽奖】{$br}宝贝，不要太贪心哦~你已经有一个专属抽奖码啦~{$br}抽奖码：${result['code']}";
         }
 
-        return "【参与成功】{$br}耶！这是喀客旅行为你提供的抽奖码：${result['code']}！希望你能抽到酒店！";
+        return "【参与成功】{$br}耶！这是喀客旅行为你提供的抽奖码：${result['code']}！希望你能抽中奖品～";
     }
 }

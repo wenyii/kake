@@ -61,7 +61,7 @@ class ProducerWithdrawController extends GeneralController
                 'field' => 'username'
             ],
             'state' => [
-                'value' => 'all'
+                'value' => 1
             ]
         ];
     }
