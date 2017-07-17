@@ -94,7 +94,7 @@ class ProducerLogController extends GeneralController
                 'table' => 'producer_log'
             ],
             'state' => [
-                'value' => 'all'
+                'value' => 1
             ]
         ];
     }

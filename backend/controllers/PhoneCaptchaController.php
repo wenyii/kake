@@ -33,7 +33,7 @@ class PhoneCaptchaController extends GeneralController
         return [
             'phone' => 'input',
             'type' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'update_time' => [
                 'elem' => 'input',
@@ -41,8 +41,18 @@ class PhoneCaptchaController extends GeneralController
                 'between' => true
             ],
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function indexSorter()
+    {
+        return [
+            'update_time'
         ];
     }
 

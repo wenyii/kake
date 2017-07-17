@@ -40,7 +40,7 @@ class LoginLogController extends GeneralController
                 'elem' => 'input'
             ],
             'type' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'add_time' => [
                 'elem' => 'input',
@@ -49,8 +49,27 @@ class LoginLogController extends GeneralController
             ],
             'ip' => 'input',
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function indexSorter()
+    {
+        return [
+            'user_id' => [
+                'table' => 'user',
+                'field' => 'id'
+            ],
+            'username' => [
+                'table' => 'user'
+            ],
+            'type',
+            'add_time',
+            'state'
         ];
     }
 

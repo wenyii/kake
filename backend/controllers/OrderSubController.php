@@ -179,10 +179,10 @@ class OrderSubController extends GeneralController
             ],
             'payment_state' => [
                 'table' => 'order',
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
         ];
     }
@@ -200,8 +200,29 @@ class OrderSubController extends GeneralController
                 'equal' => true
             ],
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function indexSorter()
+    {
+        return [
+            'id',
+            'order_number',
+            'price',
+            'payment_state' => [
+                'table' => 'order'
+            ],
+            'payment_method' => [
+                'table' => 'order'
+            ],
+            'add_time',
+            'update_time',
+            'state'
         ];
     }
 
@@ -330,7 +351,10 @@ class OrderSubController extends GeneralController
                 'order.payment_state',
                 'order_sub.*'
             ],
-            'order' => 'order.state DESC, order_sub.id DESC'
+            'order' => [
+                'order.state DESC',
+                'order_sub.id DESC'
+            ]
         ];
     }
 

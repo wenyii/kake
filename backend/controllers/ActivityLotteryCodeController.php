@@ -32,10 +32,10 @@ class ActivityLotteryCodeController extends GeneralController
             'real_name' => 'input',
             'phone' => 'input',
             'company' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'subscribe' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'add_time' => [
                 'elem' => 'input',
@@ -76,6 +76,16 @@ class ActivityLotteryCodeController extends GeneralController
     /**
      * @inheritDoc
      */
+    public static function indexSorter()
+    {
+        return [
+            'add_time'
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function indexCondition()
     {
         return [
@@ -95,7 +105,7 @@ class ActivityLotteryCodeController extends GeneralController
             'phone',
             'state' => [
                 'elem' => 'select',
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
         ];
     }

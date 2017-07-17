@@ -101,13 +101,13 @@ class ProducerSettingController extends GeneralController
                 'elem' => 'input'
             ],
             'theme' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'account_type' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
         ];
     }
@@ -126,7 +126,7 @@ class ProducerSettingController extends GeneralController
                 'elem' => 'input'
             ],
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
         ];
     }
@@ -369,7 +369,10 @@ class ProducerSettingController extends GeneralController
                 'producer_setting.*',
                 'user.username'
             ],
-            'order' => 'producer_setting.state DESC, producer_setting.update_time DESC'
+            'order' => [
+                'producer_setting.state DESC',
+                'producer_setting.update_time DESC'
+            ]
         ];
     }
 
@@ -404,7 +407,9 @@ class ProducerSettingController extends GeneralController
      * 获取推广信息
      *
      * @access private
+     *
      * @param integer $userId
+     *
      * @return array
      */
     private function spreadInfo($userId)
@@ -420,11 +425,17 @@ class ProducerSettingController extends GeneralController
         $logo = current($producer['logo_preview_url']);
         $logoPath = Yii::$app->params['tmp_path'] . '/' . basename($logo);
         if (!Helper::saveRemoteFile($logo, $logoPath)) {
-            return [$link, null];
+            return [
+                $link,
+                null
+            ];
         }
         $qr = $this->createQrCode($link, 200, $logoPath);
 
-        return [$link, $qr->writeDataUri()];
+        return [
+            $link,
+            $qr->writeDataUri()
+        ];
     }
 
     /**
@@ -442,6 +453,7 @@ class ProducerSettingController extends GeneralController
                 $record['spread_img'] = ['qr' => $record['spread_img']];
             }
         }
+
         return parent::sufHandleField($record, $action);
     }
 

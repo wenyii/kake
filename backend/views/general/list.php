@@ -12,9 +12,14 @@ $action = \Yii::$app->controller->action->id;
 ?>
 
 <div id="<?= $action ?>">
+
+    <!-- 筛选器 -->
     <?php if (!empty($filter)): ?>
         <form class="form-inline filter">
             <input type="hidden" name="r" value="<?= $controller ?>/<?= $action ?>">
+            <?php if ($sortQuery = Yii::$app->request->get('sorter')): ?>
+                <input type="hidden" name="sorter" value="<?= $sortQuery ?>">
+            <?php endif; ?>
             <?php foreach ($filter as $field => $item): ?>
 
                 <?php
@@ -69,13 +74,17 @@ $action = \Yii::$app->controller->action->id;
         <hr>
     <?php endif; ?>
 
+    <!-- 全局按钮 - 顶部 -->
     <?php $operationsHtml = ViewHelper::createButton($operations, $controller) ?>
     <?php if (!empty($operations) && $operationsPosition == 'top'): ?>
         <?= $operationsHtml ?>
         <hr>
     <?php endif; ?>
 
+    <!-- 列表 -->
     <table class="table table-hover">
+
+        <!-- 列表 - 标题 -->
         <thead>
         <tr>
             <?php if (!empty($recordFilter)): ?>
@@ -86,14 +95,38 @@ $action = \Yii::$app->controller->action->id;
                 </th>
             <?php endif; ?>
             <th>No</th>
-            <?php foreach ($assist as $item): ?>
+            <?php foreach ($assist as $key => $item): ?>
                 <?php
                 if (!empty($item['adorn']['tip']) || !empty($item['adorn']['hidden'])) {
                     continue;
                 }
                 ?>
                 <th>
-                    <div <?= ViewHelper::getStyleByAdorn($item['adorn']) ?>><?= $item['title'] ?></div>
+                    <div <?= ViewHelper::getStyleByAdorn($item['adorn']) ?>>
+                        <?= $item['title'] ?>
+                        <?php
+                        if (!empty($sorter[$key])):
+                            $sortClsMap = [
+                                'natural' => 'glyphicon-sort',
+                                'desc' => 'glyphicon-sort-by-alphabet-alt',
+                                'asc' => 'glyphicon-sort-by-alphabet'
+                            ];
+                            $sort = empty($sorter[$key]['value']) ? 'natural' : strtolower($sorter[$key]['value']);
+                            $sortIndex = array_flip(array_keys($sortClsMap))[$sort];
+                            ?>
+                            <span sort-index="<?= $sortIndex ?>"
+                                  sort-name="<?= $sorter[$key]['name'] ?>"
+                                  class="glyphicon <?= $sortClsMap[$sort] ?> sort-btn"
+                                  title='
+                                      点击按钮依次排序<br>
+                                      <span class="glyphicon glyphicon-sort"></span> 无排序<br>
+                                      <span class="glyphicon glyphicon-sort-by-alphabet-alt"></span> 降序排列<br>
+                                      <span class="glyphicon glyphicon-sort-by-alphabet"></span> 升序排序'
+                                  data-toggle="tooltip"
+                                  data-html="true"
+                                  data-placement="top"></span>
+                        <?php endif; ?>
+                    </div>
                 </th>
             <?php endforeach; ?>
             <?php if (!empty($operation)): ?>
@@ -103,6 +136,8 @@ $action = \Yii::$app->controller->action->id;
             <?php endif; ?>
         </tr>
         </thead>
+
+        <!-- 列表 - 内容 -->
         <tbody>
         <?php foreach ($list as $key => $item): ?>
             <?php
@@ -125,7 +160,7 @@ $action = \Yii::$app->controller->action->id;
             }
 
             if (!empty($tip)) {
-                array_walk($tip, function(&$value, $key) use ($maxLen) {
+                array_walk($tip, function (&$value, $key) use ($maxLen) {
                     $key = str_pad($key, $maxLen, '　', STR_PAD_LEFT);
                     $value = $key . ' : ' . $value;
                 });
@@ -177,11 +212,13 @@ $action = \Yii::$app->controller->action->id;
         </tbody>
     </table>
 
+    <!-- 全局按钮 - 底部 -->
     <?php if (!empty($operations) && $operationsPosition == 'bottom'): ?>
         <hr>
         <?= $operationsHtml ?>
     <?php endif; ?>
 
+    <!-- 分页 -->
     <div class="page">
         <?= ViewHelper::page($page) ?>
         <?php if (!empty($ajaxPage)): ?>

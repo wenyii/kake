@@ -124,10 +124,10 @@ class ProducerProductController extends GeneralController
                 'table' => 'hotel'
             ],
             'type' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
         ];
     }
@@ -281,7 +281,10 @@ class ProducerProductController extends GeneralController
                 'user.username'
             ],
             'where' => [['producer_id' => self::$uid]],
-            'order' => 'producer_product.state DESC, producer_product.update_time DESC'
+            'order' => [
+                'producer_product.state DESC',
+                'producer_product.update_time DESC'
+            ]
         ];
     }
 
@@ -344,7 +347,7 @@ class ProducerProductController extends GeneralController
     }
 
     /**
-     * 列表指定用户的可结算分享订单
+     * 列表指定用户的可结算分销订单
      *
      * @access public
      *

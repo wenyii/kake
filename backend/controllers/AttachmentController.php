@@ -47,7 +47,7 @@ class AttachmentController extends GeneralController
     {
         return [
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
         ];
     }
@@ -85,9 +85,7 @@ class AttachmentController extends GeneralController
     public function indexCondition()
     {
         return [
-            'order' => [
-                'attachment.update_time DESC'
-            ]
+            'order' => 'attachment.update_time DESC'
         ];
     }
 

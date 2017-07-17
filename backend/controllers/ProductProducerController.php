@@ -74,14 +74,14 @@ class ProductProducerController extends GeneralController
                 'equal' => true
             ],
             'type' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'commission' => [
                 'elem' => 'input',
                 'equal' => true
             ],
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
         ];
     }

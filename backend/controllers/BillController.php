@@ -109,10 +109,10 @@ class BillController extends GeneralController
             'address' => 'input',
             'handle' => [
                 'title' => '状况',
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ],
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
         ];
     }
@@ -198,9 +198,7 @@ class BillController extends GeneralController
                 'order_sub.price',
                 'bill.*'
             ],
-            'order' => [
-                'bill.update_time DESC'
-            ]
+            'order' => 'bill.update_time DESC'
         ];
     }
 }

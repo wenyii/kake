@@ -63,7 +63,7 @@ class HotelController extends GeneralController
             'principal' => 'input',
             'address' => 'input',
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
         ];
     }
@@ -78,8 +78,19 @@ class HotelController extends GeneralController
             'principal' => 'input',
             'address' => 'input',
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function indexSorter()
+    {
+        return [
+            'id',
+            'name'
         ];
     }
 

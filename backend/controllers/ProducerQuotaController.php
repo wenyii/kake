@@ -45,7 +45,7 @@ class ProducerQuotaController extends GeneralController
                 'field' => 'username'
             ],
             'state' => [
-                'value' => 'all'
+                'value' => parent::SELECT_KEY_ALL
             ]
         ];
     }
