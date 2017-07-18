@@ -39,6 +39,10 @@ class WeChatReplyController extends GeneralController
         $br = PHP_EOL;
         $text = trim($message->Content);
 
+        if ($text == '000') {
+            return '测试 <a href="http://www.kakehotels.com/">超链接</a>';
+        }
+
         // 格式判断
         $text = str_replace('＋', '+', $text);
         $char = substr_count($text, '+');
