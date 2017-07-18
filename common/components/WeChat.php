@@ -65,15 +65,12 @@ class WeChat extends Object
      */
     public function listen($fnArray)
     {
-        Yii::error('CCC');
         $this->server->setMessageHandler(function ($message) use ($fnArray) {
 
             $reply = null;
             $type = strtolower($message->MsgType);
 
-            Yii::error('DDD ' . $type);
             if (empty($fnArray[$type]) && $fnArray[$type] === false) {
-                Yii::error('EEE');
                 $function = 'reply' . ucfirst($type);
                 $fnArray[$type] = [
                     $this,
@@ -82,9 +79,7 @@ class WeChat extends Object
             }
 
             if ($fnArray[$type]) {
-                Yii::error('FFF');
                 $reply = call_user_func($fnArray[$type], $message);
-                Yii::error('GGG ' . $reply);
             }
 
             return $reply;

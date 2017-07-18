@@ -1712,7 +1712,7 @@ class GeneralController extends MainController
             $filterDefault = $this->preHookLogicForWhere($filterDefault);
             if (!Helper::arrayEmpty($filterDefault)) {
                 $_where = empty($condition['where']) ? [] : $condition['where'];
-                $condition['where'] = array_merge($_where, $filterDefault);
+                $condition['where'] = array_merge($_where, (array) $filterDefault);
             }
 
             list($sorterDefault, $sorter) = $this->getSorter($this->getSorterFromUrl($get), $caller);
