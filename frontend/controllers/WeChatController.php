@@ -17,6 +17,18 @@ class WeChatController extends GeneralController
     {
         parent::init();
     }
+    
+    /**
+     * @inheritdoc
+     */
+    public function beforeAction($action)
+    {
+        if (in_array($action->id, ['reply'])) {
+            $action->controller->enableCsrfValidation = false;
+        }
+
+        return parent::beforeAction($action);
+    }
 
     /**
      * 监听消息
