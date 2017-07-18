@@ -25,9 +25,12 @@ class WeChatController extends GeneralController
     {
         $wx = Yii::$app->wx;
 
+        Yii::error('AAA');
         if (Yii::$app->request->get('signature')) {
+            Yii::error('BBB');
             $wx->listen([
                 'text' => function ($message) use ($wx) {
+                    Yii::error('YYY');
                     return $this->replyTextLottery($message, $wx);
                 }
             ]);
@@ -44,6 +47,7 @@ class WeChatController extends GeneralController
      */
     private function replyTextLottery($message, $wx)
     {
+        Yii::error('ZZZ');
         $br = PHP_EOL;
         $text = trim($message->Content);
 
