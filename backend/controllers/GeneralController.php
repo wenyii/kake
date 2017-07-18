@@ -2219,4 +2219,29 @@ class GeneralController extends MainController
 
         return true;
     }
+
+    /**
+     * 列表管理员
+     *
+     * @access public
+     * @return array
+     */
+    public function listAdmin()
+    {
+        $admin = $this->service(static::$listApiName, [
+            'table' => 'user',
+            'select' => [
+                'id',
+                'username'
+            ],
+            'size' => 0,
+            'where' => [
+                ['role' => 1],
+                ['state' => 1]
+            ]
+        ], 'yes');
+        $admin = Helper::arrayColumnSimple($admin, 'id', 'username');
+
+        return $admin;
+    }
 }

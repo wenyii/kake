@@ -268,12 +268,29 @@ class UserController extends GeneralController
 
         $authList = $this->getAuthList(true);
         $authRecord = array_keys($this->getAuthRecord($userId));
+        $admin = $this->listAdmin();
 
         return $this->display('auth', [
             'user_id' => $userId,
             'list' => $authList,
-            'record' => $authRecord
+            'record' => $authRecord,
+            'admin' => $admin
         ]);
+    }
+
+    /**
+     * 获取管理员的权限列表
+     *
+     * @access    public
+     * @auth-same user/edit-auth
+     *
+     * @param integer $id
+     *
+     * @return void
+     */
+    public function actionAjaxGetUserAuth($id)
+    {
+        $this->success($this->getAuthRecord($id));
     }
 
     /**
