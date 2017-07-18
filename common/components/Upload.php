@@ -508,7 +508,7 @@ class Upload extends Object
      *
      * @return mixed - boolean or string
      */
-    private function _save($file, $replace = true)
+    private function _save($file, $replace = false)
     {
         $savePath = rtrim($this->_config['root_path'] . $file['save_path'], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 

@@ -495,11 +495,11 @@ class MainController extends Controller
      * @access protected
      *
      * @param array $config
-     * @param mixed $crop
+     * @param mixed $cropData
      *
      * @return void
      */
-    protected function ajaxUploader($config = [], $crop = null)
+    protected function uploader($config = [], $cropData = null)
     {
         $uploader = Yii::createObject([
             'class' => Upload::className(),
@@ -529,9 +529,9 @@ class MainController extends Controller
             'url' => Helper::joinString('/', $url, $file['save_path'], $file['save_name'])
         ];
 
-        if ($crop && !empty($crop['width']) && !empty($crop['height'])) {
-            if ($crop['width'] != $file['width'] || $crop['height'] != $file['height']) {
-                $result['crop'] = $crop;
+        if ($cropData && !empty($cropData['width']) && !empty($cropData['height'])) {
+            if ($cropData['width'] != $file['width'] || $cropData['height'] != $file['height']) {
+                $result['crop'] = $cropData;
             }
         }
 
@@ -581,7 +581,7 @@ class MainController extends Controller
             }
         }
 
-        $this->ajaxUploader($rule, $crop);
+        $this->uploader($rule, $crop);
     }
 
     /**
@@ -593,7 +593,7 @@ class MainController extends Controller
      */
     public function actionAjaxCkEditorUpload()
     {
-        $this->ajaxUploader();
+        $this->uploader();
     }
 
     /**

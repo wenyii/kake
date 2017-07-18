@@ -59,41 +59,27 @@ class WeChat extends Object
     /**
      * Listen message
      *
-     * @param mixed $replyEvent
-     * @param callable $replyText
+     * @param array $fnArray
      *
      * @return object
      */
-    public function listen($replyEvent = false, $replyText)
+    public function listen($fnArray)
     {
-        $this->server->setMessageHandler(function ($message) use ($replyEvent, $replyText) {
+        $this->server->setMessageHandler(function ($message) use ($fnArray) {
 
             $reply = null;
-            switch ($message->MsgType) {
+            $type = strtolower($message->MsgType);
 
-                case 'event':
-                    if ($replyEvent === false) {
-                        $replyEvent = [
-                            $this,
-                            'replyEvent'
-                        ];
-                    }
-                    if ($replyEvent) {
-                        $reply = call_user_func($replyEvent, $message);
-                    }
-                    break;
+            if (empty($fnArray[$type]) && $fnArray[$type] === false) {
+                $function = 'reply' . ucfirst($type);
+                $fnArray[$type] = [
+                    $this,
+                    $function
+                ];
+            }
 
-                case 'text':
-                    if ($replyText === false) {
-                        $replyText = [
-                            $this,
-                            'replyText'
-                        ];
-                    }
-                    if ($replyText) {
-                        $reply = call_user_func($replyText, $message);
-                    }
-                    break;
+            if ($fnArray[$type]) {
+                $reply = call_user_func($fnArray[$type], $message);
             }
 
             return $reply;
