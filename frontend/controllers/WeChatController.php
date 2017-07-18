@@ -23,6 +23,7 @@ class WeChatController extends GeneralController
      */
     public function actionReply()
     {
+        Yii::error('BEGIN..............................');
         $wx = Yii::$app->wx;
 
         Yii::error('AAA');
