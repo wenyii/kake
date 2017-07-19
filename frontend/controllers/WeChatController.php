@@ -11,14 +11,6 @@ use Yii;
 class WeChatController extends GeneralController
 {
     /**
-     * @inheritDoc
-     */
-    public function init()
-    {
-        parent::init();
-    }
-    
-    /**
      * @inheritdoc
      */
     public function beforeAction($action)

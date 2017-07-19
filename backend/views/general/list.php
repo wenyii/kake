@@ -32,6 +32,14 @@ $action = \Yii::$app->controller->action->id;
 
                     return Helper::$fn($data, $key, $default);
                 };
+
+                $day = function ($date) {
+                    if (empty($date) || !($date = strtotime($date))) {
+                        return null;
+                    }
+
+                    return date('Y-m-d', $date);
+                };
                 ?>
 
                 <?= $empty('html') ?>
@@ -45,13 +53,13 @@ $action = \Yii::$app->controller->action->id;
                                type="<?= $empty('type', 'text') ?>"
                                name="<?= $field . $from ?>"
                                placeholder="<?= $empty('placeholder' . $from) ?>"
-                               value="<?= $empty('value' . $from) ?>" <?= empty($item['readonly' . $from]) ? null : 'readonly=readonly' ?>>
+                               value="<?= $day($empty('value' . $from)) ?>" <?= empty($item['readonly' . $from]) ? null : 'readonly=readonly' ?>>
                         To
                         <input class="form-control"
                                type="<?= $empty('type', 'text') ?>"
                                name="<?= $field . $to ?>"
                                placeholder="<?= $empty('placeholder' . $to) ?>"
-                               value="<?= $empty('value' . $to) ?>" <?= empty($item['readonly' . $to]) ? null : 'readonly=readonly' ?>>
+                               value="<?= $day($empty('value' . $to)) ?>" <?= empty($item['readonly' . $to]) ? null : 'readonly=readonly' ?>>
                     <?php elseif ($item['elem'] == 'input'): ?> <!-- input -->
                         <input class="form-control"
                                type="<?= $empty('type', 'text') ?>"

@@ -14,6 +14,7 @@ return [
     'create directory fail' => '创建目录失败, 请检查是否有写权限',
     'file move fail, file exists' => '文件移动失败, 该文件已存在',
     'file move error' => '文件移动错误',
+    'root path is required' => '上传根目录不能为空',
 
     // general
     'preview_url' => '预览',

@@ -20,12 +20,7 @@ class Upload extends Object
     private $_config = [
         'mimes' => [
             'text/xml',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'application/octet-stream',
-            'application/vnd.ms-office',
-            'application/vnd.ms-excel',
-            'application/excel',
-            'application/msexcel',
+            'text/html',
             'text/plain',
             'application/pdf',
             'image/png',
@@ -37,9 +32,25 @@ class Upload extends Object
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             'application/vnd.ms-powerpoint',
             'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-            'text/html'
         ],
-        'suffix' => 'xml,xls,xlsx,txt,pdf,png,gif,jpeg,jpg,zip,rar,doc,docx,ppt,pptx',
+        'suffix' => [
+            'xml',
+            'html',
+            'txt',
+            'pdf',
+            'png',
+            'gif',
+            'jpg',
+            'jpeg',
+            'jpe',
+            'svg',
+            'zip',
+            'rar',
+            'doc',
+            'docx',
+            'ppt',
+            'pptx'
+        ],
 
         // 100-200*200-MAX
         'pic_sizes' => null,
@@ -55,7 +66,7 @@ class Upload extends Object
                 'createDeepPath'
             ]
         ],
-        'root_path' => '/upload/',
+        'root_path' => null,
         'keep_name' => false,
 
         // for rename file, [0]-function name, method use array, [1]-param, params use array
@@ -487,7 +498,11 @@ class Upload extends Object
      */
     private function _checkRootPath($rootPath)
     {
-        if (!is_dir($rootPath) && !Helper::createDirectory($rootPath)) {
+        if (empty($rootPath)) {
+            $this->_error = 'root path is required';
+
+            return false;
+        } else if (!is_dir($rootPath) && !Helper::createDirectory($rootPath)) {
             $this->_error = 'create directory fail';
 
             return false;
