@@ -88,7 +88,7 @@ $params = \Yii::$app->params;
         <div class="auth-code">
             <input name="captcha" class="input-border" ng-model="buy.user_info.captcha" placeholder="验证码"/>
 
-            <div class="auth-code-1" kk-sms="{{buy.user_info.phone}}" sms-type="2" message="factory.message">发送验证码</div>
+            <div class="auth-code-1" kk-sms="{{buy.user_info.phone}}" data-type="2">发送验证码</div>
         </div>
     </div>
     <div class="blank">

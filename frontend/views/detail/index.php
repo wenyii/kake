@@ -11,12 +11,12 @@ $params = \Yii::$app->params;
 
 <div class="body" ng-init="service.goToTop('.back-top')">
     <div class="banner">
-	    	<div class="menu-box"  kk-menu="#menu" menu-pos-x="-15" menu-pos-y="-15">
+	    	<div class="menu-box"  kk-menu="#menu" data-pos-x="-15" data-pos-y="-15">
 	    		<div class="menu">
 	            <img src="<?= $params['frontend_source'] ?>/img/menu.svg"/>
 	        </div>
 	    	</div>
-        <div class="carousel" id="focus-hot" kk-focus=".focus-number" focus-number-tpl="< {NOW} / {TOTAL} > Sold: <?= $detail['max_sales'] ?>"
+        <div class="carousel" id="focus-hot" kk-focus=".focus-number" data-number-tpl="< {NOW} / {TOTAL} > Sold: <?= $detail['max_sales'] ?>"
              style="overflow: hidden">
             <div class="carousel-scroller product-focus">
                 <?php if (!empty($detail['slave_preview_url'])): ?>
@@ -38,11 +38,11 @@ $params = \Yii::$app->params;
         </div>
     </div>
     <div class="classify">
-        <div class="classify-1" kk-tab-card="cur-1" tab-element="div">
-            <div class="classify-1-1 cur-1" tab-card=".card_first">
+        <div class="classify-1" kk-tab-card="cur-1" data-element="div">
+            <div class="classify-1-1 cur-1" data-card=".card_first">
                 <span>详情介绍</span>
             </div>
-            <div class="classify-1-2" tab-card=".card_second">
+            <div class="classify-1-2" data-card=".card_second">
                 <span>预订须知</span>
             </div>
         </div>
