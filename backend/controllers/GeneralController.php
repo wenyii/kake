@@ -5,7 +5,6 @@ namespace backend\controllers;
 use common\components\Helper;
 use common\controllers\MainController;
 use common\models\Main;
-use function GuzzleHttp\Psr7\parse_query;
 use yii;
 use yii\helpers\Url;
 

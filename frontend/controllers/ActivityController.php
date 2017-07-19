@@ -27,8 +27,10 @@ class ActivityController extends GeneralController
     {
         $this->sourceCss = ['activity/activity'];
         $this->sourceJs = [
+            'activity/activity',
+            'jquery.ajaxupload',
             'html2canvas',
-            'activity/activity'
+            'canvas2image',
         ];
 
         return $this->render('story');
@@ -37,7 +39,7 @@ class ActivityController extends GeneralController
     /**
      * ajax 上传照片
      */
-    public function actionAjaxUploadPhoto()
+    public function actionUploadPhoto()
     {
         $this->uploader([
             'suffix' => [
@@ -57,6 +59,18 @@ class ActivityController extends GeneralController
      */
     public function actionAjaxStory()
     {
-        
+        $post = Yii::$app->request->post();
+
+        $result = $this->service('general.add-activity-story', [
+            'user_id' => $this->user->id,
+            'attachment' => $post['attachment'],
+            'story' => $post['story']
+        ]);
+
+        if (is_string($result)) {
+            $this->fail($result);
+        }
+
+        $this->success($result);
     }
 }
