@@ -534,6 +534,8 @@ class MainController extends Controller
         $url = Yii::$app->params['upload_url'];
         $result = [
             'id' => $result['id'],
+            'width' => $file['width'],
+            'height' => $file['height'],
             'url' => Helper::joinString('/', $url, $file['save_path'], $file['save_name'])
         ];
 
