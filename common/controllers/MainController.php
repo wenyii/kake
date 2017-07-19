@@ -111,7 +111,7 @@ class MainController extends Controller
     protected function parseError()
     {
         if (null === ($exception = Yii::$app->getErrorHandler()->exception)) {
-            $exception = new yii\web\HttpException(404, Yii::t('yii', 'Page not found.'));
+            $exception = new yii\web\HttpException(400, Yii::t('yii', 'An internal server error occurred.'));
         }
 
         if ($exception instanceof yii\web\HttpException) {
@@ -120,7 +120,7 @@ class MainController extends Controller
             $code = $exception->getCode();
         }
 
-        $errorAction = new yii\web\ErrorAction();
+        $errorAction = new yii\web\ErrorAction($this->id, $this->module);
 
         if ($exception instanceof yii\base\Exception) {
             $name = $exception->getName();
@@ -270,6 +270,7 @@ class MainController extends Controller
              * @var $exception object
              */
             $error = $this->parseError();
+
             extract($error);
             $trace = YII_DEBUG ? strval($exception->getPrevious()) : null;
         } else {
@@ -494,12 +495,13 @@ class MainController extends Controller
      *
      * @access protected
      *
-     * @param array $config
-     * @param mixed $cropData
+     * @param array   $config
+     * @param mixed   $cropData
+     * @param boolean $ajaxMode
      *
-     * @return void
+     * @return mixed
      */
-    protected function uploader($config = [], $cropData = null)
+    protected function uploader($config = [], $cropData = null, $ajaxMode = true)
     {
         $uploader = Yii::createObject([
             'class' => Upload::className(),
@@ -509,6 +511,9 @@ class MainController extends Controller
         $file = $uploader->upload($_FILES);
 
         if (is_string($file)) {
+            if (!$ajaxMode) {
+                return $file;
+            }
             $this->fail($file);
         }
         $file = current($file);
@@ -520,6 +525,9 @@ class MainController extends Controller
         ]);
 
         if (is_string($result)) {
+            if (!$ajaxMode) {
+                return $result;
+            }
             $this->fail($result);
         }
 
@@ -535,7 +543,12 @@ class MainController extends Controller
             }
         }
 
+        if (!$ajaxMode) {
+            return $result;
+        }
+
         $this->success($result);
+        return true;
     }
 
     /**

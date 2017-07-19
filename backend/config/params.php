@@ -61,7 +61,8 @@ return [
         'h' => [
             'name' => '活动日志',
             'sub' => [
-                'activity-lottery-code.index' => '抽奖码领取记录'
+                'activity-lottery-code.index' => '抽奖码领取记录',
+                'activity-story.index' => '酒店故事记录'
             ]
         ],
         'i' => [

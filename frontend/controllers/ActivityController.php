@@ -11,17 +11,19 @@ use Yii;
 class ActivityController extends GeneralController
 {
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
-    public function init()
+    public function beforeAction($action)
     {
-        parent::init();
+        $this->mustLogin();
+
+        return parent::beforeAction($action);
     }
 
     /**
-     * 上传照片
+     * 我和酒店的故事
      */
-    public function actionUploadPhoto()
+    public function actionStory()
     {
         $this->sourceCss = ['activity/activity'];
         $this->sourceJs = [
@@ -29,6 +31,32 @@ class ActivityController extends GeneralController
             'activity/activity'
         ];
 
-        return $this->render('upload-photo');
+        return $this->render('story');
+    }
+
+    /**
+     * ajax 上传照片
+     */
+    public function actionAjaxUploadPhoto()
+    {
+        $this->uploader([
+            'suffix' => [
+                'png',
+                'jpg',
+                'jpeg',
+                'jpe',
+                'gif'
+            ],
+            'pic_sizes' => '200-MAX*200-MAX',
+            'max_size' => 2048
+        ]);
+    }
+
+    /**
+     * 提交酒店故事数据
+     */
+    public function actionAjaxStory()
+    {
+        
     }
 }

@@ -905,7 +905,7 @@ class GeneralController extends MainController
 
         $model = new Main(static::$modelName);
         $labels = $model->attributeLabels();
-        $get = $this->callMethod('sufHandleField', $get, [
+        $get = $this->callMethod('preHandleField', $get, [
             $get,
             $caller
         ]);
@@ -2083,8 +2083,8 @@ class GeneralController extends MainController
         $url = str_replace(Yii::$app->params['upload_url'], null, $url);
         $file = Yii::$app->params['upload_path'] . $url;
 
-        $base64 = preg_replace('/^(data:\s*image\/(\w+);base64,)/', '', $base64);
-        @file_put_contents($file, base64_decode($base64));
+        Helper::saveBase64File($base64, $file);
+
         $this->success();
     }
 
