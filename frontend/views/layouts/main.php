@@ -43,10 +43,30 @@ $cover = empty($params['cover']) ? $params['frontend_source'] . '/img/logo.png' 
 
 <body<?= $ngCtl ?>>
 
-<kk-message message="factory.message"></kk-message>
-<kk-loading loading="factory.loading"></kk-loading>
-<kk-hit hit="factory.hit"></kk-hit>
+<!-- Loading -->
+<div id="loading" class="kk-animate kk-show hidden">
+    <div class="loading-bar loading-bounce kk-animate kk-t2b-show">
+        <div class="in"></div>
+        <div class="out"></div>
+    </div>
+</div>
 
+<!-- Message -->
+<div id="message" class="kk-animate kk-show hidden">
+    <div class="message-bar kk-animate kk-t2b-show">
+        <p class="message-box"></p>
+    </div>
+</div>
+
+<!-- Hit -->
+<div id="hit" class="hidden">
+    <div class="hit-bar hit-bounce kk-animate">
+        <div class="in"></div>
+        <div class="out"></div>
+    </div>
+</div>
+
+<!-- Menu -->
 <div id="menu">
     <div class="triangle"></div>
     <div>
@@ -67,6 +87,7 @@ $cover = empty($params['cover']) ? $params['frontend_source'] . '/img/logo.png' 
     </div>
 </div>
 
+<!-- Body -->
 <?php $this->beginBody() ?>
 <?= $content ?>
 <?php $this->endBody() ?>
@@ -95,6 +116,7 @@ foreach ($items as $item) {
 }
 ?>
 
+<!-- Footer -->
 <div class="hidden">
     <span ng-init="common()"></span>
     <span ng-init='wxSDK(<?= Yii::$app->wx->js->config([

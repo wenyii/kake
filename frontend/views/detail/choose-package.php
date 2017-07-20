@@ -40,7 +40,7 @@ $params = \Yii::$app->params;
 	                               	<i class="price">￥<?= $item['min_price'] ?><i/>
 	                            	</div>
                             </div>
-                            <div class="combo-2 kk-animate ng-hide" ng-class="{'kk-b2s': <?= $number ?>}"
+                            <div class="combo-2 kk-animate ng-hide" ng-class="{'kk-b2s-show': <?= $number ?>}"
                                  ng-show="<?= $number ?>">
                                 <i></i>
 
