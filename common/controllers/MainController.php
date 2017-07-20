@@ -1275,6 +1275,28 @@ class MainController extends Controller
     }
 
     /**
+     * ajax 保存 base64 格式的图片
+     *
+     * @access public
+     * @auth-pass-all
+     * @return void
+     */
+    public function actionAjaxSaveBase64Png()
+    {
+        $base64 = Yii::$app->request->post('base64');
+
+        $path = Yii::$app->params['upload_path'];
+        $deep = Helper::createDeepPath();
+        $file = $deep . '/' . uniqid('base64_') . '.png';
+
+        Helper::saveBase64File($base64, $path . '/' . $file);
+
+        $this->success([
+            'url' => Yii::$app->params['upload_url'] . '/' . $file
+        ]);
+    }
+
+    /**
      * @inheritDoc
      */
     public function __call($name, $params)
