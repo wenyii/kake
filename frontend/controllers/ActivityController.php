@@ -29,8 +29,7 @@ class ActivityController extends GeneralController
         $this->sourceJs = [
             'activity/activity',
             'jquery.ajaxupload',
-            'html2canvas',
-            'canvas2image',
+            'html2canvas'
         ];
 
         return $this->render('story');
