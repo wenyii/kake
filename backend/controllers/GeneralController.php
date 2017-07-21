@@ -276,6 +276,7 @@ class GeneralController extends MainController
     {
         return $this->cache([
             'controller.auth.list',
+            $this->user->id,
             func_get_args()
         ], function () use ($manager, $userRole) {
 
