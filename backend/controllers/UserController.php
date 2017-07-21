@@ -51,7 +51,7 @@ class UserController extends GeneralController
                 'level' => 'info',
                 'icon' => 'cog',
                 'show_condition' => function ($record) {
-                    return $record['role'] == 1;
+                    return $record['role'] >= 1;
                 }
             ]
         ]);
