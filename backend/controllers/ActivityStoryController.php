@@ -25,6 +25,14 @@ class ActivityStoryController extends GeneralController
     /**
      * @inheritDoc
      */
+    public static function indexOperation()
+    {
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function indexFilter()
     {
         return [
