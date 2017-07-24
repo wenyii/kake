@@ -60,6 +60,11 @@ class HotelController extends GeneralController
                 'equal' => true
             ],
             'name' => 'input',
+            'hotel_region_id' => [
+                'list_table' => 'hotel_region',
+                'list_value' => 'name',
+                'value' => parent::SELECT_KEY_ALL
+            ],
             'principal' => 'input',
             'address' => 'input',
             'state' => [
@@ -75,6 +80,11 @@ class HotelController extends GeneralController
     {
         return [
             'name' => 'input',
+            'hotel_region_id' => [
+                'list_table' => 'hotel_region',
+                'list_value' => 'name',
+                'value' => parent::SELECT_KEY_ALL,
+            ],
             'principal' => 'input',
             'address' => 'input',
             'state' => [
@@ -104,6 +114,12 @@ class HotelController extends GeneralController
             'name' => [
                 'max-width' => '250px'
             ],
+            'hotel_region_id' => [
+                'list_table' => 'hotel_region',
+                'list_value' => 'name',
+                'info',
+                'code'
+            ],
             'principal',
             'contact',
             'address' => [
@@ -125,8 +141,14 @@ class HotelController extends GeneralController
     {
         return [
             'name',
+            'hotel_region_id' => [
+                'list_table' => 'hotel_region',
+                'list_value' => 'name',
+                'info',
+                'code'
+            ],
             'address' => [
-                'max-width' => '450px'
+                'max-width' => '400px'
             ],
             'state' => [
                 'code',
@@ -144,6 +166,11 @@ class HotelController extends GeneralController
         return [
             'name' => [
                 'placeholder' => '64个字以内'
+            ],
+            'hotel_region_id' => [
+                'list_table' => 'hotel_region',
+                'list_value' => 'name',
+                'elem' => 'select'
             ],
             'principal' => [
                 'placeholder' => '32个字以内'

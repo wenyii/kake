@@ -614,6 +614,37 @@ class GeneralController extends MainController
     }
 
     /**
+     * 从表中获取 select 的列表数据
+     *
+     * @access public
+     *
+     * @param array $item
+     *
+     * @return array
+     */
+    public function getListAboutTable($item)
+    {
+        return $this->cache($item, function () use ($item) {
+
+            $table = $item['list_table'];
+            $key = empty($item['list_key']) ? 'id' : $item['list_key'];
+            $value = empty($item['list_value']) ? 'id' : $item['list_value'];
+
+            $list = $this->service(self::$listApiName, [
+                'table' => $table,
+                'select' => [
+                    $key,
+                    $value
+                ],
+                'size' => 0
+            ]);
+            $list = Helper::arrayColumnSimple($list, 'id', 'name');
+
+            return $list;
+        }, YEAR, null, Yii::$app->params['use_cache']);
+    }
+
+    /**
      * 获取 model 中的枚举属性
      *
      * @access public
@@ -747,6 +778,10 @@ class GeneralController extends MainController
                 }
             }
 
+            if (!empty($_value['list_table'])) {
+                $_value['field_info'] = $this->getListAboutTable($_value);
+            }
+
             $title = Helper::popOne($_value, 'title');
 
             $_assist[$key] = [
@@ -868,7 +903,15 @@ class GeneralController extends MainController
     {
         $valued = isset($value['value']) ? $value['value'] : null;
 
-        $list = empty($value['list']) ? null : (array) $value['list'];
+        if (empty($value['list'])) {
+            if (empty($value['list_table'])) {
+                $list = null;
+            } else {
+                $list = $this->getListAboutTable($value);
+            }
+        } else {
+            $list = (array) $value['list'];
+        }
         $list = $this->getEnumerate($model, $key, $list);
 
         if ($addAll) {

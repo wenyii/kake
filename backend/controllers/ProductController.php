@@ -280,12 +280,17 @@ class ProductController extends GeneralController
                 'equal' => true
             ],
             'title' => 'input',
-            'destination' => 'input',
             'hotel_name' => [
                 'elem' => 'input',
                 'table' => 'hotel',
                 'field' => 'name',
                 'title' => '酒店名称'
+            ],
+            'hotel_region_id' => [
+                'table' => 'hotel',
+                'list_table' => 'hotel_region',
+                'list_value' => 'name',
+                'value' => parent::SELECT_KEY_ALL
             ],
             'classify' => [
                 'value' => parent::SELECT_KEY_ALL
@@ -369,14 +374,18 @@ class ProductController extends GeneralController
             'title' => [
                 'max-width' => '250px'
             ],
-            'destination' => [
-                'max-width' => '150px'
-            ],
             'hotel_name' => [
                 'table' => 'hotel',
                 'field' => 'name',
                 'title' => '酒店名称',
                 'tip'
+            ],
+            'hotel_region_id' => [
+                'table' => 'hotel',
+                'list_table' => 'hotel_region',
+                'list_value' => 'name',
+                'info',
+                'code'
             ],
             'classify' => [
                 'code',
@@ -435,7 +444,6 @@ class ProductController extends GeneralController
         return [
             'id' => 'code',
             'title',
-            'destination',
             'classify' => [
                 'code',
                 'info'
@@ -493,9 +501,6 @@ class ProductController extends GeneralController
             'title' => [
                 'placeholder' => '64个字以内',
                 'label' => 4
-            ],
-            'destination' => [
-                'placeholder' => '32个字以内'
             ],
             'hotel_id' => [
                 'readonly' => true,
@@ -724,6 +729,7 @@ class ProductController extends GeneralController
                 'master.deep_path AS master_deep_path',
                 'master.filename AS master_filename',
                 'hotel.name AS hotel_name',
+                'hotel.hotel_region_id',
                 'product.*'
             ],
             'order' => [

@@ -289,7 +289,9 @@ class ViewHelper extends Object
             }
         } elseif (isset($adorn['info'])) { // enumeration
             $content = $empty($field, null, null, $notSetFn);
-            $content = is_null($content) ? $notSetStr : $empty($field . '_info', $notSetStr, null, $notSetFn);
+            $default = empty($adorn['field_info'][$item[$field]]) ? $notSetStr : $adorn['field_info'][$item[$field]];
+            $fieldInfo = $empty($field . '_info', $default, null, $notSetFn);
+            $content = is_null($content) ? $notSetStr : $fieldInfo;
         } elseif (isset($adorn['link'])) { // link
             if ($empty($field)) {
                 $content = '<a href="' . $empty($field) . '" target="_blank">' . $adorn['url_info'] . '</a>';

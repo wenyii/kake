@@ -20,7 +20,10 @@ class ProductPackageController extends GeneralController
     /**
      * @var array Hook
      */
-    public static $hookPriceNumber = ['price'];
+    public static $hookPriceNumber = [
+        'base_price',
+        'price'
+    ];
 
     public static $_status;
 
@@ -139,6 +142,10 @@ EOF
             'name' => [
                 'max-width' => '120px'
             ],
+            'base_price' => [
+                'code',
+                'tip'
+            ],
             'title' => [
                 'title' => '产品',
                 'tip'
@@ -203,6 +210,9 @@ EOF
             'name' => [
                 'placeholder' => '32个字以内'
             ],
+            'base_price' => [
+                'placeholder' => '保留到小数点后两位'
+            ],
             'price' => [
                 'placeholder' => '保留到小数点后两位'
             ],
@@ -237,6 +247,10 @@ EOF
             'name' => [
                 'label' => 5,
                 'placeholder' => '32个字以内'
+            ],
+            'base_price' => [
+                'label' => 5,
+                'placeholder' => '保留到小数点后两位'
             ],
             'price' => [
                 'label' => 5,

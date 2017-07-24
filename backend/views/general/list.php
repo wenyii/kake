@@ -216,7 +216,7 @@ $action = \Yii::$app->controller->action->id;
                     ?>
                     <td>
                         <div <?= ViewHelper::getStyleByAdorn($value['adorn']) ?>>
-                            <?= ViewHelper::adornHtml($field, $value, $item) ?>
+                            <?= ViewHelper::adornHtml($field, $value, $item, $value['adorn']) ?>
                         </div>
                     </td>
                 <?php endforeach; ?>
