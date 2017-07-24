@@ -519,6 +519,9 @@ class GeneralController extends MainController
         Yii::$app->view->params['user_info'] = $this->user;
         $menu = $hideMenu ? [] : Yii::$app->params['menu'];
 
+        $this->debug(function () {
+            return $this->user;
+        });
         $authList = $this->getAuthList(false, $this->user->role);
         $rootUser = $this->getRootUsers();
 
