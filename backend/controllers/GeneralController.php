@@ -624,7 +624,7 @@ class GeneralController extends MainController
      */
     public function getListAboutTable($item)
     {
-        return $this->cache($item, function () use ($item) {
+        $list = $this->cache($item, function () use ($item) {
 
             $table = $item['list_table'];
             $key = empty($item['list_key']) ? 'id' : $item['list_key'];
@@ -642,6 +642,8 @@ class GeneralController extends MainController
 
             return $list;
         }, YEAR, null, Yii::$app->params['use_cache']);
+
+        return empty($list) ? [] : $list;
     }
 
     /**
@@ -656,7 +658,7 @@ class GeneralController extends MainController
      * @throws \Exception
      * @return mixed
      */
-    public function getEnumerate($model, $enumName, $default = [])
+    public function getEnumerate($model, $enumName, $default = null)
     {
         $key = '_' . $enumName;
 
@@ -676,7 +678,7 @@ class GeneralController extends MainController
         try {
             $enum = $model->$key;
         } catch (\Exception $e) {
-            if (!empty($default)) {
+            if (isset($default)) {
                 return $except($default);
             }
             throw new \Exception('This enumeration property ' . $key . ' don\'t exist in model');
