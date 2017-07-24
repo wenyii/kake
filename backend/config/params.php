@@ -43,10 +43,12 @@ return [
         'f' => [
             'name' => '酒店和产品',
             'sub' => [
-                'ad.index' => '广告管理',
+                'hotel-plate.index' => '酒店板块管理',
+                'hotel-region.index' => '酒店地区管理',
                 'hotel.index' => '酒店管理',
                 'product.index' => '产品管理',
-                'product-package.index' => '产品套餐管理'
+                'product-package.index' => '产品套餐管理',
+                'ad.index' => '广告管理',
             ]
         ],
         'g' => [
