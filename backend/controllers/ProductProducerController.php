@@ -2,7 +2,6 @@
 
 namespace backend\controllers;
 
-use common\components\Helper;
 use Yii;
 
 /**

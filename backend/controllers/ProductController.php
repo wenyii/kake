@@ -4,7 +4,6 @@ namespace backend\controllers;
 
 use backend\components\ViewHelper;
 use common\components\Helper;
-use common\models\Main;
 use Yii;
 use yii\helpers\Url;
 
@@ -495,7 +494,8 @@ class ProductController extends GeneralController
      */
     public static function editAssist($action = null)
     {
-        $description = (new Main('ProductDescription'))->attributeLabels();
+        $model = parent::model('ProductDescription');
+        $description = $model->attributeLabels();
 
         return [
             'title' => [

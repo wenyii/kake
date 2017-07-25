@@ -4,7 +4,6 @@ namespace backend\controllers;
 
 use common\components\Helper;
 use common\controllers\MainController;
-use common\models\Main;
 use yii;
 use yii\helpers\Url;
 
@@ -720,7 +719,8 @@ class GeneralController extends MainController
      */
     public function getListAssist($assist)
     {
-        $labels = (new Main(static::$modelName))->attributeLabels();
+        $model = parent::model(static::$modelName);
+        $labels = $model->attributeLabels();
         $_assist = [];
 
         foreach ($assist as $key => $value) {
@@ -752,7 +752,7 @@ class GeneralController extends MainController
                 $_labels = $labels;
                 if (isset($_value['table'])) {
                     $_labels = Helper::singleton('model.' . $_value['table'], function () use ($_value) {
-                        return new Main($_value['table']);
+                        return parent::model($_value['table']);
                     })->attributeLabels();
                 }
                 $_value['title'] = isset($_labels[$_key]) ? $_labels[$_key] : Yii::t('common', $key);
@@ -808,7 +808,7 @@ class GeneralController extends MainController
      */
     public function getEditAssist($assist, &$default = [], $action = null)
     {
-        $model = new Main(static::$modelName);
+        $model = parent::model(static::$modelName);
 
         $info = $model->attributeLabels();
         $_assist = [];
@@ -948,7 +948,7 @@ class GeneralController extends MainController
             ];
         }
 
-        $model = new Main(static::$modelName);
+        $model = parent::model(static::$modelName);
         $labels = $model->attributeLabels();
         $get = $this->callMethod('preHandleField', $get, [
             $get,
@@ -976,7 +976,7 @@ class GeneralController extends MainController
                 $_labels = $labels;
                 if (isset($value['table'])) {
                     $_labels = Helper::singleton('model.' . $value['table'], function () use ($value) {
-                        return new Main($value['table']);
+                        return parent::model($value['table']);
                     })->attributeLabels();
                 }
                 $value['title'] = isset($_labels[$field]) ? $_labels[$field] : Yii::t('common', $key);
@@ -1121,7 +1121,7 @@ class GeneralController extends MainController
             ];
         }
 
-        $model = new Main(static::$modelName);
+        $model = parent::model(static::$modelName);
 
         $_sorter = $default = [];
         foreach ($sorter as $key => $value) {
@@ -1765,7 +1765,7 @@ class GeneralController extends MainController
                 $condition['order'] = $sorterDefault;
             }
 
-            $model = new Main(static::$modelName);
+            $model = parent::model(static::$modelName);
             $params = [
                 'table' => $model->tableName,
                 'db' => static::$modelDb
@@ -1936,7 +1936,7 @@ class GeneralController extends MainController
         if (!empty(static::$addFunctionName)) {
             $result = $this->callMethod(static::$addFunctionName, 'function non-exists');
         } else {
-            $model = new Main(static::$modelName);
+            $model = parent::model(static::$modelName);
 
             $params = array_merge(['table' => $model->tableName], $post);
             $params = $this->callMethod('preHandleField', [], [
@@ -1982,7 +1982,7 @@ class GeneralController extends MainController
             $id = Yii::$app->request->get('id');
             $condition = $this->callMethod($caller . 'Condition', []);
 
-            $model = new Main(static::$modelName);
+            $model = parent::model(static::$modelName);
             $condition['table'] = $model->tableName;
             if (!$where) {
                 $where = [[$model->tableName . '.id' => $id]];
@@ -2052,7 +2052,7 @@ class GeneralController extends MainController
         if (!empty(static::$editFunctionName)) {
             $result = $this->callMethod(static::$editFunctionName, 'function non-exists');
         } else {
-            $model = new Main(static::$modelName);
+            $model = parent::model(static::$modelName);
             $params = array_merge([
                 'table' => $model->tableName,
                 'where' => [$model->tableName . '.id' => $post['id']]
@@ -2085,7 +2085,7 @@ class GeneralController extends MainController
         if (!empty(static::$frontFunctionName)) {
             $result = $this->callMethod(static::$frontFunctionName, 'function non-exists');
         } else {
-            $model = new Main(static::$modelName);
+            $model = parent::model(static::$modelName);
             $result = $this->service(static::$frontApiName, [
                 'table' => $model->tableName,
                 'id' => Yii::$app->request->get('id')

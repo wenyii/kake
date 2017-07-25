@@ -3,7 +3,6 @@
 namespace frontend\controllers;
 
 use Yii;
-use yii\helpers\ArrayHelper;
 
 /**
  * Detail controller

@@ -2,7 +2,6 @@
 
 namespace frontend\controllers;
 
-use common\models\Main;
 use Yii;
 
 /**

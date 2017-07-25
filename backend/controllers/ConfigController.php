@@ -3,7 +3,6 @@
 namespace backend\controllers;
 
 use common\components\Helper;
-use common\models\Main;
 use Yii;
 use yii\data\Pagination;
 use yii\helpers\Html;
@@ -128,7 +127,7 @@ class ConfigController extends GeneralController
      */
     public function actionFile()
     {
-        $model = new Main(self::$modelName);
+        $model = parent::model(self::$modelName);
         $handler = function ($config, $app) use ($model) {
 
             $_config = [];

@@ -4,7 +4,6 @@ namespace backend\components;
 
 use common\components\Helper;
 use yii\base\Object;
-use yii\data\Pagination;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\LinkPager;

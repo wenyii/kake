@@ -3,7 +3,6 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\Main;
 
 /**
  * 订单操作日志

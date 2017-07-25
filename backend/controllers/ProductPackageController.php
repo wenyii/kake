@@ -2,8 +2,6 @@
 
 namespace backend\controllers;
 
-use common\models\Main;
-
 /**
  * 酒店产品套餐管理
  *
@@ -286,7 +284,8 @@ EOF
                 return $record;
             }
 
-            self::$_status = (new Main(self::$modelName))->_state;
+            $model = parent::model(self::$modelName);
+            self::$_status = $model->_state;
             $record = $this->getFieldInfo($record, 'status');
 
             if (!empty($record['sale_rate'])) {
