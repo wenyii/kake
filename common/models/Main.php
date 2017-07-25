@@ -126,11 +126,6 @@ class Main extends ActiveRecord
         $client = realpath(Yii::getAlias('@thrift/client.php'));
         Yii::trace('服务请求开始: ' . $api . ' with ' . json_encode($params));
         $cmd = Helper::joinString(' ', 'php', $client, $params, $conf['thrift_ip'], $conf['thrift_port']);
-        
-
-        if (strpos($api, 'login-check')) {
-            $this->dump($cmd);
-        }
         exec($cmd, $result);
         Yii::trace('服务请求结束');
 
