@@ -66,10 +66,7 @@ foreach ($item as $type): ?>
                     </li>
                     <?php if ($this->params['user_info']->role == 1): ?>
                         <li>
-                            <a class="btn btn-link mission-button" data-action-tag="clear-frontend-cache">清前台缓存</a>
-                        </li>
-                        <li>
-                            <a class="btn btn-link mission-button" data-action-tag="clear-backend-cache">清后台缓存</a>
+                            <a class="btn btn-link mission-button" data-action-tag="clear-all-cache">清前缓存</a>
                         </li>
                     <?php endif; ?>
                     <li><a class="confirm-button" href="<?= Url::to(['login/logout']) ?>">退出登录</a></li>

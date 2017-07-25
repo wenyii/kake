@@ -2,7 +2,6 @@
 
 namespace frontend\controllers;
 
-use common\models\Main;
 use Yii;
 
 /**
@@ -65,7 +64,7 @@ class WeChatController extends GeneralController
             return "名字和手机号码用于中奖联络方式，请规范填写哦~";
         }
 
-        $model = new Main('ActivityLotteryCode');
+        $model = parent::model('ActivityLotteryCode');
 
         // 公司代码验证
         $company = strtolower($company);

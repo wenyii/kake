@@ -3,8 +3,6 @@
 namespace frontend\controllers;
 
 use Yii;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
 
 /**
  * User controller

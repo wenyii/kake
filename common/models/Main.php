@@ -43,14 +43,14 @@ class Main extends ActiveRecord
      * Constructor
      *
      * @param string  $name
-     * @param array   $config
      * @param boolean $useCache
+     * @param array   $config
      */
-    public function __construct($name = null, $config = [], $useCache = true)
+    public function __construct($name = null, $useCache = false, $config = null)
     {
         $this->tableName = Helper::camelToUnder($name);
         $this->useCache = $useCache;
-        parent::__construct($config);
+        parent::__construct($config ?: []);
 
         $model = ($this->tableName ? Helper::underToCamel($this->tableName, false) : 'Main');
         Yii::trace('实例化模型: ' . $model . 'Model');

@@ -548,6 +548,7 @@ class MainController extends Controller
         }
 
         $this->success($result);
+
         return true;
     }
 
@@ -1295,6 +1296,19 @@ class MainController extends Controller
     }
 
     /**
+     * 获取模型
+     *
+     * @param string $model
+     * @param array  $config
+     *
+     * @return Main
+     */
+    public static function model($model = null, $config = [])
+    {
+        return new Main($model, Yii::$app->params['use_cache'], $config);
+    }
+
+    /**
      * @inheritDoc
      */
     public function __call($name, $params)
@@ -1306,7 +1320,7 @@ class MainController extends Controller
         ];
         if (in_array($name, $methods)) {
             $model = Helper::singleton('model.main', function () {
-                return new Main();
+                return self::model();
             });
 
             return $model->{$name}(...$params);

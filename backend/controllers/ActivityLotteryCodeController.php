@@ -2,11 +2,6 @@
 
 namespace backend\controllers;
 
-use common\models\Main;
-use Yii;
-use yii\data\Pagination;
-use yii\helpers\Html;
-
 /**
  * 抽奖码管理
  *

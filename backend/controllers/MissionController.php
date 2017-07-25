@@ -2,7 +2,6 @@
 
 namespace backend\controllers;
 
-use common\components\Helper;
 use Yii;
 
 /**
@@ -21,6 +20,26 @@ class MissionController extends GeneralController
     public function actionCache()
     {
         return $this->display('cache');
+    }
+
+    /**
+     * 一键清除缓存
+     */
+    public function actionAjaxClearAllCache()
+    {
+        $info = null;
+
+        $info .= Yii::$app->cache->flush() ? '后台缓存清除成功' : '后台缓存清除失败';
+        $info .= '<br>';
+
+        $result = $this->api('frontend', 'site.clear-cache');
+        $info .= ($result['state'] < 1) ? ('前台缓存清除失败: ' . $result['info']) : '前台缓存清除成功';
+        $info .= '<br>';
+
+        $result = $this->service('general.clear-cache');
+        $info .= is_string($result) ? ('服务缓存清除失败: ' . $result) : '服务缓存清除成功';
+
+        $this->success(null, $info);
     }
 
     /**
