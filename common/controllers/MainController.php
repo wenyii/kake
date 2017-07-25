@@ -120,12 +120,10 @@ class MainController extends Controller
             $code = $exception->getCode();
         }
 
-        $errorAction = new yii\web\ErrorAction($this->id, $this->module);
-
         if ($exception instanceof yii\base\Exception) {
             $name = $exception->getName();
         } else {
-            $name = $errorAction->defaultName ?: Yii::t('yii', 'Error');
+            $name = Yii::t('yii', 'Error');
         }
         if ($code) {
             $name .= " (#$code)";
@@ -134,7 +132,7 @@ class MainController extends Controller
         if ($exception instanceof yii\base\UserException) {
             $message = $exception->getMessage();
         } else {
-            $message = $errorAction->defaultMessage ?: Yii::t('yii', 'An internal server error occurred.');
+            $message = Yii::t('yii', 'An internal server error occurred.');
         }
 
         return [
