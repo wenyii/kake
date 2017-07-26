@@ -18,7 +18,8 @@
     "yiisoft/yii2-swiftmailer": "*",
     "apache/thrift": "^0.9.3",
     "overtrue/wechat": "^3.2",
-    "endroid/qrcode": "^2.2"
+    "endroid/qrcode": "^2.2",
+    "intervention/image": "^2.4"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "*",

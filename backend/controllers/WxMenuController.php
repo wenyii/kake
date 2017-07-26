@@ -19,6 +19,9 @@ class WxMenuController extends GeneralController
      */
     public function actionIndex()
     {
+        // $source = Yii::$app->wx->material->lists('news');
+        // $this->dump($source);
+
         $menu = Yii::$app->wx->menu->current();
         $menu = empty($menu->selfmenu_info['button']) ? [] : $menu->selfmenu_info['button'];
         foreach ($menu as &$item) {
