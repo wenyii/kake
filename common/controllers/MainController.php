@@ -1283,12 +1283,7 @@ class MainController extends Controller
     public function actionAjaxSaveBase64Png()
     {
         $base64 = Yii::$app->request->post('base64');
-
-        $path = Yii::$app->params['upload_path'];
-        $deep = Helper::createDeepPath();
-        $file = $deep . '/' . uniqid('base64_') . '.png';
-
-        Helper::saveBase64File($base64, $path . '/' . $file);
+        $file = Helper::saveBase64File($base64, Yii::$app->params['upload_path'], 'png');
 
         $this->success([
             'url' => Yii::$app->params['upload_url'] . '/' . $file
@@ -1298,6 +1293,8 @@ class MainController extends Controller
     /**
      * 获取模型
      *
+     * @access public
+     *
      * @param string $model
      * @param array  $config
      *
@@ -1306,6 +1303,52 @@ class MainController extends Controller
     public static function model($model = null, $config = [])
     {
         return new Main($model, Yii::$app->params['use_cache'], $config);
+    }
+
+    /**
+     * 通过 url 获取文件路径
+     *
+     * @access public
+     *
+     * @param string $url
+     * @param string $host
+     *
+     * @return bool|string
+     */
+    public static function getPathByUrl($url, $host = null)
+    {
+        if (strpos($url, 'http') !== 0 && !empty($host)) {
+            $url = Yii::$app->params[$host] . '/' . $url;
+        }
+
+        $file = Yii::$app->params['tmp_path'] . '/' . basename($url);
+
+        return Helper::saveRemoteFile($url, $file) ? $file : false;
+    }
+
+    /**
+     * 通过文件路获取可访问的 url
+     *
+     * @access public
+     *
+     * @param string $file
+     * @param string $ext
+     * @param string $prefix
+     *
+     * @return bool|string
+     */
+    public static function getUrlByPath($file, $ext = 'jpg', $prefix = null)
+    {
+        $deep = Helper::createDeepPath();
+        $path = Yii::$app->params['upload_path'] . '/' . $deep;
+
+        $filename = uniqid($prefix) . '.' . $ext;
+        $new = $path . '/' . $filename;
+
+        mkdir($path, 0777, true);
+        $url = Yii::$app->params['upload_url'] . '/' . $deep . '/' . $filename;
+
+        return rename($file, $new) ? $url : false;
     }
 
     /**

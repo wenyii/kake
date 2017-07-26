@@ -2,7 +2,10 @@
 
 namespace frontend\controllers;
 
+use common\components\Helper;
 use Yii;
+use Intervention\Image\ImageManagerStatic as Image;
+use yii\helpers\FileHelper;
 
 /**
  * Activity controller
@@ -53,6 +56,46 @@ class ActivityController extends GeneralController
     }
 
     /**
+     * 生成截屏图
+     *
+     * @access private
+     *
+     * @param string $story
+     * @param string $text
+     *
+     * @return string
+     */
+    private function screenShot($story, $text)
+    {
+        $bg = self::getPathByUrl('img/activity/story-bg.jpg', 'frontend_source');
+        $story = self::getPathByUrl($story);
+        $ele = self::getPathByUrl('img/activity/story-ele.png', 'frontend_source');
+
+        $fonts = self::getPathByUrl('fonts/nexa.ttf', 'frontend_source');
+
+        $story = Image::make($story);
+        $data = Helper::calThumb(700, 340, $story->width(), $story->height());
+        $story->resize($data['width'], $data['height']);
+
+        $img = Image::make($bg);
+
+        $x = intval($data['left'] + 25);
+        $y = intval($data['top'] + 150);
+        $img->insert($story, 'top-left', $x, $y);
+
+        $img->insert($ele);
+        $img->text($text, 170, 770, function ($font) use ($fonts) {
+            $font->file($fonts);
+            $font->size(32);
+        });
+
+        $tmp = Yii::$app->params['tmp_path'] . '/' . $this->user->id . '.jpg';
+        $img->save($tmp);
+
+        return self::getUrlByPath($tmp, 'jpg', 'screen_shot_');
+    }
+
+    /**
      * 提交酒店故事数据
      */
     public function actionAjaxStory()
@@ -69,6 +112,7 @@ class ActivityController extends GeneralController
             $this->fail($result);
         }
 
-        $this->success($result);
+        $img = $this->screenShot($post['img'], $post['story']);
+        $this->success(['img' => $img]);
     }
 }

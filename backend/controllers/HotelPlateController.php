@@ -108,7 +108,7 @@ class HotelPlateController extends GeneralController
                 'tag' => 1,
                 'rules' => [
                     'suffix' => 'jpg,jpeg,png',
-                    'pic_sizes' => '188*380', // 336*234
+                    'pic_sizes' => '188*380',
                     'max_size' => 512
                 ],
                 'preview_name' => 'preview_url',

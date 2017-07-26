@@ -424,9 +424,8 @@ class ProducerSettingController extends GeneralController
         $channel = Helper::integerEncode($userId);
         $link = Yii::$app->params['frontend_url'] . '/?r=distribution&channel=' . $channel;
 
-        $logo = current($producer['logo_preview_url']);
-        $logoPath = Yii::$app->params['tmp_path'] . '/' . basename($logo);
-        if (!Helper::saveRemoteFile($logo, $logoPath)) {
+        $logoPath = parent::getPathByUrl(current($producer['logo_preview_url']));
+        if (!$logoPath) {
             return [
                 $link,
                 null
