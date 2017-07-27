@@ -78,6 +78,10 @@ class UserController extends GeneralController
     public static function indexFilter()
     {
         return [
+            'id' => [
+                'elem' => 'input',
+                'equal' => true
+            ],
             'username' => 'input',
             'phone' => 'input',
             'role' => [
@@ -346,7 +350,7 @@ class UserController extends GeneralController
         $result = $this->service(static::$editApiName, [
             'table' => 'user',
             'where' => ['openid' => $openid],
-            'username' => $user['nickname'],
+            'username' => Helper::filterEmjoy($user['nickname']),
             'sex' => $user['sex'],
             'city' => $user['city'],
             'province' => $user['province'],
