@@ -1201,7 +1201,7 @@ class MainController extends Controller
             return [];
         }
 
-        $producer = $this->callMethod('sufHandleField', $producer, [$producer], $controller);
+        $producer = $this->callMethod('sufHandleField', $producer, [$producer, 'list'], $controller);
 
         return $producer;
     }

@@ -83,6 +83,15 @@ class ProducerSettingController extends GeneralController
                 'level' => 'info',
                 'icon' => 'link',
                 'params' => ['username']
+            ],
+            [
+                'text' => '用户',
+                'value' => 'user/index',
+                'level' => 'info',
+                'icon' => 'link',
+                'params' => function($record) {
+                    return ['id' => $record['producer_id']];
+                }
             ]
         ]);
     }
@@ -141,6 +150,10 @@ class ProducerSettingController extends GeneralController
                 'code',
                 'table' => 'user',
                 'color' => 'default'
+            ],
+            'producer_id' => [
+                'code',
+                'title' => 'UID'
             ],
             'name',
             'theme' => [
