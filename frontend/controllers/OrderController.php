@@ -77,7 +77,6 @@ class OrderController extends GeneralController
             'product_package.bidding',
 
             'product.title',
-            'product.destination',
             'product.attachment_cover',
 
             'attachment.deep_path AS cover_deep_path',

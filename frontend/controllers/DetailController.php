@@ -39,6 +39,10 @@ class DetailController extends GeneralController
                 'table' => 'hotel',
                 'left_on_field' => 'hotel_id',
                 'right_on_field' => 'id'
+            ],
+            [
+                'left_table' => 'hotel',
+                'table' => 'hotel_region'
             ]
         ],
         'select' => [
@@ -54,7 +58,8 @@ class DetailController extends GeneralController
             'product_package.price',
             'cover.deep_path AS cover_deep_path',
             'cover.filename AS cover_filename',
-            'hotel.name'
+            'hotel.name',
+            'hotel_region.name AS region'
         ],
         'where' => [
             ['product.state' => 1]

@@ -99,9 +99,15 @@ class WeChatController extends GeneralController
 
         // 已参与判断
         if (!empty($result['exists'])) {
+            if ($company == '汪正摄影') {
+                return '你已经参与过该活动了，请您等待汪正摄影的联系！';
+            }
             return "宝贝，不要太贪心哦~你已经参与过啦~{$br}抽奖码：${result['code']}，祝你好运~";
         }
 
+        if ($company == '汪正摄影') {
+            return '恭喜您报名成功，请您等待汪正摄影的联系！';
+        }
         return "WoW~ 这是喀客旅行为你提供的抽奖码：${result['code']}！希望你能抽中奖品～";
     }
 }

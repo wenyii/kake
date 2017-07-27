@@ -4,8 +4,6 @@ namespace backend\controllers;
 
 /**
  * 广告管理
- *
- * @auth-inherit-except front
  */
 class AdController extends GeneralController
 {
