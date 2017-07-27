@@ -71,8 +71,6 @@ class ActivityController extends GeneralController
         $story = self::getPathByUrl($story);
         $ele = self::getPathByUrl('img/activity/story-ele.png', 'frontend_source');
 
-        $fonts = self::getPathByUrl('fonts/nexa.ttf', 'frontend_source');
-
         $story = Image::make($story);
         $data = Helper::calThumb(700, 340, $story->width(), $story->height());
         $story->resize($data['width'], $data['height']);
@@ -84,10 +82,26 @@ class ActivityController extends GeneralController
         $img->insert($story, 'top-left', $x, $y);
 
         $img->insert($ele);
-        $img->text($text, 170, 770, function ($font) use ($fonts) {
-            $font->file($fonts);
-            $font->size(32);
-        });
+        $fonts = self::getPathByUrl('fonts/mango.ttf', 'frontend_source');
+
+        $writeString = function ($text, $index = 0) use ($img, $fonts, &$writeString) {
+
+            $y = $index * 40 + 770;
+            $str = Helper::mSubStr($text, $index * 14, 14, 'utf-8', null);
+
+            if (empty($str)) {
+                return;
+            }
+
+            $img->text($str, 160, $y, function ($font) use ($fonts) {
+                $font->file($fonts);
+                $font->size(32);
+            });
+
+            $writeString($text, $index + 1);
+        };
+
+        $writeString($text);
 
         $tmp = Yii::$app->params['tmp_path'] . '/' . $this->user->id . '.jpg';
         $img->save($tmp);
