@@ -363,25 +363,47 @@ class GeneralController extends MainController
     {
         $where = [];
 
-        if (isset($options['ids'])) {
+        // 具体列表
+        if (!empty($options['ids'])) {
             $ids = is_array($options['ids']) ? $options['ids'] : explode(',', $options['ids']);
             $where[] = ['product.id' => $ids];
         }
 
+        // 表现方式
         if (isset($options['manifestation']) && is_numeric($options['manifestation'])) {
             $where[] = ['product.manifestation' => $options['manifestation']];
         }
 
+        // 分类
         if (isset($options['classify']) && is_numeric($options['classify'])) {
             $where[] = ['product.classify' => $options['classify']];
         }
 
+        // 折扣中
         if (isset($options['sale'])) {
             $controller = $this->controller('product');
             $_where = $this->callStatic('saleReverseWhereLogic', [], [$options['sale'] ? 1 : 0], $controller);
             $where = array_merge($where, $_where);
         }
 
+        // 板块
+        $plate = null;
+        if (isset($options['plate']) && is_numeric($options['plate'])) {
+            $plate = $this->getRegionByPlate($options['plate']);
+        }
+
+        // 地区
+        if (empty($options['region'])) {
+            $options['region'] = $plate;
+        } else {
+            $options['region'] = array_merge(explode(',', $options['region']), $plate);
+        }
+
+        if (!empty($options['region'])) {
+            $where[] = ['hotel_region.id' => $options['region']];
+        }
+
+        // 关键字
         if (!empty($options['keyword'])) {
             $where[] = [
                 'or',
@@ -392,7 +414,7 @@ class GeneralController extends MainController
                 ],
                 [
                     'like',
-                    'product.destination',
+                    'hotel_region.name',
                     $options['keyword']
                 ]
             ];
@@ -430,6 +452,21 @@ class GeneralController extends MainController
 
             return $list;
         }, $time, null, Yii::$app->params['use_cache']);
+    }
+
+    /**
+     * 通过板块获取涵盖地区
+     *
+     * @access public
+     *
+     * @param  integer $plate
+     *
+     * @return array
+     */
+    public function getRegionByPlate($plate)
+    {
+
+        return [];
     }
 
     /**
