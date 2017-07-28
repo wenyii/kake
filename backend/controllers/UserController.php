@@ -347,7 +347,7 @@ class UserController extends GeneralController
             $this->goReference($key);
         }
 
-        $result = $this->service(static::$editApiName, [
+        $result = $this->service(self::$apiGeneralUpdate, [
             'table' => 'user',
             'where' => ['openid' => $openid],
             'username' => Helper::filterEmjoy($user['nickname']),

@@ -144,7 +144,7 @@ class Upload extends Object
     {
         // no file
         if (empty($files)) {
-            return 'no file upload';
+            return $this->_error = 'no file upload';
         }
 
         // check root path

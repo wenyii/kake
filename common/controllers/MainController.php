@@ -39,6 +39,16 @@ class MainController extends Controller
     public $sourceJs = false;
 
     /**
+     * @var string 通用列表接口
+     */
+    public static $apiList = 'general.list';
+
+    /**
+     * @var string 通用详情接口
+     */
+    public static $apiDetail = 'general.detail';
+
+    /**
      * @cont string language
      */
     const LANGUAGE = 'language';

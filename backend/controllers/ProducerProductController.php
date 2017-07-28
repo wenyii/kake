@@ -357,7 +357,7 @@ class ProducerProductController extends GeneralController
      */
     public function listLog($userId)
     {
-        $log = $this->service(static::$listApiName, [
+        $log = $this->service(self::$apiGeneralList, [
             'table' => 'producer_log',
             'join' => [
                 [
