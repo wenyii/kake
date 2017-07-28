@@ -2,7 +2,7 @@
 return [
     // component upload
     'no file upload' => '没有任何文件被上传',
-    'upload error' => '上传文件发送了错误',
+    'upload error' => '上传文件发生了错误',
     'image sizes error' => '图片宽高不符合要求',
     'image illegal' => '图片文件类型不符合要求',
     'unknown upload error' => '未知的上传错误',
