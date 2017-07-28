@@ -12,6 +12,7 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\ErrorCorrectionLevel;
+use Intervention\Image\ImageManagerStatic as Image;
 
 /**
  * Main controller
@@ -71,6 +72,22 @@ class MainController extends Controller
     }
 
     /**
+     * 通用方法
+     *
+     * @access public
+     * @return array
+     */
+    public function actions()
+    {
+        return [
+            'captcha' => [
+                'class' => 'yii\captcha\CaptchaAction',
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null
+            ]
+        ];
+    }
+
+    /**
      * @inheritdoc
      */
     public function beforeAction($action)
@@ -96,20 +113,48 @@ class MainController extends Controller
         return parent::beforeAction($action);
     }
 
+    // --- Function ---
+
     /**
-     * 通用方法
+     * 跨命名空间调用控制器方法
      *
      * @access public
-     * @return array
+     *
+     * @param string  $controller
+     * @param string  $namespace
+     * @param boolean $new
+     *
+     * @return mixed
      */
-    public function actions()
+    public function controller($controller, $namespace = 'backend', $new = true)
     {
-        return [
-            'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null
-            ]
-        ];
+        if (!strpos($controller, 'Controller')) {
+            $controller = Helper::underToCamel($controller, false, '-') . 'Controller';
+        }
+        $class = '\\' . $namespace . '\controllers\\' . $controller;
+
+        if (!$new) {
+            return $class;
+        }
+
+        return Helper::singleton($class, function ($cls) {
+            return new $cls($this->id, $this->module);
+        });
+    }
+
+    /**
+     * 获取模型
+     *
+     * @access public
+     *
+     * @param string $model
+     * @param array  $config
+     *
+     * @return Main
+     */
+    public static function model($model = null, $config = [])
+    {
+        return new Main($model, Yii::$app->params['use_cache'], $config);
     }
 
     /**
@@ -151,28 +196,6 @@ class MainController extends Controller
             'message' => $message,
             'exception' => $exception
         ];
-    }
-
-    /**
-     * 解析提示数据中的链接
-     *
-     * @access public
-     *
-     * @param array $message
-     *
-     * @return string
-     */
-    public function messageParseLink($message)
-    {
-        $msg = Helper::popOne($message, 0);
-        $items = [];
-
-        foreach ($message as $item) {
-            $options = isset($item['options']) ? $item['options'] : [];
-            $items[] = Html::a($item['text'], $item['router'], $options);
-        }
-
-        return sprintf($msg, ...$items);
     }
 
     /**
@@ -257,39 +280,60 @@ class MainController extends Controller
     }
 
     /**
-     * 公共错误控制器
+     * 解析提示数据中的链接
      *
      * @access public
-     * @auth-pass-all
      *
-     * @param string  $message
-     * @param integer $code
-     * @param string  $title
+     * @param array $message
      *
-     * @return void
+     * @return string
      */
-    public function actionError($message = null, $code = 400, $title = 'Error')
+    public function messageParseLink($message)
     {
-        if (!$message) {
-            /**
-             * @var $code      integer
-             * @var $title     string
-             * @var $message   string
-             * @var $exception object
-             */
-            $error = $this->parseError();
+        $msg = Helper::popOne($message, 0);
+        $items = [];
 
-            extract($error);
-            $trace = YII_DEBUG ? strval($exception->getPrevious()) : null;
-        } else {
-            $trace = null;
+        foreach ($message as $item) {
+            $options = isset($item['options']) ? $item['options'] : [];
+            $items[] = Html::a($item['text'], $item['router'], $options);
         }
 
-        if (Yii::$app->request->isAjax) {
-            $this->fail($title . ':' . $message);
+        return sprintf($msg, ...$items);
+    }
+
+    /**
+     * 语言包翻译 - 支持多个语言包
+     *
+     * @access public
+     *
+     * @param mixed  $lang
+     * @param string $package
+     *
+     * @return string
+     */
+    public function lang($lang, $package = 'common')
+    {
+        if (is_string($lang)) {
+            return Yii::t($package, $lang);
         }
 
-        $this->error($message, $code, $trace);
+        if (!is_array($lang)) {
+            return null;
+        }
+
+        if (is_array(current($lang))) {
+            $text = null;
+            foreach ($lang as $_lang) {
+                $text .= $this->lang($_lang, $package);
+            }
+
+            return $text;
+        }
+
+        $params = $lang;
+        $lang = array_shift($params);
+
+        return Yii::t($package, $lang, $params);
     }
 
     /**
@@ -332,41 +376,6 @@ class MainController extends Controller
     }
 
     /**
-     * 语言包翻译 - 支持多个语言包
-     *
-     * @access public
-     *
-     * @param mixed  $lang
-     * @param string $package
-     *
-     * @return string
-     */
-    public function lang($lang, $package = 'common')
-    {
-        if (is_string($lang)) {
-            return Yii::t($package, $lang);
-        }
-
-        if (!is_array($lang)) {
-            return null;
-        }
-
-        if (is_array(current($lang))) {
-            $text = null;
-            foreach ($lang as $_lang) {
-                $text .= $this->lang($_lang, $package);
-            }
-
-            return $text;
-        }
-
-        $params = $lang;
-        $lang = array_shift($params);
-
-        return Yii::t($package, $lang, $params);
-    }
-
-    /**
      * 返回成功提示信息及数据
      *
      * @access public
@@ -401,24 +410,6 @@ class MainController extends Controller
         Yii::info($info);
 
         $this->json(0, $info, null);
-    }
-
-    /**
-     * 多语言切换
-     *
-     * @access public
-     * @auth-pass-all
-     *
-     * @param string $language
-     *
-     * @return void
-     */
-    public function actionLanguage($language)
-    {
-        Yii::$app->session->set(self::LANGUAGE, $language);
-
-        // 返回刚刚的页面
-        $this->goBack(Yii::$app->request->getReferrer());
     }
 
     /**
@@ -469,33 +460,6 @@ class MainController extends Controller
         }
 
         return true;
-    }
-
-    /**
-     * 跨命名空间调用控制器方法
-     *
-     * @access public
-     *
-     * @param string  $controller
-     * @param string  $namespace
-     * @param boolean $new
-     *
-     * @return mixed
-     */
-    public function controller($controller, $namespace = 'backend', $new = true)
-    {
-        if (!strpos($controller, 'Controller')) {
-            $controller = Helper::underToCamel($controller, false, '-') . 'Controller';
-        }
-        $class = '\\' . $namespace . '\controllers\\' . $controller;
-
-        if (!$new) {
-            return $class;
-        }
-
-        return Helper::singleton($class, function ($cls) {
-            return new $cls($this->id, $this->module);
-        });
     }
 
     /**
@@ -560,64 +524,6 @@ class MainController extends Controller
         $this->success($result);
 
         return true;
-    }
-
-    /**
-     * 上传功能
-     *
-     * @access public
-     * @auth-pass-all
-     * @return void
-     */
-    public function actionAjaxUpload()
-    {
-        $params = Yii::$app->request->post();
-
-        if (empty($params['controller']) || empty($params['action']) || !isset($params['tag'])) {
-            $this->fail('lack of necessary parameters');
-        }
-
-        $class = '\backend\controllers\\' . Helper::underToCamel($params['controller'], false, '-') . 'Controller';
-        $method = Helper::underToCamel($params['action'], true, '-') . 'Assist';
-        if (!class_exists($class) || !method_exists($class, $method)) {
-            $this->fail([
-                'param illegal',
-                'param' => 'controller or action'
-            ]);
-        }
-
-        $assist = $this->callMethod($method, [], null, $class);
-        $rules = array_column($assist, 'rules', 'tag');
-        if (!isset($rules[$params['tag']])) {
-            $this->fail([
-                'param illegal',
-                'param' => 'tag'
-            ]);
-        }
-
-        $rule = $rules[$params['tag']];
-        $crop = null;
-        if (!empty($rule['pic_sizes']) && strpos($rule['pic_sizes'], '*') !== false) {
-            list($width, $height) = explode('*', $rule['pic_sizes']);
-            if (is_numeric($width) && is_numeric($height)) {
-                $rule['pic_sizes'] = "${width}-MAX*${height}-MAX";
-                $crop = compact('width', 'height');
-            }
-        }
-
-        $this->uploader($rule, $crop);
-    }
-
-    /**
-     * CkEditor-上传功能
-     *
-     * @access public
-     * @auth-pass-all
-     * @return void
-     */
-    public function actionAjaxCkEditorUpload()
-    {
-        $this->uploader();
     }
 
     /**
@@ -1119,6 +1025,309 @@ class MainController extends Controller
     }
 
     /**
+     * 获取分销商用户信息
+     *
+     * @access public
+     *
+     * @param integer $userId
+     *
+     * @return array
+     */
+    public function getProducer($userId)
+    {
+        $controller = $this->controller('producer-setting');
+        $condition = $this->callMethod('indexCondition', [], null, $controller);
+        $condition = array_merge($condition, [
+            'table' => 'producer_setting',
+            'where' => [
+                ['producer_setting.producer_id' => $userId],
+                ['producer_setting.state' => 1]
+            ]
+        ]);
+
+        $producer = $this->service('general.get-for-backend', $condition);
+        if (empty($producer)) {
+            return [];
+        }
+
+        $producer = $this->callMethod('sufHandleField', $producer, [
+            $producer,
+            'list'
+        ], $controller);
+
+        return $producer;
+    }
+
+    /**
+     * 生成二维码图片
+     *
+     * @param string  $content
+     * @param integer $qrWidth
+     * @param string  $logo
+     * @param integer $logoWidth
+     *
+     * @return QrCode
+     */
+    public function createQrCode($content, $qrWidth = 300, $logo = null, $logoWidth = null)
+    {
+        $qrCode = new QrCode($content);
+        $qrCode->setSize($qrWidth);
+
+        $qrCode->setWriterByName('png');
+        $qrCode->setMargin($qrWidth / 25);
+        $qrCode->setEncoding('utf-8');
+        $qrCode->setErrorCorrectionLevel(ErrorCorrectionLevel::MEDIUM);
+        $qrCode->setForegroundColor([
+            'r' => 0,
+            'g' => 0,
+            'b' => 0
+        ]);
+        $qrCode->setBackgroundColor([
+            'r' => 255,
+            'g' => 255,
+            'b' => 255
+        ]);
+
+        if ($logo) {
+            $qrCode->setLogoPath($logo);
+            $logoWidth = $logoWidth ?: $qrWidth / 4;
+            $qrCode->setLogoWidth($logoWidth);
+        }
+        $qrCode->setValidateResult(false);
+
+        return $qrCode;
+    }
+
+    /**
+     * 通过 url 获取文件路径
+     *
+     * @access public
+     *
+     * @param string $url
+     * @param string $host
+     *
+     * @return bool|string
+     */
+    public static function getPathByUrl($url, $host = null)
+    {
+        if (strpos($url, 'http') !== 0 && !empty($host)) {
+            $url = Yii::$app->params[$host] . '/' . $url;
+        }
+
+        $file = Yii::$app->params['tmp_path'] . '/' . basename($url);
+
+        return Helper::saveRemoteFile($url, $file) ? $file : false;
+    }
+
+    /**
+     * 通过文件路获取可访问的 url
+     *
+     * @access public
+     *
+     * @param string $file
+     * @param string $ext
+     * @param string $prefix
+     *
+     * @return bool|string
+     */
+    public static function getUrlByPath($file, $ext = 'jpg', $prefix = null)
+    {
+        $deep = Helper::createDeepPath();
+        $path = Yii::$app->params['upload_path'] . '/' . $deep;
+
+        $filename = uniqid($prefix) . '.' . $ext;
+        $new = $path . '/' . $filename;
+
+        mkdir($path, 0777, true);
+        $url = Yii::$app->params['upload_url'] . '/' . $deep . '/' . $filename;
+
+        return rename($file, $new) ? $url : false;
+    }
+
+    /**
+     * Debug
+     *
+     * @param callable $callback
+     * @param int      $userId
+     *
+     * @return mixed
+     */
+    public function debug($callback, $userId = 1)
+    {
+        if (!$this->user) {
+            return null;
+        }
+
+        if ($this->user->id != $userId) {
+            return false;
+        }
+
+        $result = call_user_func($callback);
+        if ($result === null) {
+            return false;
+        }
+        $this->dump($result, false, true);
+
+        return true;
+    }
+
+    /**
+     * 生成缩略图
+     *
+     * @param string  $img
+     * @param integer $width
+     * @param integer $height
+     * @param string $bgColor
+     *
+     * @return array
+     */
+    public function thumb($img, $width, $height, $bgColor = null)
+    {
+        $img = Image::make($img);
+        $result = Helper::calThumb($width, $height, $img->width(), $img->height());
+        $img->resize($result['width'], $result['height']);
+
+        $bg = Image::canvas($width, $height, $bgColor);
+        $bg->insert($img, 'top-left', intval($result['left']), intval($result['top']));
+
+        $path = Helper::createFilePath(Yii::$app->params['upload_path'], $bgColor ? 'jpg' : 'png', 'thumb_');
+        $bg->save($path['file']);
+
+        return $path;
+    }
+
+    // --- Display ---
+
+    /**
+     * 公共错误控制器
+     *
+     * @access public
+     * @auth-pass-all
+     *
+     * @param string  $message
+     * @param integer $code
+     * @param string  $title
+     *
+     * @return void
+     */
+    public function actionError($message = null, $code = 400, $title = 'Error')
+    {
+        if (!$message) {
+            /**
+             * @var $code      integer
+             * @var $title     string
+             * @var $message   string
+             * @var $exception object
+             */
+            $error = $this->parseError();
+
+            extract($error);
+            $trace = YII_DEBUG ? strval($exception->getPrevious()) : null;
+        } else {
+            $trace = null;
+        }
+
+        if (Yii::$app->request->isAjax) {
+            $this->fail($title . ':' . $message);
+        }
+
+        $this->error($message, $code, $trace);
+    }
+
+    /**
+     * ajax 保存 base64 格式的图片
+     *
+     * @access public
+     * @auth-pass-all
+     * @return void
+     */
+    public function actionAjaxSaveBase64Png()
+    {
+        $base64 = Yii::$app->request->post('base64');
+        $file = Helper::saveBase64File($base64, Yii::$app->params['upload_path'], 'png');
+
+        $this->success([
+            'url' => Yii::$app->params['upload_url'] . '/' . $file
+        ]);
+    }
+
+    /**
+     * CkEditor-上传功能
+     *
+     * @access public
+     * @auth-pass-all
+     * @return void
+     */
+    public function actionAjaxCkEditorUpload()
+    {
+        $this->uploader();
+    }
+
+    /**
+     * 多语言切换
+     *
+     * @access public
+     * @auth-pass-all
+     *
+     * @param string $language
+     *
+     * @return void
+     */
+    public function actionLanguage($language)
+    {
+        Yii::$app->session->set(self::LANGUAGE, $language);
+
+        // 返回刚刚的页面
+        $this->goBack(Yii::$app->request->getReferrer());
+    }
+
+    /**
+     * 上传功能
+     *
+     * @access public
+     * @auth-pass-all
+     * @return void
+     */
+    public function actionAjaxUpload()
+    {
+        $params = Yii::$app->request->post();
+
+        if (empty($params['controller']) || empty($params['action']) || !isset($params['tag'])) {
+            $this->fail('lack of necessary parameters');
+        }
+
+        $class = '\backend\controllers\\' . Helper::underToCamel($params['controller'], false, '-') . 'Controller';
+        $method = Helper::underToCamel($params['action'], true, '-') . 'Assist';
+        if (!class_exists($class) || !method_exists($class, $method)) {
+            $this->fail([
+                'param illegal',
+                'param' => 'controller or action'
+            ]);
+        }
+
+        $assist = $this->callMethod($method, [], null, $class);
+        $rules = array_column($assist, 'rules', 'tag');
+        if (!isset($rules[$params['tag']])) {
+            $this->fail([
+                'param illegal',
+                'param' => 'tag'
+            ]);
+        }
+
+        $rule = $rules[$params['tag']];
+        $crop = null;
+        if (!empty($rule['pic_sizes']) && strpos($rule['pic_sizes'], '*') !== false) {
+            list($width, $height) = explode('*', $rule['pic_sizes']);
+            if (is_numeric($width) && is_numeric($height)) {
+                $rule['pic_sizes'] = "${width}-MAX*${height}-MAX";
+                $crop = compact('width', 'height');
+            }
+        }
+
+        $this->uploader($rule, $crop);
+    }
+
+    /**
      * Ajax 发送手机验证码
      *
      * @access public
@@ -1185,181 +1394,7 @@ class MainController extends Controller
         $this->success($html);
     }
 
-    /**
-     * 获取分销商用户信息
-     *
-     * @access public
-     *
-     * @param integer $userId
-     *
-     * @return array
-     */
-    public function getProducer($userId)
-    {
-        $controller = $this->controller('producer-setting');
-        $condition = $this->callMethod('indexCondition', [], null, $controller);
-        $condition = array_merge($condition, [
-            'table' => 'producer_setting',
-            'where' => [
-                ['producer_setting.producer_id' => $userId],
-                ['producer_setting.state' => 1]
-            ]
-        ]);
-
-        $producer = $this->service('general.get-for-backend', $condition);
-        if (empty($producer)) {
-            return [];
-        }
-
-        $producer = $this->callMethod('sufHandleField', $producer, [$producer, 'list'], $controller);
-
-        return $producer;
-    }
-
-    /**
-     * 生成二维码图片
-     *
-     * @param string  $content
-     * @param integer $qrWidth
-     * @param string  $logo
-     * @param integer $logoWidth
-     *
-     * @return QrCode
-     */
-    public function createQrCode($content, $qrWidth = 300, $logo = null, $logoWidth = null)
-    {
-        $qrCode = new QrCode($content);
-        $qrCode->setSize($qrWidth);
-
-        $qrCode->setWriterByName('png');
-        $qrCode->setMargin($qrWidth / 25);
-        $qrCode->setEncoding('utf-8');
-        $qrCode->setErrorCorrectionLevel(ErrorCorrectionLevel::MEDIUM);
-        $qrCode->setForegroundColor([
-            'r' => 0,
-            'g' => 0,
-            'b' => 0
-        ]);
-        $qrCode->setBackgroundColor([
-            'r' => 255,
-            'g' => 255,
-            'b' => 255
-        ]);
-
-        if ($logo) {
-            $qrCode->setLogoPath($logo);
-            $logoWidth = $logoWidth ?: $qrWidth / 4;
-            $qrCode->setLogoWidth($logoWidth);
-        }
-        $qrCode->setValidateResult(false);
-
-        return $qrCode;
-    }
-
-    /**
-     * Debug
-     *
-     * @param callable $callback
-     * @param int      $userId
-     *
-     * @return mixed
-     */
-    public function debug($callback, $userId = 1)
-    {
-        if (!$this->user) {
-            return null;
-        }
-
-        if ($this->user->id != $userId) {
-            return false;
-        }
-
-        $result = call_user_func($callback);
-        if ($result === null) {
-            return false;
-        }
-        $this->dump($result, false, true);
-
-        return true;
-    }
-
-    /**
-     * ajax 保存 base64 格式的图片
-     *
-     * @access public
-     * @auth-pass-all
-     * @return void
-     */
-    public function actionAjaxSaveBase64Png()
-    {
-        $base64 = Yii::$app->request->post('base64');
-        $file = Helper::saveBase64File($base64, Yii::$app->params['upload_path'], 'png');
-
-        $this->success([
-            'url' => Yii::$app->params['upload_url'] . '/' . $file
-        ]);
-    }
-
-    /**
-     * 获取模型
-     *
-     * @access public
-     *
-     * @param string $model
-     * @param array  $config
-     *
-     * @return Main
-     */
-    public static function model($model = null, $config = [])
-    {
-        return new Main($model, Yii::$app->params['use_cache'], $config);
-    }
-
-    /**
-     * 通过 url 获取文件路径
-     *
-     * @access public
-     *
-     * @param string $url
-     * @param string $host
-     *
-     * @return bool|string
-     */
-    public static function getPathByUrl($url, $host = null)
-    {
-        if (strpos($url, 'http') !== 0 && !empty($host)) {
-            $url = Yii::$app->params[$host] . '/' . $url;
-        }
-
-        $file = Yii::$app->params['tmp_path'] . '/' . basename($url);
-
-        return Helper::saveRemoteFile($url, $file) ? $file : false;
-    }
-
-    /**
-     * 通过文件路获取可访问的 url
-     *
-     * @access public
-     *
-     * @param string $file
-     * @param string $ext
-     * @param string $prefix
-     *
-     * @return bool|string
-     */
-    public static function getUrlByPath($file, $ext = 'jpg', $prefix = null)
-    {
-        $deep = Helper::createDeepPath();
-        $path = Yii::$app->params['upload_path'] . '/' . $deep;
-
-        $filename = uniqid($prefix) . '.' . $ext;
-        $new = $path . '/' . $filename;
-
-        mkdir($path, 0777, true);
-        $url = Yii::$app->params['upload_url'] . '/' . $deep . '/' . $filename;
-
-        return rename($file, $new) ? $url : false;
-    }
+    // --- Magic ---
 
     /**
      * @inheritDoc
