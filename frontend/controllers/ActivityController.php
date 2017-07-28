@@ -5,7 +5,6 @@ namespace frontend\controllers;
 use common\components\Helper;
 use Yii;
 use Intervention\Image\ImageManagerStatic as Image;
-use yii\helpers\FileHelper;
 
 /**
  * Activity controller
