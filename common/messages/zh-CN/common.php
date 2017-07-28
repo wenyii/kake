@@ -2,7 +2,10 @@
 return [
     // component upload
     'no file upload' => '没有任何文件被上传',
-    'upload error' => '上传文件发生了错误',
+    'upload error 1' => '上传的文件超过了 PHP 系统限制',
+    'upload error 2' => '上传的文件超过了 HTML 表单限制',
+    'upload error 3' => '上传的文件部分丢失',
+    'upload error 4' => '没有文件被上传',
     'image sizes error' => '图片宽高不符合要求',
     'image illegal' => '图片文件类型不符合要求',
     'unknown upload error' => '未知的上传错误',
