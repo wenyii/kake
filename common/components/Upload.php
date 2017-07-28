@@ -160,7 +160,8 @@ class Upload extends Object
 
         foreach ($files as $key => $file) {
 
-            if ($file['error']) {
+            if (!empty($file['error'])) {
+                Yii::error('上传错误代码：' . $file['error']);
                 $this->_error = 'upload error';
                 continue;
             }
