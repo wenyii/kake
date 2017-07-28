@@ -25,12 +25,12 @@ class ProductController extends GeneralController
     /**
      * @var string 添加操作使用到的 api
      */
-    public static $addApiName = 'product.add-product';
+    public static $apiGeneralAdd = 'product.add-product';
 
     /**
      * @var string 编辑操作使用到的 api
      */
-    public static $editApiName = 'product.edit-product';
+    public static $apiGeneralUpdate = 'product.update-product';
 
     /**
      * @var string 模态框的名称

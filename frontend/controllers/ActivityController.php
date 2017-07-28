@@ -72,12 +72,12 @@ class ActivityController extends GeneralController
         $ele = self::getPathByUrl('img/activity/story-ele.png', 'frontend_source');
 
         $story = Image::make($story);
-        $data = Helper::calThumb(700, 340, $story->width(), $story->height());
+        $data = Helper::calThumb(564, 330, $story->width(), $story->height());
         $story->resize($data['width'], $data['height']);
 
         $img = Image::make($bg);
 
-        $x = intval($data['left'] + 25);
+        $x = intval($data['left'] + 93);
         $y = intval($data['top'] + 150);
         $img->insert($story, 'top-left', $x, $y);
 

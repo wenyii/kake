@@ -285,10 +285,14 @@ if ($modal) {
     <?= $html_end_div ?>
     <?php endforeach; ?>
 
+    <br>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <button type="submit" class="btn btn-primary">
+                <!--
                 <?= $view['button_info'] ?><?= $modal ? null : $modelInfo ?>
+                -->
+                确认提交
             </button>
 
             <?php if (!empty($operation)): ?>

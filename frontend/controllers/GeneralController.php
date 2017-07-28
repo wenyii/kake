@@ -387,7 +387,7 @@ class GeneralController extends MainController
         }
 
         // 板块
-        $plate = null;
+        $plate = [];
         if (isset($options['plate']) && is_numeric($options['plate'])) {
             $plate = $this->getRegionByPlate($options['plate']);
         }
@@ -460,13 +460,38 @@ class GeneralController extends MainController
      * @access public
      *
      * @param  integer $plate
+     * @param boolean  $nameModel Default id
      *
      * @return array
      */
-    public function getRegionByPlate($plate)
+    public function getRegionByPlate($plate, $nameModel = false)
     {
+        $map = $this->cache('list-region.' . $plate, function () {
+            $result = $this->service(self::$apiList, [
+                'table' => 'hotel_region',
+                'where' => [['state' => 1]],
+                'select' => [
+                    'id',
+                    'hotel_plate_id',
+                    'name'
+                ]
+            ]);
 
-        return [];
+            if (!is_array($result) || empty($result)) {
+                return [];
+            }
+
+            $_map = [];
+            foreach ($result as $item) {
+                $_map[$item['hotel_plate_id']][$item['id']] = $item['name'];
+            }
+
+            return $_map;
+        }, MONTH, null, Yii::$app->params['use_cache']);
+
+        $map = empty($map[$plate]) ? [] : $map[$plate];
+
+        return $nameModel ? array_values($map) : array_keys($map);
     }
 
     /**

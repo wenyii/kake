@@ -51,31 +51,31 @@ class GeneralController extends MainController
     /**
      * @var string 列表接口名
      */
-    public static $listApiName = 'general.list-for-backend';
+    public static $apiGeneralList = 'general.list-for-backend';
     public static $listFunctionName;
 
     /**
      * @var string 获取单条接口名
      */
-    public static $getApiName = 'general.get-for-backend';
+    public static $apiGeneralGet = 'general.get-for-backend';
     public static $getFunctionName;
 
     /**
      * @var string 编辑接口名
      */
-    public static $editApiName = 'general.update-for-backend';
-    public static $editFunctionName;
+    public static $apiGeneralUpdate = 'general.update-for-backend';
+    public static $updateFunctionName;
 
     /**
      * @var string 新增接口名
      */
-    public static $addApiName = 'general.add-for-backend';
+    public static $apiGeneralAdd = 'general.add-for-backend';
     public static $addFunctionName;
 
     /**
      * @var string 前置记录接口名
      */
-    public static $frontApiName = 'general.front-for-backend';
+    public static $apiGeneralFront = 'general.front-for-backend';
     public static $frontFunctionName;
 
     /**
@@ -255,6 +255,10 @@ class GeneralController extends MainController
             return true;
         }
 
+        if (empty($_authListDec[$router])) {
+            return '[' . $router . '] 未被纳入权限控制系统内';
+        }
+
         Yii::trace('操作权限鉴定失败: ' . $router . ' (' . $_authListDec[$router] . ')');
         $info = Helper::deleteHtml('"' . $_authListDec[$router] . '" 操作权限不足');
 
@@ -360,7 +364,7 @@ class GeneralController extends MainController
             'controller.auth.record',
             func_get_args()
         ], function () use ($userId) {
-            $record = $this->service(static::$listApiName, [
+            $record = $this->service(static::$apiGeneralList, [
                 'table' => 'admin_auth',
                 'size' => 0,
                 'where' => [
@@ -629,7 +633,7 @@ class GeneralController extends MainController
             $key = empty($item['list_key']) ? 'id' : $item['list_key'];
             $value = empty($item['list_value']) ? 'id' : $item['list_value'];
 
-            $list = $this->service(self::$listApiName, [
+            $list = $this->service(self::$apiGeneralList, [
                 'table' => $table,
                 'select' => [
                     $key,
@@ -1771,7 +1775,7 @@ class GeneralController extends MainController
                 'db' => static::$modelDb
             ];
             $params = array_merge($params, $condition, $get);
-            $result = $this->service(static::$listApiName, $params);
+            $result = $this->service(static::$apiGeneralList, $params);
         }
         if (is_string($result)) {
             $this->error(Yii::t('common', $result));
@@ -1943,7 +1947,7 @@ class GeneralController extends MainController
                 $params,
                 $action
             ]);
-            $result = $this->service(static::$addApiName, $params);
+            $result = $this->service(static::$apiGeneralAdd, $params);
         }
 
         $key = $this->getControllerName();
@@ -1992,7 +1996,7 @@ class GeneralController extends MainController
             $_where = empty($condition['where']) ? [] : $condition['where'];
             $condition['where'] = array_merge($_where, $where);
 
-            $result = $this->service(static::$getApiName, $condition);
+            $result = $this->service(static::$apiGeneralGet, $condition);
         }
 
         if (is_string($result)) {
@@ -2049,8 +2053,8 @@ class GeneralController extends MainController
 
         $post = $post ?: Yii::$app->request->post();
 
-        if (!empty(static::$editFunctionName)) {
-            $result = $this->callMethod(static::$editFunctionName, 'function non-exists');
+        if (!empty(static::$updateFunctionName)) {
+            $result = $this->callMethod(static::$updateFunctionName, 'function non-exists');
         } else {
             $model = parent::model(static::$modelName);
             $params = array_merge([
@@ -2061,7 +2065,7 @@ class GeneralController extends MainController
                 $params,
                 $action
             ]);
-            $result = $this->service(static::$editApiName, $params);
+            $result = $this->service(static::$apiGeneralUpdate, $params);
         }
 
         $key = $this->getControllerName();
@@ -2086,7 +2090,7 @@ class GeneralController extends MainController
             $result = $this->callMethod(static::$frontFunctionName, 'function non-exists');
         } else {
             $model = parent::model(static::$modelName);
-            $result = $this->service(static::$frontApiName, [
+            $result = $this->service(static::$apiGeneralFront, [
                 'table' => $model->tableName,
                 'id' => Yii::$app->request->get('id')
             ]);
@@ -2273,7 +2277,7 @@ class GeneralController extends MainController
      */
     public function listAdmin()
     {
-        $admin = $this->service(static::$listApiName, [
+        $admin = $this->service(static::$apiGeneralList, [
             'table' => 'user',
             'select' => [
                 'id',
