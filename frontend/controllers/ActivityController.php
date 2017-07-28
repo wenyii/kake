@@ -51,7 +51,7 @@ class ActivityController extends GeneralController
                 'gif'
             ],
             'pic_sizes' => '200-MAX*200-MAX',
-            'max_size' => 2048
+            'max_size' => 1024 * 5
         ]);
     }
 

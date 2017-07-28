@@ -162,7 +162,7 @@ class Upload extends Object
 
             if (!empty($file['error'])) {
                 Yii::error('上传错误代码：' . $file['error']);
-                $this->_error = 'upload error';
+                $this->_error = 'upload error ' . $file['error'];
                 continue;
             }
 
