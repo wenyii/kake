@@ -13,7 +13,7 @@ class SiteController extends GeneralController
     /**
      * Displays homepage.
      */
-    public function actionIndex()
+    public function actionIndex1()
     {
         $this->sourceCss = null;
         $this->sourceJs = false;
@@ -26,7 +26,7 @@ class SiteController extends GeneralController
         $focusList = Helper::arraySort($focusList, 'update_time', 'DESC');
 
         // 板块
-        $plate = $this->listPlate();
+        $plateList = $this->listPlate();
 
         // 闪购模块
         $flashSalesList = $this->listProduct(1, $params['site_sale_limit'], 0, [
@@ -34,12 +34,12 @@ class SiteController extends GeneralController
         ]);
 
         // banner 模块
-        $banner = $this->listAd(1, $params['site_ad_banner_limit']);
+        $bannerList = $this->listAd(1, $params['site_ad_banner_limit']);
 
         // 精品推荐
         list($standardHtml, $over) = $this->renderListPage(1);
 
-        return $this->render('index', compact('focusList', 'plate', 'flashSalesList', 'banner', 'standardHtml', 'over'));
+        return $this->render('index1', compact('focusList', 'plateList', 'flashSalesList', 'bannerList', 'standardHtml', 'over'));
     }
 
     /**
