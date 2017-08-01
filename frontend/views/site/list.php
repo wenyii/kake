@@ -7,18 +7,21 @@ use yii\helpers\Url;
 
 <?php if (!empty($list)): ?>
     <?php foreach ($list as $standard): ?>
-        <div class="recommend3">
-            <div class="recommend3-1">
-                <a target="_blank" href="<?= Url::to([
-                    'detail/index',
-                    'id' => $standard['id']
-                ]) ?>">
-                    <img class="img-responsive" src="<?= current($standard['cover_preview_url']) ?>"/>
-                </a>
-                <div class="recommend3-1-1">￥<span><?= $standard['price'] ?></span></div>
-            </div>
-            <div class="recommend3-2"><?= $standard['title'] ?></div>
-            <div class="recommend3-3"><?= $standard['name'] ?></div>
-        </div>
+        <li>
+			<a target="_blank" href="<?= Url::to([
+                'detail/index',
+                'id' => $standard['id']
+            ]) ?>">
+				<div class="photo">
+					<img class="img-responsive" src="<?= current($standard['cover_preview_url']) ?>"/>
+				</div>
+				<span><i>￥</i><?= $standard['price'] ?></span>
+				<div class="text">
+					<h2><?= $standard['title'] ?></h2>
+					<small><?= $standard['name'] ?></small>
+				</div>
+			</a>
+		</li>
+		<li class="thinner-border"></li>
     <?php endforeach ?>
 <?php endif; ?>

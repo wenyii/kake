@@ -6,11 +6,21 @@ use yii\helpers\Url;
 $params = \Yii::$app->params;
 \Yii::$app->params['ng_ctrl'] = 'generic';
 ?>
-
-<?php foreach ($region as $item): ?>
-    <?= $item['name'] ?>
-    <img src="<?= current($item['preview_url']) ?>">
-    <a href="<?= Url::to(['items/index', 'region' => $item['id']]) ?>">跳转链接</a>
-    <hr>
-<?php endforeach; ?>
-
+<header>
+     全部目的地
+    <div class="menu detail" kk-menu="#menu">
+        <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/menu1.svg"/>
+    </div>
+</header>
+<!-- All-hot-aim -->
+<div class="allaim">
+	<ul>
+	<?php foreach ($region as $item): ?>
+	    <a href="<?= Url::to(['items/index', 'region' => $item['id']]) ?>">
+			<li>
+				<img src="<?= current($item['preview_url']) ?>"/>
+			</li>
+		</a>
+	<?php endforeach; ?>
+	</ul>
+</div>
