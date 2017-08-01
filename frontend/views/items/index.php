@@ -13,7 +13,7 @@ $params = \Yii::$app->params;
 </header>
 <div class="body">
     <div class="recommend" kk-ajax-load="items/ajax-list" data-over="<?= $over ?>">
-        <?= $html ?>
+        <?= trim($html) ? $html : '<div class="no-data">暂无相关酒店</div>' ?>
     </div>
 </div>
 

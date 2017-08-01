@@ -25,6 +25,9 @@ class SiteController extends GeneralController
         $focusList = array_merge($focusList, $this->listAd(0, $params['site_ad_focus_limit']));
         $focusList = Helper::arraySort($focusList, 'update_time', 'DESC');
 
+        // 板块
+        $plate = $this->listPlate();
+
         // 闪购模块
         $flashSalesList = $this->listProduct(1, $params['site_sale_limit'], 0, [
             'manifestation' => 2
@@ -36,7 +39,7 @@ class SiteController extends GeneralController
         // 精品推荐
         list($standardHtml, $over) = $this->renderListPage(1);
 
-        return $this->render('index', compact('focusList', 'flashSalesList', 'banner', 'standardHtml', 'over'));
+        return $this->render('index', compact('focusList', 'plate', 'flashSalesList', 'banner', 'standardHtml', 'over'));
     }
 
     /**

@@ -53,4 +53,22 @@ class ItemsController extends GeneralController
             count($list) < $pageSize
         ];
     }
+
+    /**
+     * 地区列表页
+     *
+     * @access public
+     *
+     * @param integer $plate
+     *
+     * @return string
+     */
+    public function actionRegion($plate = null)
+    {
+        $this->sourceCss = null;
+
+        $region = $this->listRegion($plate);
+
+        return $this->render('region', compact('region'));
+    }
 }

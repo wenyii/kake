@@ -235,7 +235,7 @@ class ProductProducerController extends GeneralController
             ]
         ];
 
-        $record = $this->service('general.detail', [
+        $record = $this->service(parent::$apiDetail, [
             'table' => 'product_producer',
             'select' => [
                 'id',
