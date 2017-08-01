@@ -60,6 +60,7 @@ class GeneralController extends MainController
         if (!Yii::$app->request->get('code')) {
             return;
         }
+
         if (!$this->user) {
             $result = Yii::$app->wx->user();
             $result['nickname'] = Helper::filterEmjoy($result['nickname']);
@@ -348,6 +349,94 @@ class GeneralController extends MainController
     }
 
     /**
+     * 列表板块
+     *
+     * @access public
+     *
+     * @param int $limit
+     *
+     * @return array
+     */
+    public function listPlate($limit = 0)
+    {
+        return $this->cache('list-plate.' . $limit, function () use ($limit) {
+            $list = $this->service(parent::$apiList, [
+                'table' => 'hotel_plate',
+                'where' => [
+                    ['hotel_plate.state' => 1]
+                ],
+                'join' => [
+                    ['table' => 'attachment']
+                ],
+                'select' => [
+                    'hotel_plate.id',
+                    'hotel_plate.name',
+                    'hotel_plate.attachment_id',
+                    'attachment.deep_path',
+                    'attachment.filename',
+                ],
+                'order' => 'hotel_plate.update_time DESC',
+                'limit' => $limit
+            ]);
+
+            $controller = $this->controller('hotel-plate');
+            array_walk($list, function (&$item) use ($controller) {
+                $item = $this->callMethod('sufHandleField', $item, [$item], $controller);
+            });
+
+            return $list;
+        });
+    }
+
+    /**
+     * 列表地区
+     *
+     * @access public
+     *
+     * @param mixed $plate
+     * @param int   $limit
+     *
+     * @return array
+     */
+    public function listRegion($plate = [], $limit = 0)
+    {
+        return $this->cache([
+            'list-region',
+            func_get_args()
+        ], function () use ($plate, $limit) {
+
+            $where = [['hotel_region.state' => 1]];
+            if (!empty($plate)) {
+                $where[] = ['hotel_region.hotel_plate_id' => (array) $plate];
+            }
+
+            $list = $this->service(parent::$apiList, [
+                'table' => 'hotel_region',
+                'where' => $where,
+                'join' => [
+                    ['table' => 'attachment']
+                ],
+                'select' => [
+                    'hotel_region.id',
+                    'hotel_region.name',
+                    'hotel_region.attachment_id',
+                    'attachment.deep_path',
+                    'attachment.filename',
+                ],
+                'order' => 'hotel_region.update_time DESC',
+                'limit' => $limit
+            ]);
+
+            $controller = $this->controller('hotel-region');
+            array_walk($list, function (&$item) use ($controller) {
+                $item = $this->callMethod('sufHandleField', $item, [$item], $controller);
+            });
+
+            return $list;
+        });
+    }
+
+    /**
      * 列表产品
      *
      * @access public
@@ -361,79 +450,79 @@ class GeneralController extends MainController
      */
     public function listProduct($page = 1, $pageSize = null, $time = DAY, $options = [])
     {
-        $where = [];
-
-        // 具体列表
-        if (!empty($options['ids'])) {
-            $ids = is_array($options['ids']) ? $options['ids'] : explode(',', $options['ids']);
-            $where[] = ['product.id' => $ids];
-        }
-
-        // 表现方式
-        if (isset($options['manifestation']) && is_numeric($options['manifestation'])) {
-            $where[] = ['product.manifestation' => $options['manifestation']];
-        }
-
-        // 分类
-        if (isset($options['classify']) && is_numeric($options['classify'])) {
-            $where[] = ['product.classify' => $options['classify']];
-        }
-
-        // 折扣中
-        if (isset($options['sale'])) {
-            $controller = $this->controller('product');
-            $_where = $this->callStatic('saleReverseWhereLogic', [], [$options['sale'] ? 1 : 0], $controller);
-            $where = array_merge($where, $_where);
-        }
-
-        // 板块
-        $plate = [];
-        if (isset($options['plate']) && is_numeric($options['plate'])) {
-            $plate = $this->getRegionByPlate($options['plate']);
-        }
-
-        // 地区
-        if (empty($options['region'])) {
-            $options['region'] = $plate;
-        } else {
-            $options['region'] = array_merge(explode(',', $options['region']), $plate);
-        }
-
-        if (!empty($options['region'])) {
-            $where[] = ['hotel_region.id' => $options['region']];
-        }
-
-        // 关键字
-        if (!empty($options['keyword'])) {
-            $where[] = [
-                'or',
-                [
-                    'like',
-                    'product.title',
-                    $options['keyword']
-                ],
-                [
-                    'like',
-                    'hotel_region.name',
-                    $options['keyword']
-                ]
-            ];
-        }
-
-        $condition = DetailController::$productListCondition;
-        $condition['where'] = array_merge($condition['where'], $where);
-
-        if (!empty($options['hot'])) {
-            $condition['order'] = '(product.virtual_sales + product.real_sales) DESC';
-        }
-
-        $pageParams = Helper::page($page, $pageSize ?: Yii::$app->params['product_page_size']);
-        list($condition['offset'], $condition['limit']) = $pageParams;
-
         return $this->cache([
             'list.product',
             func_get_args()
-        ], function () use ($condition, $time) {
+        ], function () use ($page, $pageSize, $time, $options) {
+            $where = [];
+
+            // 具体列表
+            if (!empty($options['ids'])) {
+                $ids = is_array($options['ids']) ? $options['ids'] : explode(',', $options['ids']);
+                $where[] = ['product.id' => $ids];
+            }
+
+            // 表现方式
+            if (isset($options['manifestation']) && is_numeric($options['manifestation'])) {
+                $where[] = ['product.manifestation' => $options['manifestation']];
+            }
+
+            // 分类
+            if (isset($options['classify']) && is_numeric($options['classify'])) {
+                $where[] = ['product.classify' => $options['classify']];
+            }
+
+            // 折扣中
+            if (isset($options['sale'])) {
+                $controller = $this->controller('product');
+                $_where = $this->callStatic('saleReverseWhereLogic', [], [$options['sale'] ? 1 : 0], $controller);
+                $where = array_merge($where, $_where);
+            }
+
+            // 板块
+            $plate = [];
+            if (isset($options['plate']) && is_numeric($options['plate'])) {
+                $plate = $this->getRegionByPlate($options['plate']);
+            }
+
+            // 地区
+            if (empty($options['region'])) {
+                $options['region'] = $plate;
+            } else {
+                $options['region'] = array_merge(explode(',', $options['region']), $plate);
+            }
+
+            if (!empty($options['region'])) {
+                $where[] = ['hotel_region.id' => $options['region']];
+            }
+
+            // 关键字
+            if (!empty($options['keyword'])) {
+                $where[] = [
+                    'or',
+                    [
+                        'like',
+                        'product.title',
+                        $options['keyword']
+                    ],
+                    [
+                        'like',
+                        'hotel_region.name',
+                        $options['keyword']
+                    ]
+                ];
+            }
+
+            $condition = DetailController::$productListCondition;
+            $condition['where'] = array_merge($condition['where'], $where);
+
+            if (!empty($options['hot'])) {
+                $condition['order'] = '(product.virtual_sales + product.real_sales) DESC';
+            }
+
+            $pageParams = Helper::page($page, $pageSize ?: Yii::$app->params['product_page_size']);
+            list($condition['offset'], $condition['limit']) = $pageParams;
+
             $controller = $this->controller('product-package');
             $list = $this->service('product.list', $condition);
             foreach ($list as $key => &$item) {

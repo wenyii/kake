@@ -354,7 +354,7 @@ class ProducerLogController extends GeneralController
      */
     private function listOrderSubByOrderIds($orderIds)
     {
-        $list = $this->service('general.list', [
+        $list = $this->service(parent::$apiList, [
             'table' => 'order_sub',
             'select' => [
                 'order_id',
@@ -454,7 +454,7 @@ class ProducerLogController extends GeneralController
             ];
         }
 
-        $list = $this->service('general.list', $condition);
+        $list = $this->service(parent::$apiList, $condition);
 
         list($list, $orderIds) = Helper::valueToKey($list, 'order_id');
         $subList = $this->listOrderSubByOrderIds($orderIds);

@@ -37,5 +37,5 @@ $params = \Yii::$app->params;
 <div class="blank-piece"></div>
 
 <div class="ongoing" kk-ajax-load="order/ajax-list" data-params="type=ongoing" data-over="<?= $over ?>">
-    <?= trim($html) ? $html : '<p class="no-order">暂无相关订单</p>' ?>
+    <?= trim($html) ? $html : '<div class="no-data">暂无相关订单</div>' ?>
 </div>
