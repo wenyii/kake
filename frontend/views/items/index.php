@@ -8,7 +8,7 @@ $params = \Yii::$app->params;
 <header>
     列表
     <div class="menu detail" kk-menu="#menu">
-        <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/menu1.svg"/>
+        <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/header-icon-right.svg"/>
     </div>
 </header>
 <div class="body">

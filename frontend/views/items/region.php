@@ -9,7 +9,7 @@ $params = \Yii::$app->params;
 <header>
      全部目的地
     <div class="menu detail" kk-menu="#menu">
-        <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/menu1.svg"/>
+        <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/header-icon-right.svg"/>
     </div>
 </header>
 <!-- All-hot-aim -->
