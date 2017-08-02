@@ -385,7 +385,7 @@ class GeneralController extends MainController
             });
 
             return $list;
-        });
+        }, MONTH, null, Yii::$app->params['use_cache']);
     }
 
     /**
@@ -433,7 +433,7 @@ class GeneralController extends MainController
             });
 
             return $list;
-        });
+        }, MONTH, null, Yii::$app->params['use_cache']);
     }
 
     /**
