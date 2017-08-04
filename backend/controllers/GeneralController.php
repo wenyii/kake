@@ -713,6 +713,30 @@ class GeneralController extends MainController
     }
 
     /**
+     * 首页列表条件参数
+     *
+     * @access public
+     *
+     * @param string $as
+     *
+     * @return array
+     */
+    public function indexCondition($as = null)
+    {
+        if (!$as) {
+            $model = parent::model(static::$modelName);
+            $as = $model->tableName;
+        }
+
+        return [
+            'order' => [
+                "${as}.state DESC",
+                "${as}.update_time DESC"
+            ],
+        ];
+    }
+
+    /**
      * 获取列表需要的辅助信息
      *
      * @access public

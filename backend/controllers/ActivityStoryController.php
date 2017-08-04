@@ -82,9 +82,9 @@ class ActivityStoryController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
-        return [
+        return array_merge(parent::indexCondition(), [
             'join' => [
                 ['table' => 'user'],
                 [
@@ -102,7 +102,7 @@ class ActivityStoryController extends GeneralController
             'where' => [
                 ['activity_story.state' => 1]
             ]
-        ];
+        ]);
     }
 
     /**

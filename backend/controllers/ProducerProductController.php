@@ -291,12 +291,12 @@ class ProducerProductController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
         $condition = $this->myCondition();
         unset($condition['where']);
 
-        return $condition;
+        return array_merge(parent::indexCondition(), $condition);
     }
 
     /**

@@ -81,13 +81,13 @@ class ActivityLotteryCodeController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
-        return [
+        return array_merge(parent::indexCondition(), [
             'where' => [
                 ['state' => 1]
             ]
-        ];
+        ]);
     }
 
     /**

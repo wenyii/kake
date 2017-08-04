@@ -135,9 +135,9 @@ class OrderInstructionsLogController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
-        return [
+        return array_merge(parent::indexCondition(), [
             'join' => [
                 [
                     'table' => 'user',
@@ -153,9 +153,8 @@ class OrderInstructionsLogController extends GeneralController
                 'user.username',
                 'order_instructions_log.*',
                 'order.order_number'
-            ],
-            'order' => 'order_instructions_log.id DESC'
-        ];
+            ]
+        ]);
     }
 
     /**

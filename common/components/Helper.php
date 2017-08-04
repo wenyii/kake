@@ -53,7 +53,7 @@ class Helper extends Object
         $params = (array) $params;
         $key = md5(json_encode($params));
         if (!isset($container[$key])) {
-            $container[$key] = call_user_func_array($logicHandler, $params);
+            $container[$key] = call_user_func($logicHandler, $params);
         }
 
         return $container[$key];

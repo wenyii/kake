@@ -77,9 +77,9 @@ class ProducerQuotaController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
-        return [
+        return array_merge(parent::indexCondition('A'), [
             'from' => ['A' => 'producer_quota'],
             'join' => [
                 [
@@ -102,7 +102,7 @@ class ProducerQuotaController extends GeneralController
                 ],
                 ['A.state' => 1]
             ]
-        ];
+        ]);
     }
 
     /**

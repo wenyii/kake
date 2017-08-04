@@ -86,7 +86,7 @@ class AppLogController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
         return [
             'order' => [

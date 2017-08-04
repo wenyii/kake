@@ -335,9 +335,9 @@ EOF
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
-        return [
+        return array_merge(parent::indexCondition(), [
             'join' => [
                 ['table' => 'product'],
                 [
@@ -354,11 +354,7 @@ EOF
                 'product.state AS status',
                 'hotel.name AS hotel_name',
                 'product_package.*'
-            ],
-            'order' => [
-                'product_package.product_id ASC',
-                'product_package.update_time DESC'
             ]
-        ];
+        ]);
     }
 }

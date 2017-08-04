@@ -113,9 +113,9 @@ class ProducerWithdrawController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
-        return [
+        return array_merge(parent::indexCondition(), [
             'join' => [
                 [
                     'table' => 'user',
@@ -133,7 +133,7 @@ class ProducerWithdrawController extends GeneralController
                 'producer_setting.account_number',
                 'producer_withdraw.*'
             ]
-        ];
+        ]);
     }
 
     /**

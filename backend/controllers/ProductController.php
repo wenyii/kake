@@ -714,7 +714,7 @@ class ProductController extends GeneralController
      *
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
         return [
             'join' => [

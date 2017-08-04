@@ -141,9 +141,9 @@ class HotelRegionController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
-        return [
+        return array_merge(parent::indexCondition(), [
             'join' => [
                 ['table' => 'attachment']
             ],
@@ -152,7 +152,7 @@ class HotelRegionController extends GeneralController
                 'attachment.deep_path AS deep_path',
                 'attachment.filename AS filename'
             ]
-        ];
+        ]);
     }
 
     /**

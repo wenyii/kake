@@ -82,16 +82,6 @@ class AttachmentController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
-    {
-        return [
-            'order' => 'attachment.update_time DESC'
-        ];
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function sufHandleField($record, $action = null, $callback = null)
     {
         if (!empty($record['filename'])) {

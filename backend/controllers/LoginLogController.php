@@ -104,17 +104,16 @@ class LoginLogController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
-        return [
+        return array_merge(parent::indexCondition(), [
             'join' => [
                 ['table' => 'user']
             ],
             'select' => [
                 'user.username',
                 'login_log.*'
-            ],
-            'order' => 'login_log.id DESC'
-        ];
+            ]
+        ]);
     }
 }

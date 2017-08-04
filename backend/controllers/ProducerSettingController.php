@@ -364,9 +364,9 @@ class ProducerSettingController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
-        return [
+        return array_merge(parent::indexCondition(), [
             'join' => [
                 [
                     'table' => 'attachment',
@@ -383,12 +383,8 @@ class ProducerSettingController extends GeneralController
                 'logo.filename AS logo_filename',
                 'producer_setting.*',
                 'user.username'
-            ],
-            'order' => [
-                'producer_setting.state DESC',
-                'producer_setting.update_time DESC'
             ]
-        ];
+        ]);
     }
 
     /**
