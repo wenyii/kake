@@ -42,6 +42,7 @@ $params = \Yii::$app->params;
             <div class="classify-1-1 cur-1" data-card=".card_first">
                 <span>详情介绍</span>
             </div>
+            <div class="thinner-border"></div>
             <div class="classify-1-2" data-card=".card_second">
                 <span>预订须知</span>
             </div>

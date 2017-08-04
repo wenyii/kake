@@ -13,7 +13,7 @@ class SiteController extends GeneralController
     /**
      * Displays homepage.
      */
-    public function actionIndex1()
+    public function actionIndex()
     {
         $this->sourceCss = null;
         $this->sourceJs = false;
@@ -39,7 +39,7 @@ class SiteController extends GeneralController
         // 精品推荐
         list($standardHtml, $over) = $this->renderListPage(1);
 
-        return $this->render('index1', compact('focusList', 'plateList', 'flashSalesList', 'bannerList', 'standardHtml', 'over'));
+        return $this->render('index', compact('focusList', 'plateList', 'flashSalesList', 'bannerList', 'standardHtml', 'over'));
     }
 
     /**
