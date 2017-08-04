@@ -232,9 +232,9 @@ class OrderController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
-        return [
+        return array_merge(parent::indexCondition(), [
             'join' => [
                 ['table' => 'user'],
                 ['table' => 'product'],
@@ -263,12 +263,8 @@ class OrderController extends GeneralController
                 'order_contacts.phone',
                 'producer_user.username AS producer_username',
                 'order.*'
-            ],
-            'order' => [
-                'order.state DESC',
-                'order.id DESC'
             ]
-        ];
+        ]);
     }
 
     /**

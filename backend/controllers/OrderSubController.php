@@ -334,7 +334,7 @@ class OrderSubController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
         return [
             'join' => [
@@ -352,9 +352,8 @@ class OrderSubController extends GeneralController
                 'order_sub.*'
             ],
             'order' => [
-                'order.state DESC',
-                'order_sub.id DESC'
-            ]
+                'order_sub.update_time DESC'
+            ],
         ];
     }
 

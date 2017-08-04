@@ -204,9 +204,9 @@ class ProductProducerController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
-        return [
+        return array_merge(parent::indexCondition(), [
             'join' => [
                 ['table' => 'product']
             ],
@@ -214,7 +214,7 @@ class ProductProducerController extends GeneralController
                 'product_producer.*',
                 'product.title'
             ]
-        ];
+        ]);
     }
 
     /**

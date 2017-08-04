@@ -194,9 +194,9 @@ class AdController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
-        return [
+        return array_merge(parent::indexCondition(), [
             'join' => [
                 ['table' => 'attachment']
             ],
@@ -204,12 +204,8 @@ class AdController extends GeneralController
                 'attachment.deep_path',
                 'attachment.filename',
                 'ad.*'
-            ],
-            'order' => [
-                'ad.state DESC',
-                'ad.update_time DESC'
             ]
-        ];
+        ]);
     }
 
     /**

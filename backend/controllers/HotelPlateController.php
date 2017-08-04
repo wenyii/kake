@@ -4,8 +4,6 @@ namespace backend\controllers;
 
 /**
  * 酒店板块管理
- *
- * @auth-inherit-except front
  */
 class HotelPlateController extends GeneralController
 {
@@ -27,6 +25,23 @@ class HotelPlateController extends GeneralController
                 'icon' => 'plus'
             ]
         ];
+    }
+
+    /**
+     * 微操作
+     *
+     * @inheritDoc
+     */
+    public static function indexOperation()
+    {
+        return array_merge(parent::indexOperation(), [
+            [
+                'text' => '前置',
+                'value' => 'front',
+                'level' => 'info',
+                'icon' => 'sort'
+            ]
+        ]);
     }
 
     /**
@@ -72,6 +87,7 @@ class HotelPlateController extends GeneralController
                 'img',
                 'width' => '200px'
             ],
+            'update_time',
             'state' => [
                 'code',
                 'color' => 'auto',
@@ -125,9 +141,9 @@ class HotelPlateController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
-        return [
+        return array_merge(parent::indexCondition(), [
             'join' => [
                 ['table' => 'attachment']
             ],
@@ -136,7 +152,7 @@ class HotelPlateController extends GeneralController
                 'attachment.deep_path AS deep_path',
                 'attachment.filename AS filename'
             ]
-        ];
+        ]);
     }
 
     /**

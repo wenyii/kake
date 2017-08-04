@@ -187,9 +187,9 @@ class ProducerLogController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
-        return [
+        return array_merge(parent::indexCondition(), [
             'join' => [
                 [
                     'table' => 'order',
@@ -237,7 +237,7 @@ class ProducerLogController extends GeneralController
                     2
                 ],
             ]
-        ];
+        ]);
     }
 
     /**

@@ -115,7 +115,7 @@ class ConfigController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
         return [
             'order' => 'config.key ASC'

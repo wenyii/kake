@@ -183,9 +183,9 @@ class BillController extends GeneralController
     /**
      * @inheritDoc
      */
-    public function indexCondition()
+    public function indexCondition($as = null)
     {
-        return [
+        return array_merge(parent::indexCondition(), [
             'join' => [
                 ['table' => 'order_sub'],
                 [
@@ -198,7 +198,6 @@ class BillController extends GeneralController
                 'order_sub.price',
                 'bill.*'
             ],
-            'order' => 'bill.update_time DESC'
-        ];
+        ]);
     }
 }

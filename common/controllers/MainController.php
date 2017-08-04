@@ -137,8 +137,8 @@ class MainController extends Controller
             return $class;
         }
 
-        return Helper::singleton($class, function ($cls) {
-            return new $cls($this->id, $this->module);
+        return Helper::singleton($class, function () use ($class) {
+            return new $class($this->id, $this->module);
         });
     }
 
@@ -154,7 +154,9 @@ class MainController extends Controller
      */
     public static function model($model = null, $config = [])
     {
-        return new Main($model, Yii::$app->params['use_cache'], $config);
+        return Helper::singleton($model, function () use ($model, $config) {
+            return new Main($model, Yii::$app->params['use_cache'], $config);
+        });
     }
 
     /**
