@@ -94,8 +94,7 @@ $params = \Yii::$app->params;
                 'detail/choose-package',
                 'id' => $detail['id']
             ]) ?>">
-            		<p>￥
-            			<span><?= $detail['min_price'] ?></span>
+            		<p><i>￥</i><span><?= $detail['min_price'] ?></span>
             		</p>
             		预订
             </a>
@@ -103,7 +102,7 @@ $params = \Yii::$app->params;
         
         <div class=" service">
             <a href="tel:<?= Yii::$app->params['company_tel'] ?>">
-                <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/customer-service.svg"/>
+                <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/custom.svg"/>
             </a>
         </div>
         <div class="back-top">
