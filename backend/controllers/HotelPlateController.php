@@ -84,8 +84,10 @@ class HotelPlateController extends GeneralController
             ],
             'preview_url' => [
                 'title' => '板块封面图',
-                'img',
-                'width' => '200px'
+                'img' => [
+                    'pos' => 'right'
+                ],
+                'width' => '128px'
             ],
             'update_time',
             'state' => [

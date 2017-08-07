@@ -63,8 +63,11 @@ class AttachmentController extends GeneralController
             'add_time',
             'update_time',
             'preview_url' => [
-                'img',
-                'width' => '150px',
+                'img' => [
+                    'pos' => 'left',
+                    'max-width' => '500px'
+                ],
+                'width' => '128px',
                 'not_set_info' => '<span class="not-set">(Deleted)</span>'
             ],
             'state' => [

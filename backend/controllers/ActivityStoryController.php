@@ -54,8 +54,11 @@ class ActivityStoryController extends GeneralController
             ],
             'photo_preview_url' => [
                 'title' => '照片',
-                'img',
-                'width' => '200px'
+                'img' => [
+                    'pos' => 'right',
+                    'max-width' => '500px'
+                ],
+                'width' => '128px'
             ],
             'story' => [
                 'max-width' => '240px'

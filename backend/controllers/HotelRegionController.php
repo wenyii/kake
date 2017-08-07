@@ -80,8 +80,10 @@ class HotelRegionController extends GeneralController
             ],
             'preview_url' => [
                 'title' => '地区封面图',
-                'img',
-                'width' => '200px'
+                'img' => [
+                    'pos' => 'left'
+                ],
+                'width' => '128px'
             ],
             'state' => [
                 'code',

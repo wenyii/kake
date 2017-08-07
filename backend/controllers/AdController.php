@@ -107,8 +107,10 @@ class AdController extends GeneralController
                 'info'
             ],
             'preview_url' => [
-                'img',
-                'width' => '200px',
+                'img' => [
+                    'pos' => 'left'
+                ],
+                'width' => '128px',
             ]
         ];
     }

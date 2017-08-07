@@ -107,7 +107,7 @@ $action = \Yii::$app->controller->action->id;
                     <?php endif; ?>
                 </th>
             <?php endif; ?>
-            <th>No</th>
+            <th>No.</th>
             <?php foreach ($assist as $key => $item): ?>
                 <?php
                 if (!empty($item['adorn']['tip']) || !empty($item['adorn']['hidden'])) {
