@@ -2,7 +2,9 @@
 
 namespace frontend\controllers;
 
+use common\components\Helper;
 use Yii;
+use Intervention\Image\ImageManagerStatic as Image;
 
 /**
  * WeChat reply controller
@@ -49,6 +51,16 @@ class WeChatController extends GeneralController
     {
         $br = PHP_EOL;
         $text = trim($message->Content);
+
+        if ($text == 'leon') {
+            $url = $this->lotteryImg('阿里巴巴集团', 'xL3js0A');
+            return [
+                'the first reply',
+                $url,
+                '<a href="http://www.baidu.com/">BAIDU</a>',
+                '<img src="' . $url . '">'
+            ];
+        }
 
         // 格式判断
         $text = str_replace('＋', '+', $text);
@@ -99,15 +111,53 @@ class WeChatController extends GeneralController
 
         // 已参与判断
         if (!empty($result['exists'])) {
-            if ($company == '汪正摄影') {
-                return '你已经参与过该活动了，请您等待汪正摄影的联系！';
-            }
             return "宝贝，不要太贪心哦~你已经参与过啦~{$br}抽奖码：${result['code']}，祝你好运~";
         }
 
-        if ($company == '汪正摄影') {
-            return '恭喜您报名成功，请您等待汪正摄影的联系！';
-        }
         return "WoW~ 这是喀客旅行为你提供的抽奖码：${result['code']}！希望你能抽中奖品～";
+    }
+
+    /**
+     * 生成抽奖码图片
+     *
+     * @access protected
+     *
+     * @param string $company
+     * @param string $code
+     *
+     * @return string
+     */
+    protected function lotteryImg($company, $code)
+    {
+        $bg = self::getPathByUrl('img/activity/lottery-bg.jpg', 'frontend_source');
+        $img = Image::make($bg);
+
+        $fonts = self::getPathByUrl('fonts/hanyi.ttf', 'frontend_source');
+
+        // 添加文本
+        $text = function ($text, $size, $y, $fonts, $width = 750) use ($img) {
+
+            list($w) = Helper::textPx($text, $fonts, $size, 0.78);
+            $x = ($width - $w) / 2;
+
+            $img->text($text, $x, $y, function ($font) use ($fonts, $size) {
+                $font->file($fonts);
+                $font->size($size);
+            });
+        };
+
+        // 打印公司名称
+        $text($company, 38, 325, $fonts);
+
+        // 打印抽奖码
+        $text($code, 28, 836, $fonts);
+
+        $this->user = (object) ['id' => 1];
+        $tmp = Yii::$app->params['tmp_path'] . '/' . $this->user->id . '.jpg';
+        $img->save($tmp);
+
+        $url = self::getUrlByPath($tmp, 'jpg', 'screen_shot_');
+
+        return $url;
     }
 }

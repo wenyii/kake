@@ -1738,11 +1738,11 @@ class Helper extends Object
      * @param string $str
      * @param string $standard
      * @param int    $zhCnLength Length of zh-cn
-     * @param int    $enLength   Length of en
+     * @param mixed  $enLength   Length of en
      *
      * @return integer
      */
-    public static function length($str, $standard = 'zh-cn', $zhCnLength = 2, $enLength = 1)
+    public static function length($str, $standard = 'zh-cn', $zhCnLength = 1, $enLength = 4 / 7)
     {
         $str = self::split($str);
         $len = 0;
@@ -1759,6 +1759,29 @@ class Helper extends Object
         $len = $len / $$standard;
 
         return $len;
+    }
+
+    /**
+     * Get text width and height
+     *
+     * @param string  $str
+     * @param  string $fonts
+     * @param mixed   $size
+     * @param mixed   $gap
+     *
+     * @return array
+     */
+    public static function textPx($str, $fonts, $size = 14, $gap = 1)
+    {
+        $box = imagettfbbox($size, 0, $fonts, $str);
+
+        $width = abs($box[4] - $box[0]);
+        $height = abs($box[5] - $box[1]);
+
+        return [
+            $width * $gap,
+            $height * $gap
+        ];
     }
 
     /**

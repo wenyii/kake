@@ -162,7 +162,9 @@ class ProducerSettingController extends GeneralController
             ],
             'logo_preview_url' => [
                 'title' => 'LOGO预览',
-                'img',
+                'img' => [
+                    'tip' => false
+                ],
                 'width' => '128px'
             ],
             'account_type' => [
