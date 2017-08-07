@@ -812,6 +812,14 @@ class GeneralController extends MainController
                 $_value['field_info'] = $this->getListAboutTable($_value);
             }
 
+            if (!empty($_value['img'])) {
+                $_value['img'] = array_merge([
+                    'tip' => true,
+                    'pos' => 'top',
+                    'max-width' => '300px'
+                ], (array) $_value['img']);
+            }
+
             $title = Helper::popOne($_value, 'title');
 
             $_assist[$key] = [

@@ -284,12 +284,6 @@ class ViewHelper extends Object
             if (empty($content)) {
                 $content = $notSetStr;
             } else {
-
-                !is_array($adorn['img']) && $adorn['img'] = [];
-                !isset($adorn['img']['tip']) && $adorn['img']['tip'] = true;
-                !isset($adorn['img']['pos']) && $adorn['img']['pos'] = 'top';
-                !isset($adorn['img']['max-width']) && $adorn['img']['max-width'] = '300px';
-
                 $tipStr = null;
                 if ($adorn['img']['tip']) {
                     $tipStr = '
@@ -313,21 +307,18 @@ class ViewHelper extends Object
             $default = empty($adorn['field_info'][$item[$field]]) ? $notSetStr : $adorn['field_info'][$item[$field]];
             $fieldInfo = $empty($field . '_info', $default, null, $notSetFn);
             $content = is_null($content) ? $notSetStr : $fieldInfo;
-        }
-
-elseif
-(isset($adorn['link'])){ // link
+        } elseif (isset($adorn['link'])) { // link
             if ($empty($field)) {
                 $content = '<a href="' . $empty($field) . '" target="_blank">' . $adorn['url_info'] . '</a>';
             } else {
                 $content = $notSetStr;
             }
-        } elseif (isset($adorn['html'])){ // html
-                 $content = $empty($field, $notSetStr, null, $notSetFn);
+        } elseif (isset($adorn['html'])) { // html
+            $content = $empty($field, $notSetStr, null, $notSetFn);
         } else { // others
-    $content = $empty($field, null, null, $notSetFn);
-    $content = is_null($content) ? $notSetStr : Html::encode($content);
-}
+            $content = $empty($field, null, null, $notSetFn);
+            $content = is_null($content) ? $notSetStr : Html::encode($content);
+        }
 
         if ($content == $notSetStr) {
             return $content;
@@ -377,19 +368,19 @@ elseif
      * @return string
      */
     public static function getStyleByAdorn($adorn)
-{
-    $styleArray = [];
-    $attributes = [
-        'width',
-        'max-width',
-        'min-width'
-    ];
-    foreach ($attributes as $attribute) {
-        if (!empty($adorn[$attribute])) {
-            $styleArray[] = $attribute . ':' . $adorn[$attribute];
+    {
+        $styleArray = [];
+        $attributes = [
+            'width',
+            'max-width',
+            'min-width'
+        ];
+        foreach ($attributes as $attribute) {
+            if (!empty($adorn[$attribute])) {
+                $styleArray[] = $attribute . ':' . $adorn[$attribute];
+            }
         }
-    }
 
-    return 'style="' . implode(';', $styleArray) . '"';
-}
+        return 'style="' . implode(';', $styleArray) . '"';
+    }
 }
