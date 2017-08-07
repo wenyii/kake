@@ -55,7 +55,8 @@ class WeChatController extends GeneralController
         if ($text == 'leon') {
 
             $wx = Yii::$app->wx;
-            $wx->server->setMessageHandler(function ($message) {
+            $wx->server->setMessageHandler(function ($message) use ($wx) {
+                return $wx->staff->message(['a', 'b'])->to($message->FromUserName)->send();
                 return ['a', 'b'];
                 return '[TEST] Say: ' . $message;
             });
