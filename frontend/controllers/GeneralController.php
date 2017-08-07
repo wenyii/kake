@@ -489,7 +489,7 @@ class GeneralController extends MainController
             if (empty($options['region'])) {
                 $options['region'] = $plate;
             } else {
-                $options['region'] = array_merge(explode(',', $options['region']), $plate);
+                $options['region'] = array_intersect(explode(',', $options['region']), $plate);
             }
 
             if (!empty($options['region'])) {
