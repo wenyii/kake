@@ -53,7 +53,7 @@ class WeChatController extends GeneralController
         $text = trim($message->Content);
 
         if ($text == 'leon') {
-            // $url = $this->lotteryImg('阿里巴巴集团', 'xL3js0A');
+            return $url = $this->lotteryImg('阿里巴巴集团', 'xL3js0A');
             return [
                 'the first reply',
                 //$url,
