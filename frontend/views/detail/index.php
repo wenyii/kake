@@ -51,7 +51,6 @@ $params = \Yii::$app->params;
     <div class="detail-hotel_1 card_first">
         <div class="detail-hotel">
             <div class="detail-hotel-1">
-                <span> <img src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 费用包含
             </div>
             <div class="detail-hotel-2">
@@ -60,7 +59,6 @@ $params = \Yii::$app->params;
         </div>
         <div class="detail-hotel">
             <div class="detail-hotel-1">
-                <span> <img src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 推荐理由
             </div>
             <div class="detail-hotel-2 detail-hotel_2">
@@ -71,7 +69,6 @@ $params = \Yii::$app->params;
     <div class="notice card_second">
         <div class="detail-hotel">
             <div class="detail-hotel-1">
-                <span> <img src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 使用说明
             </div>
             <div class="notice-money bor">
@@ -80,7 +77,6 @@ $params = \Yii::$app->params;
         </div>
         <div class="detail-hotel">
             <div class="detail-hotel-1">
-                <span> <img src="<?= $params['frontend_source'] ?>/img/classify.svg"/></span>
                 退改规则
             </div>
             <div class="notice-money">
