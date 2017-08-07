@@ -53,26 +53,13 @@ class WeChatController extends GeneralController
         $text = trim($message->Content);
 
         if ($text == 'leon') {
-
-            $wx = Yii::$app->wx;
-            $wx->server->setMessageHandler(function ($message) use ($wx) {
-                return [
-                    new Text(['content' => 'Hello']),
-                    new Text(['content' => 'Leon'])
-                ];
-            });
-
-            return $wx->server->serve()->send();
-
-            /*
             $url = $this->lotteryImg('阿里巴巴集团', 'xL3js0A');
-            return [
-                'the first reply',
-                //$url,
-                '<a href="http://www.baidu.com/">BAIDU</a>',
-                //'<img src="' . $url . '">'
+            return ''
+                . 'the first reply' . '<br>'
+                . $url . '<br>'
+                . '<a href="http://www.baidu.com/">BAIDU</a>' . '<br>'
+                . '<img src="' . $url . '">'
             ];
-            */
         }
 
         // 格式判断
