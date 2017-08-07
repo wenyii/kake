@@ -54,7 +54,7 @@ class WeChatController extends GeneralController
 
         if ($text == 'leon') {
             $url = $this->lotteryImg('阿里巴巴集团', 'xL3js0A');
-            return "<img src=" . $url . ">";
+            return '<img src="' . $url . '">';
         }
 
         // 格式判断
