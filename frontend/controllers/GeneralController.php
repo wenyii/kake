@@ -482,14 +482,14 @@ class GeneralController extends MainController
             // 板块
             $plate = [];
             if (isset($options['plate']) && is_numeric($options['plate'])) {
-                $plate = $this->getRegionByPlate($options['plate']);
+                $plate = $this->getRegionByPlate($options['plate']) ?: [0];
             }
 
             // 地区
             if (empty($options['region'])) {
                 $options['region'] = $plate;
             } else {
-                $options['region'] = array_intersect(explode(',', $options['region']), $plate);
+                $options['region'] = array_merge(explode(',', $options['region']), $plate);
             }
 
             if (!empty($options['region'])) {
