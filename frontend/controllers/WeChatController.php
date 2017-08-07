@@ -53,13 +53,23 @@ class WeChatController extends GeneralController
         $text = trim($message->Content);
 
         if ($text == 'leon') {
-            return $url = $this->lotteryImg('阿里巴巴集团', 'xL3js0A');
+
+            $wx = Yii::$app->wx;
+            $wx->server->setMessageHandler(function ($message) {
+                return '[TEST] Say: ' . $message;
+            });
+
+            return $wx->server->serve()->send();
+
+            /*
+            $url = $this->lotteryImg('阿里巴巴集团', 'xL3js0A');
             return [
                 'the first reply',
                 //$url,
                 '<a href="http://www.baidu.com/">BAIDU</a>',
                 //'<img src="' . $url . '">'
             ];
+            */
         }
 
         // 格式判断
@@ -156,7 +166,7 @@ class WeChatController extends GeneralController
         $tmp = Yii::$app->params['tmp_path'] . '/' . $this->user->id . '.jpg';
         $img->save($tmp);
 
-        $url = self::getUrlByPath($tmp, 'jpg', 'screen_shot_');
+        $url = self::getUrlByPath($tmp, 'jpg', 'general_');
 
         return $url;
     }
