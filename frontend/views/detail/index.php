@@ -85,23 +85,28 @@ $params = \Yii::$app->params;
         </div>
     </div>
 
-
-    <footer>
+    <footer> 
         <?php
         $night = empty($detail['night_times']) ? '' : " / {$detail['night_times']}晚";
         ?>
-        <div class="price"><p>￥<span><?= $detail['min_price'] ?></span> 起<?= $night ?></p></div>
-
-        <div class="buy"><a href="<?= Url::to([
+        <div class="buy">
+        		<a href="<?= Url::to([
                 'detail/choose-package',
                 'id' => $detail['id']
-            ]) ?>">立即购买</a></div>
+            ]) ?>">
+            		<p>￥
+            			<span><?= $detail['min_price'] ?></span>
+            		</p>
+            		预订
+            </a>
+        </div>
+        
         <div class=" service">
             <a href="tel:<?= Yii::$app->params['company_tel'] ?>">
                 <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/customer-service.svg"/>
             </a>
         </div>
         <div class="back-top">
-            <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/back-top_13.png"/>
+            <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/back-top.svg"/>
         </div>
     </footer>
