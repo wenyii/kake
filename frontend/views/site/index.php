@@ -108,10 +108,10 @@ $params = \Yii::$app->params;
 
     <!-- Activity -->
     <div class="kake-box activity">
-        <?php if (!empty($banner)): ?>
+        <?php if (!empty($bannerList)): ?>
             <div class="carousel-scroll" id="carousel-scroller-activity" kk-scroll>
                 <div class="carousel-scroller activity">
-                    <?php foreach ($banner as $item): ?>
+                    <?php foreach ($bannerList as $item): ?>
                         <a href="<?= $item['url'] ?>" target="<?= $item['target_info'] ?>">
                             <img class="img-responsive" src="<?= current($item['preview_url']) ?>"/>
                         </a>
