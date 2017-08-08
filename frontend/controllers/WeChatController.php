@@ -54,14 +54,10 @@ class WeChatController extends GeneralController
         $br = PHP_EOL;
         $text = trim($message->Content);
 
-        if ($text == 'leon') {
+        if ($text == '小姐姐') {
 
-            try {
-                $text = new Text(['content' => 'welcome leon']);
-                $wx->staff->message($text)->by('kf2002@KAKE_Hotel')->to($message->FromUserName)->send();
-            } catch (\Exception $e) {
-                return $e->getMessage();
-            }
+            $text = new Text(['content' => 'welcome leon']);
+            $wx->staff->message($text)->by('kf2002@KAKE_Hotel')->to($message->FromUserName)->send();
 
             $file = $this->lotteryImg('小姐姐你不要跑，哥哥给你糖', '666666');
             $result = $wx->material_temporary->uploadImage($file);
@@ -121,7 +117,9 @@ class WeChatController extends GeneralController
             return "宝贝，不要太贪心哦~你已经参与过啦~{$br}抽奖码：${result['code']}，祝你好运~";
         }
 
-        // return "WoW~ 这是喀客旅行为你提供的抽奖码：${result['code']}！希望你能抽中奖品～";
+        // return ;
+        $text = new Text(['content' => "WoW~ 这是喀客旅行为你提供的抽奖码：${result['code']}！希望你能抽中奖品～"]);
+        $wx->staff->message($text)->by('kf2002@KAKE_Hotel')->to($message->FromUserName)->send();
 
         $file = $this->lotteryImg('喀客KAKE x ' . $company, $result['code']);
         $result = $wx->material_temporary->uploadImage($file);
