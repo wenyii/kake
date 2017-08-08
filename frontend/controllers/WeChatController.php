@@ -55,13 +55,8 @@ class WeChatController extends GeneralController
 
         if ($text == 'leon') {
             $file = $this->lotteryImg('阿里巴巴集团', 'He40jsu4');
-            try {
-                $result = $wx->material_temporary->uploadImage($file);
-            } catch (\Exception $e) {
-                return $e->getMessage();
-            }
-            return json_encode($result);
-            //return new Img(['media_id' => $mediaId]);
+            $result = $wx->material_temporary->uploadImage($file);
+            return new Img(['media_id' => $result->media_id]);
         }
 
         // 格式判断
