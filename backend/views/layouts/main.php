@@ -54,7 +54,7 @@ foreach ($item as $type): ?>
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container-fluid">
-        <div id="menu-toggle" class="glyphicon glyphicon-th-list"></div>
+        <div id="menu-toggle" class="glyphicon glyphicon-list"></div>
         <div class="navbar-header">
             <a class="navbar-brand" target="_blank"
                href="<?= $params['frontend_url'] . Url::toRoute(['site/index']) ?>"><?= $params['app_name'] ?></a>

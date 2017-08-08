@@ -23,7 +23,7 @@ class ProducerProductController extends GeneralController
      */
     public function pageDocument()
     {
-        return [
+        return array_merge(parent::pageDocument(), [
             'add-my' => [
                 'title_icon' => 'plus',
                 'title_info' => '新增',
@@ -36,7 +36,7 @@ class ProducerProductController extends GeneralController
                 'button_info' => '编辑',
                 'action' => 'edit-my-form'
             ]
-        ];
+        ]);
     }
 
     /**

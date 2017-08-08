@@ -276,7 +276,7 @@ class Helper extends Object
     }
 
     /**
-     * Dump for object、array、string...
+     * Dump for object、array、string
      *
      * @access public
      *
@@ -1362,6 +1362,86 @@ class Helper extends Object
         ];
     }
 
+    /**
+     * Create Sign
+     *
+     * @access public
+     *
+     * @param array  $param
+     * @param mixed  $merge
+     * @param string $salt
+     *
+     * @return string
+     */
+    public static function createSign($param, $merge = 'app_sign', $salt = null)
+    {
+        $param = http_build_query($param);
+        parse_str($param, $param);
+
+        ksort($param);
+        $sign = strrev(md5(json_encode($param)));
+        $salt = $salt ? md5(strrev($salt)) : null;
+        $sign = strtoupper(sha1($sign) . $salt);
+
+        if (!empty($merge)) {
+            $param[$merge] = $sign;
+
+            return $param;
+        }
+
+        return $sign;
+    }
+
+    /**
+     * Validation Sign
+     *
+     * @access private
+     *
+     * @param array  $param
+     * @param string $keyName
+     * @param string $salt
+     *
+     * @return boolean
+     */
+    public static function validateSign($param, $keyName = 'app_sign', $salt = null)
+    {
+        if (empty($param[$keyName])) {
+            return false;
+        }
+
+        $_sign = $param[$keyName];
+        unset($param[$keyName]);
+
+        $sign = self::createSign($param, null, $salt);
+        if (strcmp($sign, $_sign) !== 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * List function back trance
+     *
+     * @access public
+     *
+     * @param mixed $index
+     * @param array $keys
+     *
+     * @return mixed
+     */
+    public static function functionCallTrance($index = 1, $keys = ['function'])
+    {
+        // exclude self
+        is_numeric($index) && $index += 1;
+        $backTrance = self::arrayColumn(debug_backtrace(), null, $keys);
+        if ($index === 'all') {
+            return $backTrance;
+        }
+
+        return isset($backTrance[$index]) ? $backTrance[$index] : null;
+    }
+
     // --- File ---
 
     /**
@@ -1716,8 +1796,6 @@ class Helper extends Object
 
     // --- String ---
 
-    public static $specialChar = '`-=[];\'\,.//~!@#$%^&*()_+{}:"|<>?·【】；’、，。、！￥…（）—：“《》？';
-
     /**
      * Number of characters
      *
@@ -1733,14 +1811,30 @@ class Helper extends Object
     }
 
     /**
+     * Split the string with nil
+     *
+     * @access public
+     *
+     * @param $string
+     *
+     * @return array
+     */
+    public static function split($string)
+    {
+        preg_match_all('/[\s\S]/u', $string, $array);
+
+        return $array[0];
+    }
+
+    /**
      * Count length
      *
-     * @param string $str
-     * @param string $standard
-     * @param int    $zhCnLength Length of zh-cn
-     * @param mixed  $enLength   Length of en
+     * @param string          $str
+     * @param string          $standard
+     * @param integer         $zhCnLength Length of zh-cn
+     * @param integer | float $enLength   Length of en
      *
-     * @return integer
+     * @return integer | float
      */
     public static function length($str, $standard = 'zh-cn', $zhCnLength = 1, $enLength = 4 / 7)
     {
@@ -1762,45 +1856,28 @@ class Helper extends Object
     }
 
     /**
-     * Get text width and height
-     *
-     * @param string  $str
-     * @param  string $fonts
-     * @param mixed   $size
-     * @param mixed   $gap
-     *
-     * @return array
-     */
-    public static function textPx($str, $fonts, $size = 14, $gap = 1)
-    {
-        $box = imagettfbbox($size, 0, $fonts, $str);
-
-        $width = abs($box[4] - $box[0]);
-        $height = abs($box[5] - $box[1]);
-
-        return [
-            $width * $gap,
-            $height * $gap
-        ];
-    }
-
-    /**
      * Interception of a string specifying the physical length
      *
      * @access public
      *
-     * @param string $str
-     * @param int    $length
-     * @param int    $zhCnLength Length of zh-cn
-     * @param int    $enLength   Length of en
+     * @param string          $str
+     * @param integer         $length
+     * @param string          $standard
+     * @param integer         $zhCnLength Length of zh-cn
+     * @param integer | float $enLength   Length of en
      *
      * @return string
      */
-    public static function subStr($str, $length, $zhCnLength = 2, $enLength = 1)
+    public static function subStr($str, $length, $standard = 'zh-cn', $zhCnLength = 1, $enLength = 4 / 7)
     {
         $str = self::split($str);
         $nowLen = 0;
         $nowStr = null;
+
+        $standard = self::underToCamel($standard, true, '-');
+        $standard = $standard . 'Length';
+        $length = $length / $$standard;
+
         foreach ($str as $val) {
             if (3 == strlen($val)) {
                 $nowLen += $zhCnLength;
@@ -1814,6 +1891,59 @@ class Helper extends Object
         }
 
         return $nowStr;
+    }
+
+    /**
+     * String replace once only
+     *
+     * @access public
+     *
+     * @param string $needle
+     * @param mixed  $replace
+     * @param string $haystack
+     *
+     * @return string
+     */
+    public static function strReplaceOnce($needle, $replace, $haystack)
+    {
+        $pos = strpos($haystack, $needle);
+        if ($pos === false) {
+            return $haystack;
+        }
+
+        return substr_replace($haystack, $replace, $pos, strlen($needle));
+    }
+
+    /**
+     * Split str by length
+     *
+     * @access public
+     *
+     * @param string  $str
+     * @param integer $length
+     * @param array   $subStrParams
+     *
+     * @return array
+     */
+    public static function strSplit($str, $length, $subStrParams = [])
+    {
+        $data = [];
+
+        $split = function ($str) use ($length, $subStrParams, &$split, &$data) {
+            if (strlen($str) <= 0) {
+                return null;
+            }
+
+            $sub = self::subStr($str, $length, ...$subStrParams);
+            $data[] = trim($sub);
+            $surplus = self::strReplaceOnce($sub, null, $str);
+
+            $split($surplus);
+        };
+
+        $split($str);
+
+        return $data;
     }
 
     /**
@@ -1853,19 +1983,26 @@ class Helper extends Object
     }
 
     /**
-     * Split the string with nil
+     * Get text width and height
      *
-     * @access public
-     *
-     * @param $string
+     * @param string  $str
+     * @param  string $fonts
+     * @param mixed   $size
+     * @param mixed   $gap
      *
      * @return array
      */
-    public static function split($string)
+    public static function textPx($str, $fonts, $size = 14, $gap = 1)
     {
-        preg_match_all('/[\s\S]/u', $string, $array);
+        $box = imagettfbbox($size, 0, $fonts, $str);
 
-        return $array[0];
+        $width = abs($box[4] - $box[0]);
+        $height = abs($box[5] - $box[1]);
+
+        return [
+            $width * $gap,
+            $height * $gap
+        ];
     }
 
     /**
@@ -2022,16 +2159,16 @@ class Helper extends Object
     {
 
         // Method  1
-        $path = parse_url($filename, PHP_URL_PATH);
-
-        return pathinfo($path, PATHINFO_EXTENSION);
+        return pathinfo(parse_url($filename, PHP_URL_PATH), PATHINFO_EXTENSION);
 
         // Method 2
-        // return strtolower(trim(array_pop(explode('.', $filename))));
+        // return array_pop(explode('.', $filename));
 
         // Method 3
-        // list($ext) = explode('.', strrev($filename));
-        // return strrev($ext);
+        // return array_reverse(explode('.'))[0];
+
+        // Method 4
+        // return strrev(explode('.', strrev($filename))[0]);
     }
 
     /**
@@ -2099,13 +2236,16 @@ class Helper extends Object
      * Filter the special char
      *
      * @param string $string
+     * @param string $specialChar
      *
      * @return string
      */
-    public static function filterSpecialChar($string)
+    public static function filterSpecialChar($string, $specialChar = null)
     {
+        $specialChar = $specialChar ?: '`-=[];\'\,.//~!@#$%^&*()_+{}:"|<>?·【】；’、，。、！￥…（）—：“《》？';
+
         $string = self::deleteHtml($string);
-        $specialArr = self::split(self::$specialChar);
+        $specialArr = self::split($specialChar);
         foreach ($specialArr as $val) {
             $string = str_replace($val, null, $string);
         }
@@ -2385,8 +2525,6 @@ class Helper extends Object
         return $str;
     }
 
-    // --- Others ---
-
     /**
      * Join items string by split - use fro url split
      *
@@ -2422,85 +2560,5 @@ class Helper extends Object
         }
 
         return implode($split, $_items);
-    }
-
-    /**
-     * Create Sign
-     *
-     * @access public
-     *
-     * @param array  $param
-     * @param mixed  $merge
-     * @param string $salt
-     *
-     * @return string
-     */
-    public static function createSign($param, $merge = 'app_sign', $salt = null)
-    {
-        $param = http_build_query($param);
-        parse_str($param, $param);
-
-        ksort($param);
-        $sign = strrev(md5(json_encode($param)));
-        $salt = $salt ? md5(strrev($salt)) : null;
-        $sign = strtoupper(sha1($sign) . $salt);
-
-        if (!empty($merge)) {
-            $param[$merge] = $sign;
-
-            return $param;
-        }
-
-        return $sign;
-    }
-
-    /**
-     * Validation Sign
-     *
-     * @access private
-     *
-     * @param array  $param
-     * @param string $keyName
-     * @param string $salt
-     *
-     * @return boolean
-     */
-    public static function validateSign($param, $keyName = 'app_sign', $salt = null)
-    {
-        if (empty($param[$keyName])) {
-            return false;
-        }
-
-        $_sign = $param[$keyName];
-        unset($param[$keyName]);
-
-        $sign = self::createSign($param, null, $salt);
-        if (strcmp($sign, $_sign) !== 0) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * List function back trance
-     *
-     * @access public
-     *
-     * @param mixed $index
-     * @param array $keys
-     *
-     * @return mixed
-     */
-    public static function functionCallTrance($index = 1, $keys = ['function'])
-    {
-        // exclude self
-        is_numeric($index) && $index += 1;
-        $backTrance = self::arrayColumn(debug_backtrace(), null, $keys);
-        if ($index === 'all') {
-            return $backTrance;
-        }
-
-        return isset($backTrance[$index]) ? $backTrance[$index] : null;
     }
 }

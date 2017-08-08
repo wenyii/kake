@@ -24,14 +24,14 @@ class OrderInstructionsLogController extends GeneralController
      */
     public function pageDocument()
     {
-        return [
+        return array_merge(parent::pageDocument(), [
             'ajax-modal-refuse' => [
                 'modal' => true,
                 'title_info' => '拒绝说明',
                 'button_info' => '确定',
                 'action' => '$.handleModalForm($(this), $.instructions);'
             ],
-        ];
+        ]);
     }
 
     /**

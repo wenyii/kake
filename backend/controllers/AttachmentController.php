@@ -55,6 +55,17 @@ class AttachmentController extends GeneralController
     /**
      * @inheritDoc
      */
+    public static function indexSorter()
+    {
+        return [
+            'update_time',
+            'state'
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function indexAssist()
     {
         return [

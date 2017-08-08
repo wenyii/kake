@@ -32,14 +32,14 @@ class ProducerSettingController extends GeneralController
      */
     public function pageDocument()
     {
-        return [
+        return array_merge(parent::pageDocument(), [
             'center' => [
                 'title_icon' => 'edit',
                 'title_info' => '编辑',
                 'button_info' => '编辑',
                 'action' => 'setting'
             ],
-        ];
+        ]);
     }
 
     /**
