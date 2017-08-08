@@ -10,7 +10,7 @@ $params = \Yii::$app->params;
 <header>
     选择套餐
     <div class="menu detail" kk-menu="#menu">
-        <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/menu1.svg"/>
+        <img class="img-responsive" src="<?= $params['frontend_source'] ?>/img/list.svg"/>
     </div>
 </header>
 <div class="body" product-id="<?= $productId ?>">
