@@ -56,7 +56,7 @@ class WeChatController extends GeneralController
         if ($text == 'leon') {
 
             $message = new Text(['content' => 'Hello LEON.']);
-            $wx->staff->message($message)->to($message->FromUserName)->send();
+            // $wx->staff->message($message)->to($message->FromUserName)->send();
             // $wx->staff->create('kf2002@KAKE_Hotel', 'replier');
 
             return 'welcome Leon';
