@@ -54,8 +54,9 @@ class WeChatController extends GeneralController
         $text = trim($message->Content);
 
         if ($text == 'leon') {
-            $file = $this->lotteryImg('阿里巴巴集团', 'He40jsu4');
+            $file = $this->lotteryImg('小姐姐你不要，小哥哥给你糖', '666666');
             $result = $wx->material_temporary->uploadImage($file);
+
             return new Img(['media_id' => $result->media_id]);
         }
 
@@ -111,7 +112,12 @@ class WeChatController extends GeneralController
             return "宝贝，不要太贪心哦~你已经参与过啦~{$br}抽奖码：${result['code']}，祝你好运~";
         }
 
-        return "WoW~ 这是喀客旅行为你提供的抽奖码：${result['code']}！希望你能抽中奖品～";
+        // return "WoW~ 这是喀客旅行为你提供的抽奖码：${result['code']}！希望你能抽中奖品～";
+
+        $file = $this->lotteryImg('喀客KAKE x ' . $company, $result['code']);
+        $result = $wx->material_temporary->uploadImage($file);
+
+        return new Img(['media_id' => $result->media_id]);
     }
 
     /**
@@ -144,10 +150,10 @@ class WeChatController extends GeneralController
         };
 
         // 打印公司名称
-        $text($company, 38, 325, $fonts);
+        $text($company, 38, 320, $fonts);
 
         // 打印抽奖码
-        $text($code, 28, 836, $fonts);
+        $text($code, 30, 834, $fonts);
 
         $tmp = Yii::$app->params['tmp_path'] . '/' . $code . '.jpg';
         $img->save($tmp);
