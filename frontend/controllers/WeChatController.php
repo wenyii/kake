@@ -3,7 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\Helper;
-use EasyWeChat\Message\Text;
+use EasyWeChat\Message\Image as Img;
 use Yii;
 use Intervention\Image\ImageManagerStatic as Image;
 
@@ -54,12 +54,10 @@ class WeChatController extends GeneralController
         $text = trim($message->Content);
 
         if ($text == 'leon') {
-
-            $message = new Text(['content' => 'Hello LEON.']);
-            // $wx->staff->message($message)->to($message->FromUserName)->send();
-            // $wx->staff->create('kf2002@KAKE_Hotel', 'replier');
-
-            return 'welcome Leon';
+            $file = $this->lotteryImg('阿里巴巴集团', 'He40jsu4');
+            $result = $wx->temporary->uploadImage($file);
+            return json_encode($result);
+            return new Img(['media_id' => $mediaId]);
         }
 
         // 格式判断
@@ -155,8 +153,6 @@ class WeChatController extends GeneralController
         $tmp = Yii::$app->params['tmp_path'] . '/' . $this->user->id . '.jpg';
         $img->save($tmp);
 
-        $url = self::getUrlByPath($tmp, 'jpg', 'general_');
-
-        return $url;
+        return $tmp;
     }
 }
