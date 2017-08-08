@@ -155,7 +155,7 @@ class WeChatController extends GeneralController
         // 打印抽奖码
         $text($code, 28, 836, $fonts);
 
-        $tmp = Yii::$app->params['tmp_path'] . '/' . $this->user->id . '.jpg';
+        $tmp = Yii::$app->params['tmp_path'] . '/' . $code . '.jpg';
         $img->save($tmp);
 
         return $tmp;
