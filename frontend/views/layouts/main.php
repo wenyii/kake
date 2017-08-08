@@ -76,7 +76,7 @@ $cover = empty($params['cover']) ? $params['frontend_source'] . '/img/logo.png' 
         </a>
         <hr/>
         <a href="<?= Url::to(['order/index']) ?>">
-            <img src="<?= $params['frontend_source'] ?>/img/order-center.svg"/>
+            <img class="order-center" src="<?= $params['frontend_source'] ?>/img/order-center.svg"/>
             订单中心
         </a>
         <hr/>

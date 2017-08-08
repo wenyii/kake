@@ -58,9 +58,6 @@ $params = \Yii::$app->params;
             </div>
         </div>
         <div class="detail-hotel">
-            <div class="detail-hotel-1">
-                推荐理由
-            </div>
             <div class="detail-hotel-2 detail-hotel_2">
                 <?= $detail['recommend'] ?>
             </div>
