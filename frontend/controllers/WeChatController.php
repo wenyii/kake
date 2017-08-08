@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\Helper;
+use EasyWeChat\Message\Text;
 use Yii;
 use Intervention\Image\ImageManagerStatic as Image;
 
@@ -53,6 +54,11 @@ class WeChatController extends GeneralController
         $text = trim($message->Content);
 
         if ($text == 'leon') {
+
+            $message = new Text(['content' => 'Hello LEON.']);
+            $wx->staff->message($message)->to($message->FromUserName)->send();
+            // $wx->staff->create('kf2002@KAKE_Hotel', 'replier');
+
             return 'welcome Leon';
         }
 
