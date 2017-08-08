@@ -584,15 +584,11 @@ class GeneralController extends MainController
      * 表单操作页面所需的文档
      *
      * @access public
-     *
-     * @param string $key
-     *
-     * @return mixed
+     * @return array
      */
-    public function pageDocuments($key = null)
+    public function pageDocument()
     {
-        $document = $this->callMethod('pageDocument', []);
-        $document = array_merge([
+        return [
             'add' => [
                 'title_icon' => 'plus',
                 'title_info' => '新增',
@@ -605,15 +601,7 @@ class GeneralController extends MainController
                 'button_info' => '编辑',
                 'action' => 'edit-form'
             ]
-        ], $document);
-
-        if (!$key) {
-            return $document;
-        }
-
-        $key = Helper::camelToUnder($key, '-');
-
-        return isset($document[$key]) ? $document[$key] : [];
+        ];
     }
 
     /**
@@ -925,6 +913,27 @@ class GeneralController extends MainController
     }
 
     /**
+     * 获取页面的相关描述信息
+     *
+     * @access public
+     *
+     * @param string $key
+     *
+     * @return array
+     */
+    public function getPageDocument($key = null)
+    {
+        $document = $this->callMethod('pageDocument', []);
+        if (!$key) {
+            return $document;
+        }
+
+        $key = Helper::camelToUnder($key, '-');
+
+        return isset($document[$key]) ? $document[$key] : [];
+    }
+
+    /**
      * 处理下拉框的数据
      *
      * @access private
@@ -1128,8 +1137,8 @@ class GeneralController extends MainController
         if (!empty($get[$key])) {
             $get = urldecode($get[$key]);
             foreach (explode(',', $get) as $item) {
-                list($name, $sort) = explode(' ', trim($item));
-                $default[$name] = $sort;
+                $item = explode(' ', trim($item));
+                $default[$item[0]] = empty($item[1]) ? null : $item[1];
             }
         }
 
@@ -1930,7 +1939,7 @@ class GeneralController extends MainController
         $assist = $this->callStatic($caller . 'Assist', []);
         $default = [];
         $list = $this->getEditAssist($assist, $default, $caller);
-        $view = $this->pageDocuments($caller);
+        $view = $this->getPageDocument($caller);
 
         return $this->display('//general/action', compact('list', 'modelInfo', 'view'));
     }
@@ -2043,7 +2052,7 @@ class GeneralController extends MainController
             return $result;
         }
 
-        $view = $this->pageDocuments($caller);
+        $view = $this->getPageDocument($caller);
 
         // 单记录操作
         $operation = $this->callStatic($caller . 'Operation');

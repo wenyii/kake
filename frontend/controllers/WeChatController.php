@@ -53,8 +53,7 @@ class WeChatController extends GeneralController
         $text = trim($message->Content);
 
         if ($text == 'leon') {
-            $url = $this->lotteryImg('阿里巴巴集团', 'xL3js0A');
-            return '<img src="' . $url . '">';
+            return 'welcome Leon';
         }
 
         // 格式判断
@@ -147,7 +146,6 @@ class WeChatController extends GeneralController
         // 打印抽奖码
         $text($code, 28, 836, $fonts);
 
-        $this->user = (object) ['id' => 1];
         $tmp = Yii::$app->params['tmp_path'] . '/' . $this->user->id . '.jpg';
         $img->save($tmp);
 

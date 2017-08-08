@@ -81,26 +81,21 @@ class ActivityController extends GeneralController
         $img->insert($story, 'top-left', $x, $y);
 
         $img->insert($ele);
-        $fonts = self::getPathByUrl('fonts/mango.ttf', 'frontend_source');
+        $fonts = self::getPathByUrl('fonts/hanyi.ttf', 'frontend_source');
 
-        $writeString = function ($text, $index = 0) use ($img, $fonts, &$writeString) {
-
-            $y = $index * 40 + 770;
-            $str = Helper::mSubStr($text, $index * 14, 14, 'utf-8', null);
-
-            if (empty($str)) {
-                return;
-            }
+        $textArr = Helper::strSplit($text, 14, [
+            'zh-cn',
+            1,
+            3.7 / 7
+        ]);
+        foreach ($textArr as $line => $str) {
+            $y = $line * 40 + 770;
 
             $img->text($str, 160, $y, function ($font) use ($fonts) {
                 $font->file($fonts);
                 $font->size(32);
             });
-
-            $writeString($text, $index + 1);
-        };
-
-        $writeString($text);
+        }
 
         $tmp = Yii::$app->params['tmp_path'] . '/' . $this->user->id . '.jpg';
         $img->save($tmp);

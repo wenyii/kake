@@ -62,7 +62,7 @@ class ProductPackageController extends GeneralController
      */
     public function pageDocument()
     {
-        return [
+        return array_merge(parent::pageDocument(), [
             'ajax-modal-package' => [
                 'modal' => true,
                 'title_info' => '添加套餐',
@@ -78,7 +78,7 @@ $.handleModalForm($(this), $.package, {
 });
 EOF
             ],
-        ];
+        ]);
     }
 
     /**
