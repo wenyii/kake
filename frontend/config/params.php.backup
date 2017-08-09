@@ -1,0 +1,7 @@
+<?php
+return [
+    'use_cache' => true,
+
+    'service_app_id' => '[SECRET:service_app_id]',
+    'service_app_secret' => '[SECRET:service_app_secret]',
+];
