@@ -30,6 +30,31 @@ class HotelRegionController extends GeneralController
     }
 
     /**
+     * 微操作
+     *
+     * @inheritDoc
+     */
+    public static function indexOperation()
+    {
+        return array_merge(parent::indexOperation(), [
+            [
+                'alt' => '排序',
+                'level' => 'default',
+                'icon' => 'sort-by-attributes',
+                'type' => 'script',
+                'value' => '$.sortField',
+                'params' => function ($record) {
+                    return [
+                        'hotel-region.sort',
+                        $record['id'],
+                        $record['sort']
+                    ];
+                },
+            ]
+        ]);
+    }
+
+    /**
      * @inheritDoc
      */
     public static function indexFilter()
@@ -58,7 +83,8 @@ class HotelRegionController extends GeneralController
     {
         return [
             'id',
-            'name'
+            'name',
+            'sort'
         ];
     }
 
@@ -85,6 +111,7 @@ class HotelRegionController extends GeneralController
                 ],
                 'width' => '128px'
             ],
+            'sort' => 'code',
             'state' => [
                 'code',
                 'color' => 'auto',
@@ -133,6 +160,9 @@ class HotelRegionController extends GeneralController
                 'field_name' => 'attachment_id'
             ],
 
+            'sort' => [
+                'placeholder' => '大于零的整数，越小越靠前'
+            ],
             'state' => [
                 'elem' => 'select',
                 'value' => 1
@@ -153,6 +183,11 @@ class HotelRegionController extends GeneralController
                 'hotel_region.*',
                 'attachment.deep_path AS deep_path',
                 'attachment.filename AS filename'
+            ],
+            'order' => [
+                'hotel_region.state DESC',
+                'ISNULL(hotel_region.sort), hotel_region.sort ASC',
+                'hotel_region.update_time DESC'
             ]
         ]);
     }

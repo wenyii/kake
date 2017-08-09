@@ -64,7 +64,10 @@ class DetailController extends GeneralController
         'where' => [
             ['product.state' => 1]
         ],
-        'order' => 'product.top DESC, product.update_time DESC'
+        'order' => [
+            'ISNULL(product.sort), product.sort ASC',
+            'product.update_time DESC'
+        ],
     ];
 
     /**

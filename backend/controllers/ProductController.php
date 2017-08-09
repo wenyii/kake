@@ -9,6 +9,8 @@ use yii\helpers\Url;
 
 /**
  * 酒店产品管理
+ *
+ * @auth-inherit-except front
  */
 class ProductController extends GeneralController
 {
@@ -204,13 +206,6 @@ class ProductController extends GeneralController
     {
         return array_merge(parent::indexOperation(), [
             [
-                'text' => '前置',
-                'value' => 'front',
-                'level' => 'info',
-                'icon' => 'sort'
-            ],
-            [
-                'br' => true,
                 'text' => '套餐',
                 'value' => 'product-package/index',
                 'level' => 'info',
@@ -229,12 +224,27 @@ class ProductController extends GeneralController
                 }
             ],
             [
+                'br' => true,
                 'text' => '二维码',
                 'type' => 'script',
                 'value' => '$.showQrCode',
                 'params' => ['link_url'],
                 'level' => 'success',
                 'icon' => 'qrcode'
+            ],
+            [
+                'alt' => '排序',
+                'level' => 'default',
+                'icon' => 'sort-by-attributes',
+                'type' => 'script',
+                'value' => '$.sortField',
+                'params' => function ($record) {
+                    return [
+                        'product.sort',
+                        $record['id'],
+                        $record['sort']
+                    ];
+                },
             ]
         ]);
     }
@@ -354,7 +364,8 @@ class ProductController extends GeneralController
     public static function indexSorter()
     {
         return [
-            'id'
+            'id',
+            'sort'
         ];
     }
 
@@ -397,14 +408,6 @@ class ProductController extends GeneralController
                 'code',
                 'color' => 'success'
             ],
-            'top' => [
-                'code',
-                'info',
-                'color' => [
-                    0 => 'default',
-                    1 => 'primary'
-                ]
-            ],
             'stock' => 'tip',
             'night_times',
             'manifestation' => [
@@ -414,6 +417,7 @@ class ProductController extends GeneralController
             'virtual_sales' => 'tip',
             'real_sales' => 'tip',
             'share_times' => 'tip',
+            'sort' => 'code',
             'state' => [
                 'code',
                 'color' => 'auto',
@@ -582,10 +586,6 @@ class ProductController extends GeneralController
                 'script' => '$.showPage("product-package.package")'
             ],
 
-            'top' => [
-                'elem' => 'select',
-                'value' => 0,
-            ],
             'stock' => [
                 'value' => 0,
                 'placeholder' => '抢购商品硬性库存'
@@ -702,6 +702,9 @@ class ProductController extends GeneralController
                 'width' => 414
             ],
 
+            'sort' => [
+                'placeholder' => '大于零的整数，越小越靠前'
+            ],
             'state' => [
                 'elem' => 'select',
                 'value' => 1
@@ -733,8 +736,8 @@ class ProductController extends GeneralController
                 'product.*'
             ],
             'order' => [
-                'product.top DESC',
                 'product.state DESC',
+                'ISNULL(product.sort), product.sort ASC',
                 'product.update_time DESC'
             ]
         ];

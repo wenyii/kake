@@ -8,6 +8,8 @@ use Yii;
 
 /**
  * 分销记录管理
+ *
+ * @auth-inherit-except add edit front sort
  */
 class ProducerLogController extends GeneralController
 {

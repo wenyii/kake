@@ -7,6 +7,8 @@ use Yii;
 
 /**
  * 分销提现管理
+ *
+ * @auth-inherit-except add edit front sort
  */
 class ProducerWithdrawController extends GeneralController
 {

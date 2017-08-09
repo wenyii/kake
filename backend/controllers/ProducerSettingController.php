@@ -8,7 +8,7 @@ use Yii;
 /**
  * 分销商设置
  *
- * @auth-inherit-except front
+ * @auth-inherit-except front sort
  */
 class ProducerSettingController extends GeneralController
 {

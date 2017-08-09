@@ -100,7 +100,8 @@ class ViewHelper extends Object
             $params = Helper::emptyDefault($value, 'params', []);
 
             if ($script) {
-                $url = 'javascript:' . ViewHelper::escapeScript($value['value']);
+                $params = $params ? self::escapeParams($params) : '';
+                $url = 'javascript:' . self::escapeScript($value['value']) . $params . ';';
             } else {
                 if (strpos($value['value'], 'http') === 0) {
                     $url = $value['value'];
@@ -114,6 +115,7 @@ class ViewHelper extends Object
             $_size = $size ? "btn-{$size}" : null;
             $alt = Helper::emptyDefault($value, 'alt');
 
+            empty($value['text']) && $value['text'] = null;
             $buttons .= "<a href='{$url}' class='btn btn-{$level} {$_size}' title='{$alt}'>{$icon} {$value['text']}</a>" . PHP_EOL;
         }
 
@@ -175,7 +177,10 @@ class ViewHelper extends Object
             }
 
             $_size = $size ? "btn-{$size}" : null;
-            $buttons .= "<a href='{$url}' class='btn btn-{$level} {$_size}'>{$icon} {$value['text']}</a>" . PHP_EOL;
+            $alt = Helper::emptyDefault($value, 'alt');
+
+            empty($value['text']) && $value['text'] = null;
+            $buttons .= "<a href='{$url}' class='btn btn-{$level} {$_size}' title='{$alt}'>{$icon} {$value['text']}</a>" . PHP_EOL;
         }
 
         return $buttons;

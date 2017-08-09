@@ -5,7 +5,7 @@ namespace backend\controllers;
 /**
  * 发票管理
  *
- * @auth-inherit-except front
+ * @auth-inherit-except front sort
  */
 class BillController extends GeneralController
 {

@@ -58,7 +58,7 @@ class OrderController extends GeneralController
                         'order_sub_id',
                         'remark'
                     ],
-                    'order' => 'add_time DESC',
+                    'order' => ['add_time DESC'],
                     'group' => 'order_sub_id'
                 ],
                 'as' => 'log',
@@ -99,7 +99,10 @@ class OrderController extends GeneralController
                 0
             ]
         ],
-        'order' => 'order_sub.add_time DESC, order_sub.id DESC',
+        'order' => [
+            'order_sub.add_time DESC',
+            'order_sub.id DESC'
+        ],
         'distinct' => true,
     ];
 
@@ -341,7 +344,7 @@ class OrderController extends GeneralController
                 'product.*',
                 'order.*'
             ],
-            'order' => 'order.id DESC',
+            'order' => ['order.id DESC'],
             'where' => [
                 ['order.' . $field => $param],
                 ['order.state' => 1]

@@ -8,8 +8,7 @@ use Yii;
 /**
  * 用户管理
  *
- * @auth-inherit-except add
- * @auth-inherit-except front
+ * @auth-inherit-except add front sort
  */
 class UserController extends GeneralController
 {

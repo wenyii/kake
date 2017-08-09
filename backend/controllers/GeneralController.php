@@ -439,6 +439,10 @@ class GeneralController extends MainController
                 $act = Helper::camelToUnder($act, '-');
 
                 if (!empty($classDoc[self::$keyInheritExcept])) {
+
+                    $except = implode(' ', $classDoc[self::$keyInheritExcept]);
+                    $classDoc[self::$keyInheritExcept] = explode(' ', $except);
+
                     if (in_array($act, $classDoc[self::$keyInheritExcept])) {
                         continue;
                     }
@@ -794,6 +798,10 @@ class GeneralController extends MainController
                 if (!isset($_value['tpl'])) {
                     $_value['tpl'] = '￥%s';
                 }
+            }
+
+            if (strpos($key, 'sort') !== false && !isset($_value['tpl'])) {
+                $_value['tpl'] = 'No.%s';
             }
 
             if (!empty($_value['list_table'])) {
@@ -2144,6 +2152,30 @@ class GeneralController extends MainController
         }
 
         $this->goReference($reference ?: $this->getControllerName('index'));
+    }
+
+    /**
+     * 记录排序
+     */
+    public function actionSort()
+    {
+        $sort = Yii::$app->request->post('sort');
+        empty($sort) && $sort = '';
+
+        $model = parent::model(static::$modelName);
+        $result = $this->service(self::$apiGeneralUpdate, [
+            'table' => $model->tableName,
+            'where' => [
+                'id' => Yii::$app->request->post('id')
+            ],
+            'sort' => $sort
+        ]);
+
+        if (is_string($result)) {
+            $this->fail($result);
+        }
+
+        $this->success(null, 'success');
     }
 
     // ---

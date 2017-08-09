@@ -7,8 +7,7 @@ use Yii;
 /**
  * 服务号菜单管理
  *
- * @auth-inherit-except add
- * @auth-inherit-except front
+ * @auth-inherit-except add front sort
  */
 class WxMenuController extends GeneralController
 {

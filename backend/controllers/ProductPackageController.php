@@ -2,10 +2,13 @@
 
 namespace backend\controllers;
 
+use common\components\Helper;
+use Yii;
+
 /**
  * 酒店产品套餐管理
  *
- * @auth-inherit-except front
+ * @auth-inherit-except front sort
  */
 class ProductPackageController extends GeneralController
 {
@@ -34,6 +37,9 @@ class ProductPackageController extends GeneralController
             [
                 'text' => '新增套餐',
                 'value' => 'product-package/add',
+                'params' => [
+                    'product_id' => Yii::$app->request->get('product_id')
+                ],
                 'icon' => 'plus'
             ]
         ];
@@ -196,6 +202,7 @@ EOF
     {
         return [
             'product_id' => [
+                'value' => intval(Yii::$app->request->get('product_id')) ?: null,
                 'readonly' => true,
                 'same_row' => true
             ],
