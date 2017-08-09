@@ -52,7 +52,7 @@ class GeneralController extends Controller
         }
 
         $message = sprintf($message, ...$params);
-        $message = ($begin ?: PHP_EOL) . $message . ($end ?: PHP_EOL . PHP_EOL);
+        $message = ($begin ?: PHP_EOL) . $message . ($end ?: null);
         $this->stdout($message, $style);
     }
 }

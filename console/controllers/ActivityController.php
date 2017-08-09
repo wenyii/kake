@@ -68,7 +68,7 @@ class ActivityController extends GeneralController
         $handler = function ($page = 1) use ($model, &$handler) {
 
             $page = intval($page) > 0 ? $page : 1;
-            $where = ['state' => 1];
+            $where = [];
 
             $count = $model::find()
                 ->where($where)
@@ -85,7 +85,12 @@ class ActivityController extends GeneralController
                 ->all();
             $result = array_column($result, 'openid');
 
-            $data = Yii::$app->wx->user->batchGet(array_values($result));
+            try {
+                $data = Yii::$app->wx->user->batchGet(array_values($result));
+            } catch (\Exception $e) {
+                $msg = $this->color($e->getMessage(), Console::FG_RED);
+                $this->console($msg);
+            }
 
             if (!empty($data->user_info_list)) {
                 foreach ($data->user_info_list as $user) {
@@ -99,7 +104,7 @@ class ActivityController extends GeneralController
 
             $this->console('Task completion ：%s', [
                 $this->color($progress, Console::FG_GREEN)
-            ], null, null, $page == $totalPage ? null : ' ');
+            ], null, null, $page == $totalPage ? PHP_EOL : null);
 
             if (count($result) == $this->limit) {
                 $handler(++$page);
