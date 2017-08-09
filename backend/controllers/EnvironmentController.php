@@ -5,9 +5,7 @@ namespace backend\controllers;
 /**
  * 项目环境管理
  *
- * @auth-inherit-except add
- * @auth-inherit-except edit
- * @auth-inherit-except front
+ * @auth-inherit-except add edit front sort
  */
 class EnvironmentController extends GeneralController
 {

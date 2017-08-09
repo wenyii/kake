@@ -7,7 +7,7 @@ use Yii;
 /**
  * 产品分销管理
  *
- * @auth-inherit-except front
+ * @auth-inherit-except front sort
  */
 class ProductProducerController extends GeneralController
 {
@@ -245,7 +245,7 @@ class ProductProducerController extends GeneralController
             'where' => [
                 [
                     'sub' => [
-                        'select' => 'MAX(from_sales) AS from_sales',
+                        'select' => ['MAX(from_sales) AS from_sales'],
                         'where' => $where
                     ],
                     'tpl' => "['from_sales' => {SUB_QUERY}]"

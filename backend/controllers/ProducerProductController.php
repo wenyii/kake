@@ -7,6 +7,8 @@ use Yii;
 
 /**
  * 分销产品管理
+ *
+ * @auth-inherit-except front sort
  */
 class ProducerProductController extends GeneralController
 {
@@ -71,12 +73,6 @@ class ProducerProductController extends GeneralController
     {
         return array_merge(parent::indexOperation(), [
             [
-                'text' => '前置',
-                'value' => 'front',
-                'level' => 'info',
-                'icon' => 'sort'
-            ],
-            [
                 'text' => '二维码',
                 'type' => 'script',
                 'value' => '$.showQrCode',
@@ -87,6 +83,20 @@ class ProducerProductController extends GeneralController
                 },
                 'level' => 'success',
                 'icon' => 'qrcode'
+            ],
+            [
+                'alt' => '排序',
+                'level' => 'default',
+                'icon' => 'sort-by-attributes',
+                'type' => 'script',
+                'value' => '$.sortField',
+                'params' => function ($record) {
+                    return [
+                        'producer-product.sort',
+                        $record['id'],
+                        $record['sort']
+                    ];
+                },
             ]
         ]);
     }
@@ -150,6 +160,16 @@ class ProducerProductController extends GeneralController
     /**
      * @inheritDoc
      */
+    public static function indexSorter()
+    {
+        return [
+            'sort'
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function myAssist()
     {
         return [
@@ -176,6 +196,7 @@ class ProducerProductController extends GeneralController
             ],
             'add_time' => 'tip',
             'update_time' => 'tip',
+            'sort' => 'code',
             'state' => [
                 'code',
                 'info',
@@ -220,6 +241,9 @@ class ProducerProductController extends GeneralController
             'type' => [
                 'elem' => 'select',
                 'value' => 0
+            ],
+            'sort' => [
+                'placeholder' => '大于零的整数，越小越靠前'
             ],
             'state' => [
                 'elem' => 'select',
@@ -283,6 +307,7 @@ class ProducerProductController extends GeneralController
             'where' => [['producer_id' => self::$uid]],
             'order' => [
                 'producer_product.state DESC',
+                'ISNULL(producer_product.sort), producer_product.sort ASC',
                 'producer_product.update_time DESC'
             ]
         ];

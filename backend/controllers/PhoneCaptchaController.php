@@ -5,9 +5,7 @@ namespace backend\controllers;
 /**
  * 短信验证码管理
  *
- * @auth-inherit-except add
- * @auth-inherit-except edit
- * @auth-inherit-except front
+ * @auth-inherit-except add edit front sort
  */
 class PhoneCaptchaController extends GeneralController
 {

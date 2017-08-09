@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 /**
  * 酒店板块管理
+ *
+ * @auth-inherit-except front
  */
 class HotelPlateController extends GeneralController
 {
@@ -36,10 +38,18 @@ class HotelPlateController extends GeneralController
     {
         return array_merge(parent::indexOperation(), [
             [
-                'text' => '前置',
-                'value' => 'front',
-                'level' => 'info',
-                'icon' => 'sort'
+                'alt' => '排序',
+                'level' => 'default',
+                'icon' => 'sort-by-attributes',
+                'type' => 'script',
+                'value' => '$.sortField',
+                'params' => function ($record) {
+                    return [
+                        'hotel-plate.sort',
+                        $record['id'],
+                        $record['sort']
+                    ];
+                },
             ]
         ]);
     }
@@ -68,7 +78,8 @@ class HotelPlateController extends GeneralController
     {
         return [
             'id',
-            'name'
+            'name',
+            'sort'
         ];
     }
 
@@ -90,6 +101,7 @@ class HotelPlateController extends GeneralController
                 'width' => '128px'
             ],
             'update_time',
+            'sort' => 'code',
             'state' => [
                 'code',
                 'color' => 'auto',
@@ -133,6 +145,9 @@ class HotelPlateController extends GeneralController
                 'field_name' => 'attachment_id'
             ],
 
+            'sort' => [
+                'placeholder' => '大于零的整数，越小越靠前'
+            ],
             'state' => [
                 'elem' => 'select',
                 'value' => 1
@@ -153,6 +168,11 @@ class HotelPlateController extends GeneralController
                 'hotel_plate.*',
                 'attachment.deep_path AS deep_path',
                 'attachment.filename AS filename'
+            ],
+            'order' => [
+                'hotel_plate.state DESC',
+                'ISNULL(hotel_plate.sort), hotel_plate.sort ASC',
+                'hotel_plate.update_time DESC'
             ]
         ]);
     }

@@ -7,10 +7,7 @@ use Yii;
 /**
  * 计划任务管理
  *
- * @auth-inherit-except index
- * @auth-inherit-except add
- * @auth-inherit-except edit
- * @auth-inherit-except front
+ * @auth-inherit-except index add edit front sort
  */
 class MissionController extends GeneralController
 {

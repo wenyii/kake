@@ -332,7 +332,10 @@ class GeneralController extends MainController
                     'product.attachment_cover',
                     'product.update_time'
                 ],
-                'order' => 'product.top DESC, product.update_time DESC',
+                'order' => [
+                    'ISNULL(product.sort), product.sort ASC',
+                    'product.update_time DESC'
+                ],
                 'where' => [
                     ['product.manifestation' => 1],
                     ['product.state' => 1]
@@ -375,7 +378,10 @@ class GeneralController extends MainController
                     'attachment.deep_path',
                     'attachment.filename',
                 ],
-                'order' => 'hotel_plate.update_time DESC',
+                'order' => [
+                    'ISNULL(hotel_plate.sort), hotel_plate.sort ASC',
+                    'hotel_plate.update_time DESC'
+                ],
                 'limit' => $limit
             ]);
 
@@ -423,7 +429,10 @@ class GeneralController extends MainController
                     'attachment.deep_path',
                     'attachment.filename',
                 ],
-                'order' => 'hotel_region.update_time DESC',
+                'order' => [
+                    'ISNULL(hotel_region.sort), hotel_region.sort ASC',
+                    'hotel_region.update_time DESC'
+                ],
                 'limit' => $limit
             ]);
 

@@ -10,7 +10,7 @@ use yii\helpers\Html;
 /**
  * 配置管理
  *
- * @auth-inherit-except front
+ * @auth-inherit-except front sort
  */
 class ConfigController extends GeneralController
 {
@@ -118,7 +118,7 @@ class ConfigController extends GeneralController
     public function indexCondition($as = null)
     {
         return [
-            'order' => 'config.key ASC'
+            'order' => ['config.key ASC']
         ];
     }
 

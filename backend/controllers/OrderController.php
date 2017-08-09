@@ -8,8 +8,7 @@ use Yii;
 /**
  * 主订单管理
  *
- * @auth-inherit-except add
- * @auth-inherit-except front
+ * @auth-inherit-except add front sort
  */
 class OrderController extends GeneralController
 {

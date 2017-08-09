@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 /**
  * 广告管理
+ *
+ * @auth-inherit-except front
  */
 class AdController extends GeneralController
 {
@@ -39,18 +41,26 @@ class AdController extends GeneralController
     {
         return array_merge(parent::indexOperation(), [
             [
-                'text' => '前置',
-                'value' => 'front',
-                'level' => 'info',
-                'icon' => 'sort'
-            ],
-            [
                 'text' => '二维码',
                 'type' => 'script',
                 'value' => '$.showQrCode',
                 'params' => ['link_url'],
                 'level' => 'success',
                 'icon' => 'qrcode'
+            ],
+            [
+                'alt' => '排序',
+                'level' => 'default',
+                'icon' => 'sort-by-attributes',
+                'type' => 'script',
+                'value' => '$.sortField',
+                'params' => function ($record) {
+                    return [
+                        'ad.sort',
+                        $record['id'],
+                        $record['sort']
+                    ];
+                },
             ]
         ]);
     }
@@ -80,7 +90,8 @@ class AdController extends GeneralController
     {
         return [
             'from',
-            'to'
+            'to',
+            'sort'
         ];
     }
 
@@ -101,6 +112,7 @@ class AdController extends GeneralController
             'remark',
             'from',
             'to',
+            'sort' => 'code',
             'state' => [
                 'code',
                 'color' => 'auto',
@@ -186,6 +198,9 @@ class AdController extends GeneralController
                 'field_name' => 'attachment_id'
             ],
 
+            'sort' => [
+                'placeholder' => '大于零的整数，越小越靠前'
+            ],
             'state' => [
                 'elem' => 'select',
                 'value' => 1
@@ -206,6 +221,11 @@ class AdController extends GeneralController
                 'attachment.deep_path',
                 'attachment.filename',
                 'ad.*'
+            ],
+            'order' => [
+                'ad.state DESC',
+                'ISNULL(ad.sort), ad.sort ASC',
+                'ad.update_time DESC'
             ]
         ]);
     }

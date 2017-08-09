@@ -5,7 +5,7 @@ namespace backend\controllers;
 /**
  * 酒店管理
  *
- * @auth-inherit-except front
+ * @auth-inherit-except front sort
  */
 class HotelController extends GeneralController
 {

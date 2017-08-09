@@ -7,6 +7,8 @@ use Yii;
 
 /**
  * 分销账目管理
+ *
+ * @auth-inherit-except add edit front sort
  */
 class ProducerQuotaController extends GeneralController
 {
@@ -95,7 +97,7 @@ class ProducerQuotaController extends GeneralController
             'where' => [
                 [
                     'sub' => [
-                        'select' => 'MAX(producer_quota.add_time)',
+                        'select' => ['MAX(producer_quota.add_time)'],
                         'where' => ['`producer_id` = `A`.`producer_id`']
                     ],
                     'tpl' => "['A.add_time' => {SUB_QUERY}]"
@@ -111,7 +113,7 @@ class ProducerQuotaController extends GeneralController
     public function myCondition()
     {
         return [
-            'order' => 'add_time DESC'
+            'order' => ['add_time DESC']
         ];
     }
 

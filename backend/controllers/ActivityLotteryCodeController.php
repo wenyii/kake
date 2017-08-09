@@ -5,9 +5,7 @@ namespace backend\controllers;
 /**
  * 抽奖码管理
  *
- * @auth-inherit-except add
- * @auth-inherit-except edit
- * @auth-inherit-except front
+ * @auth-inherit-except add edit front sort
  */
 class ActivityLotteryCodeController extends GeneralController
 {
@@ -49,6 +47,7 @@ class ActivityLotteryCodeController extends GeneralController
     public static function indexAssist()
     {
         return [
+            'id' => 'code',
             'nickname',
             'real_name',
             'phone',
@@ -94,5 +93,17 @@ class ActivityLotteryCodeController extends GeneralController
                 'value' => parent::SELECT_KEY_ALL
             ]
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function indexCondition($as = null)
+    {
+        return array_merge(parent::indexCondition(), [
+            'order' => [
+                'id DESC'
+            ]
+        ]);
     }
 }
