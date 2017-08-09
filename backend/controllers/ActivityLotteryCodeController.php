@@ -36,6 +36,9 @@ class ActivityLotteryCodeController extends GeneralController
                 'elem' => 'input',
                 'type' => 'date',
                 'between' => true
+            ],
+            'state' => [
+                'value' => 1
             ]
         ];
     }
@@ -76,18 +79,6 @@ class ActivityLotteryCodeController extends GeneralController
         return [
             'add_time'
         ];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function indexCondition($as = null)
-    {
-        return array_merge(parent::indexCondition(), [
-            'where' => [
-                ['state' => 1]
-            ]
-        ]);
     }
 
     /**
