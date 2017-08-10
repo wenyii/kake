@@ -116,7 +116,7 @@ $params = \Yii::$app->params;
     </div>
 
     <!-- Recommend-item -->
-    <div class="kake-box product">
+    <div class="kake-box product" kk-pull-up>
         <div class="title">
             <img src="<?= $params['frontend_source'] ?>/img/index-icon-recommand.png"/>
         </div>
@@ -128,4 +128,7 @@ $params = \Yii::$app->params;
             </ul>
         </div>
     </div>
+    <a href="javascript:void(0)">
+    		<img src="<?= $params['frontend_source'] ?>/img/lookmore.jpeg" style="width: 100%;"/>
+    </a>
 </div>
